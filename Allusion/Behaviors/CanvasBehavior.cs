@@ -1,14 +1,18 @@
-﻿using Allusion.Core.Helpers;
-using Allusion.ViewModels;
-using Microsoft.Xaml.Behaviors;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using Allusion.Controls;
+using Allusion.ViewModels;
+using Allusion.WPFCore.Extensions;
+using Allusion.WPFCore.Helpers;
+using Microsoft.Xaml.Behaviors;
 
 namespace Allusion.Behaviors;
 
 public class CanvasBehavior : Behavior<UIElement>
 {
-    private MainViewModel? _mainViewModel;
+    private MainViewModel? _mainViewModel; //Replace this with an event aggregation
 
     protected override void OnAttached()
     {
@@ -35,18 +39,23 @@ public class CanvasBehavior : Behavior<UIElement>
     {
         if (_mainViewModel == null) return;
 
+        List<BitmapSource> bitmaps = new List<BitmapSource>();
+
         if (!e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             e.Effects = DragDropEffects.None;
-            return;
         }
+
+        var bitmap = e.Data.GetBitmap();
 
         var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
 
-        var bitmaps = BitmapHelper.GetImagesFromUri(files);
+        bitmaps = BitmapHelper.GetImagesFromUri(files).ToList();
 
-        _mainViewModel.AddDropppedImages(bitmaps);
+        _mainViewModel.AddDropppedImages(bitmaps.ToArray());
     }
+
+
 
     private void OnMouseMove(object sender, MouseEventArgs e)
     {

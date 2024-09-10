@@ -21,7 +21,7 @@ public class ImageViewModel : Screen
     private double _posX;
     private double _posY;
     private bool _selected;
-
+    public double Scale;
     private double _descriptorHeight = 30.0;
 
     public double DescriptorHeight
@@ -79,5 +79,7 @@ public class ImageViewModel : Screen
         _imageSource = imageSource;
         _posX = 10;
         _posY = 40;
+
+        
     }
 }

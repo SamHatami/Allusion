@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+﻿
+using Caliburn.Micro;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Allusion.Core;
-using Caliburn.Micro;
+using Allusion.WPFCore.Artboard;
+using Allusion.WPFCore.Handlers;
+using Allusion.WPFCore.Helpers;
 
 namespace Allusion.ViewModels;
 
@@ -12,8 +15,9 @@ public class MainViewModel : Screen
 {
     public BindableCollection<ImageViewModel> Images { get; set; } = [];
 
-    private ProjectFile _project;
+    private ArtBoard _artBoard;
     private string _text;
+    private ArtBoardHandler _artBoardHandler;
 
     public string Text
     {
@@ -25,47 +29,70 @@ public class MainViewModel : Screen
         }
     }
 
-
     public MainViewModel()
     {
+        _artBoardHandler = new ArtBoardHandler();
         //Move to project-handler, testing json seriazible for now
+    }
+
+    public void OpenArtBoard()
+    {
         var path = @"C:\Temp\project1.json";
-        ProjectFile? project = ProjectFile.Read(Path.GetDirectoryName(path));
-        if (project == null)
+        _artBoard = ArtBoard.Read(Path.GetDirectoryName(path));
+        if (_artBoard == null)
         {
-            _project = new ProjectFile("AllusionTestProject1");
-            ProjectFile.Save(_project, path);
+            _artBoard = new ArtBoard("AllusionTestProject1");
+            ArtBoard.Save(_artBoard, path);
+        }
+
+        InitializeProject();
+    }
+
+    public void SaveArtBoard()
+    {
+        var path = @"C:\Temp\project1.json";
+        //var imagesFromCollection = Images.Select(i => new ImageItem(i.ImageSource., i.PosX, i.PosY, 1.0)).ToArray();
+        //_artBoardHandler.SaveImageOnArtBoard(imagesFromCollection);
+
+    }
+
+    private void InitializeProject()
+    {
+        Images.Clear();
+        foreach (var imageItem in _artBoard.Images)
+        {
+            var bitmap = BitmapHelper.GetImageFromUri(imageItem.ImageUri);
+            Images.Add(new ImageViewModel(bitmap)
+            {
+                PosX = imageItem.PosX,
+                PosY = imageItem.PosY
+            });
         }
     }
-    public void PasteOnCanvas(System.Windows.Point e)
-    {
-        var pastedImage = Clipboard.GetImage();
-        //BitmapImage bitmap = 
-        //if(image == null) return;
-        using (var fileStream = new FileStream(@"C:\Temp\"+"1.png", FileMode.Create))
-        {
-            BitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(pastedImage));
-            encoder.Save(fileStream);
-        }
-        //var newImageItem = new ImageItem();
 
-        Images.Add(new ImageViewModel(pastedImage));
+    public void PasteOnCanvas(Point e)
+    {
+        var pastedImages = _artBoardHandler.GetPastedBitmaps();
+
+        if(pastedImages == null)  return;
+
+        foreach (var pasted in pastedImages)
+            Images.Add(new ImageViewModel(pasted));
+
     }
 
     private void ExtractUrlFromDataObject()
     {
-        IDataObject dataObject = Clipboard.GetDataObject();
+        var dataObject = Clipboard.GetDataObject();
         if (dataObject != null)
-        {
-            foreach (string format in dataObject.GetFormats())
+            foreach (var format in dataObject.GetFormats())
             {
-                object data = dataObject.GetData(format);
+                var data = dataObject.GetData(format);
                 // Inspect data for potential URL or source information
                 Debug.WriteLine($"Format: {format}, Data: {data}");
             }
-        }
     }
+
     public void Delete()
     {
         Text = "Pressed delete";
@@ -73,10 +100,10 @@ public class MainViewModel : Screen
 
     public void AddDropppedImages(ImageSource[] bitmaps)
     {
-        int counter = bitmaps.Length;
+        var counter = bitmaps.Length;
         foreach (var bitmap in bitmaps)
         {
-            Images.Add(new ImageViewModel(bitmap) {PosX = 10*counter, PosY = 10*counter});
+            Images.Add(new ImageViewModel(bitmap) { PosX = 10 * counter, PosY = 10 * counter });
             counter++;
         }
     }

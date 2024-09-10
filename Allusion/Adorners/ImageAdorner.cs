@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media;
-using Allusion.ViewModels;
 
 namespace Allusion.Adorners;
 

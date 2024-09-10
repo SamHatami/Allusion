@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Allusion.Core\Allusion.Core.csproj" />
+    <ProjectReference Include="..\Allusion.WPFCore\Allusion.WPFCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,5 +24,6 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
+
 
 </Project>
