@@ -51,7 +51,6 @@ public static class DataObjectExtension
                     bitmap.EndInit();
 
                     return bitmap;
-
                 }
             }
         }
@@ -77,4 +76,7 @@ public static class DataObjectExtension
         var match = Regex.Match(html, @"<img[^>]*?src=[""']([^""']+)[""']");
         return match.Success ? match.Groups[1].Value : string.Empty;
     }
+
+    //Note: For future reference regarading transparent channels.
+    //https://stackoverflow.com/questions/44177115/copying-from-and-to-clipboard-loses-image-transparency?noredirect=1&lq=1
 }
