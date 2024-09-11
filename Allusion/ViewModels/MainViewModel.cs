@@ -1,16 +1,22 @@
-﻿using Allusion.WPFCore.Artboard;
-using Allusion.WPFCore.Handlers;
+﻿using Allusion.WPFCore.Handlers;
 using Allusion.WPFCore.Service;
 using Caliburn.Micro;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Allusion.WPFCore.Board;
 
 namespace Allusion.ViewModels;
 
 public class MainViewModel : Screen
 {
+
+    //TODO: Booleans on states -> enums
+
+    public bool Saving;
+    public bool Loading;
+
     public BindableCollection<ImageViewModel> Images { get; set; } = [];
 
     private ArtBoard _artBoard;
@@ -35,7 +41,11 @@ public class MainViewModel : Screen
 
     public void OpenArtBoard()
     {
+        //open viewmodel on current available artboards
+        _artBoardHandler.OpenArtBoard()
         var path = @"C:\Temp\project1.json";
+
+        //Only for testing
         _artBoard = ArtBoard.Read(Path.GetDirectoryName(path));
         if (_artBoard == null)
         {
@@ -48,18 +58,20 @@ public class MainViewModel : Screen
 
     public void SaveArtBoard()
     {
-        var path = @"C:\Temp\project1.json";
-        //var imagesFromCollection = Images.Select(i => new ImageItem(i.ImageSource., i.PosX, i.PosY, 1.0)).ToArray();
-        //_artBoardHandler.SaveImageOnArtBoard(imagesFromCollection);
+        var imageItems = Images.Select(i => i.Item).ToArray();
+ 
+        Task.Run(() => _artBoardHandler.SaveImageOnArtBoard(imageItems));
     }
 
     private void InitializeProject()
     {
         Images.Clear();
+
+        if(_artBoard.Images is null) return;
+
         foreach (var imageItem in _artBoard.Images)
         {
-            var bitmap = BitmapService.GetFromUri(imageItem.ImageUri);
-            Images.Add(new ImageViewModel(bitmap)
+            Images.Add(new ImageViewModel(imageItem)
             {
                 PosX = imageItem.PosX,
                 PosY = imageItem.PosY
@@ -69,7 +81,7 @@ public class MainViewModel : Screen
 
     public void PasteOnCanvas(Point e)
     {
-        var pastedImages = ArtBoardHandler.GetPastedBitmaps();
+        var pastedImages = ClipboardService.GetPastedBitmaps();
 
         if (pastedImages == null) return;
 

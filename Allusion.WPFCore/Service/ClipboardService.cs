@@ -6,14 +6,14 @@ namespace Allusion.WPFCore.Service
 {
     public class ClipboardService
     {
-        public static BitmapSource[]? GetPastedBitmaps()  //Make this static that both mainview or canvas can talk to directly.
+        public BitmapSource[]? GetPastedBitmaps()  //Make this static that both mainview or canvas can talk to directly.
         {
             var pastedFromWeb = System.Windows.Clipboard.GetImage();
-
+            
             return pastedFromWeb is null ? null : new[] { pastedFromWeb };
         }
 
-        public static BitmapSource[]? GetDroppedBitmaps(IDataObject droppedObject)
+        public BitmapSource[]? GetDroppedBitmaps(IDataObject droppedObject)
         {
             //Try getting bitmap if dropped object was from browser
             var getbiBitmapAsync = Task.Run(droppedObject.GetBitmapAsync);

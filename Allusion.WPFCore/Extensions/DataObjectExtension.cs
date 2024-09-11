@@ -1,14 +1,9 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text.RegularExpressions;
+﻿using System.Runtime.CompilerServices;
+using Allusion.WPFCore.Service;
+using HtmlAgilityPack;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Allusion.WPFCore.Service;
 using IDataObject = System.Windows.IDataObject;
-using HtmlAgilityPack;
 
 namespace Allusion.WPFCore.Extensions;
 
@@ -18,21 +13,15 @@ public static class DataObjectExtension
     {
         if (dataObject.GetDataPresent(DataFormats.Bitmap))
         {
-            if (dataObject.GetData(DataFormats.Bitmap) is BitmapSource bitmap)
-            {
-                return bitmap;
-            }
+            if (dataObject.GetData(DataFormats.Bitmap) is BitmapSource bitmap) return bitmap;
         }
 
         // Check if the data contains HTML (could include the image URL)
         else if (dataObject.GetDataPresent(DataFormats.Html))
         {
-            var htmlData = dataObject.GetData(DataFormats.Html) as string;
-
-            if (string.IsNullOrEmpty(htmlData)) return null;
-
-            var imageUrl = HtmlTest(htmlData);
-            var bitmap = await BitmapService.DownloadAndConvert(imageUrl);
+            BitmapSource bitmap = null;
+            if(!TryGetUrl(dataObject, out string imageUrl))
+            {bitmap = await BitmapService.DownloadAndConvert(imageUrl);}
 
             return bitmap;
         }
@@ -51,11 +40,33 @@ public static class DataObjectExtension
 
         return null;
     }
+    public static bool TryGetUrl(this IDataObject dataObject, out string url)
+    {
+        try
+        {
+            if (!dataObject.GetDataPresent(DataFormats.Html))
+            {
+                url = string.Empty;
+                return false;
+            }
 
-    //Note: For future reference regarading transparent channels.
-    //https://stackoverflow.com/questions/44177115/copying-from-and-to-clipboard-loses-image-transparency?noredirect=1&lq=1
+            var htmlData = dataObject.GetData(DataFormats.Html) as string;
 
-    //Note2: HTMLAgilityPack might be of use...
+            if (string.IsNullOrEmpty(htmlData))
+            {
+                url = string.Empty;
+                return false;
+            }
+
+            url = HtmlTest(htmlData);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
     private static string HtmlTest(string html)
     {

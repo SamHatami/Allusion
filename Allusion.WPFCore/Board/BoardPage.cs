@@ -1,4 +1,4 @@
-﻿namespace Allusion.WPFCore.Artboard
+﻿namespace Allusion.WPFCore.Board
 {
     [Serializable]
     public class BoardPage

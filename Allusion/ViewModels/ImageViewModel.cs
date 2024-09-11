@@ -1,10 +1,20 @@
-﻿using System.Windows.Media;
+﻿using Allusion.WPFCore.Board;
 using Caliburn.Micro;
+using System.Windows.Media;
 
 namespace Allusion.ViewModels;
 
 public class ImageViewModel : Screen
 {
+    private ImageItem _item;
+
+    public ImageItem Item
+    {
+        get => TransferToItem();
+        set => _item = value;
+    }
+
+    private bool _selected;
     private ImageSource _imageSource;
 
     public ImageSource ImageSource
@@ -17,11 +27,8 @@ public class ImageViewModel : Screen
         }
     }
 
-    private string _description = string.Empty;
-    private double _posX;
-    private double _posY;
-    private bool _selected;
     public double Scale;
+    public double AspectRatio { get; set; }
     private double _descriptorHeight = 30.0;
 
     public double DescriptorHeight
@@ -33,6 +40,8 @@ public class ImageViewModel : Screen
             NotifyOfPropertyChange(nameof(DescriptorHeight));
         }
     }
+
+    private string _description = string.Empty;
 
     public string Description
     {
@@ -54,6 +63,8 @@ public class ImageViewModel : Screen
         }
     }
 
+    private double _posX;
+
     public double PosX //kind of anti-pattern.
     {
         get => _posX;
@@ -63,6 +74,8 @@ public class ImageViewModel : Screen
             NotifyOfPropertyChange(nameof(PosX));
         }
     }
+
+    private double _posY;
 
     public double PosY
     {
@@ -74,16 +87,41 @@ public class ImageViewModel : Screen
         }
     }
 
-    public ImageViewModel(ImageSource imageSource)
+    private int _pageMember;
+
+    public int PageMember
     {
-        _imageSource = imageSource;
-        _posX = 10;
-        _posY = 40;
-
-        AspectRatio = imageSource.Width / imageSource.Height;
-
-
+        get => _pageMember;
+        set
+        {
+            _pageMember = value;
+            NotifyOfPropertyChange(nameof(PageMember));
+        }
     }
 
-    public double AspectRatio { get; set; }
+    public ImageViewModel(ImageItem item)
+    {
+        Item = item;
+        Initialize();
+
+        AspectRatio = _imageSource.Width / _imageSource.Height;
+    }
+
+    private void Initialize()
+    {
+        ImageSource = _item.Source;
+        PosX = _posX;
+        PosY = _posY;
+        Description = _item.Description;
+    }
+
+    private ImageItem TransferToItem()
+    {
+        _item.Description = Description;
+        _item.PosX = PosX;
+        _item.PosY = PosY;
+        _item.MemberOfPage = _pageMember;
+
+        return _item;
+    }
 }

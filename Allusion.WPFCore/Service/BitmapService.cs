@@ -78,16 +78,9 @@ namespace Allusion.WPFCore.Service
         }
 
         //https://stackoverflow.com/questions/14337071/convert-array-of-bytes-to-bitmapimage
+        //Note: This is not fully done, the scale will be wrong.
         private static BitmapSource? CreateFromBytes(byte[] imageBytes)
         {
-            //using var stream = new MemoryStream(imageBytes);
-            //var bitmap = new BitmapImage();
-            //bitmap.BeginInit();
-            //bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            //bitmap.StreamSource = stream;
-            //bitmap.EndInit();
-
-            //return bitmap;
             var bitmapSource = (BitmapSource)new ImageSourceConverter().ConvertFrom(imageBytes);
 
             return bitmapSource;

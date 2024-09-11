@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 
-namespace Allusion.WPFCore.Artboard;
+namespace Allusion.WPFCore.Board;
 
 public class ArtBoard
 {
@@ -33,7 +33,7 @@ public class ArtBoard
 
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
-
+        
         File.WriteAllText(fullPath, JsonSerializer.Serialize(board));
     }
 }

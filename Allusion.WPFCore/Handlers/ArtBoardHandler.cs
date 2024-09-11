@@ -1,59 +1,53 @@
-﻿using Allusion.WPFCore.Artboard;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Service;
-using static System.Net.WebRequestMethods;
 
 namespace Allusion.WPFCore.Handlers;
 
 public class ArtBoardHandler
 {
     private ArtBoard? _currentArtBoard;
+    private ClipboardService _clipboardService = new();
+    private BitmapService _bitmapService = new();
+    private ImageItemService _imageItemService = new();
 
-    public ArtBoardHandler()
+  
+    public void GetNewImageItems(int pageNr)
     {
+        var dataObject = Clipboard.GetDataObject();
+        
+        var pastedImages = _clipboardService.GetPastedBitmaps();
+
+        ImageItemService.RetrieveNewImages();
     }
-
-    public static BitmapSource[]? GetPastedBitmaps()  //Make this static that both mainview or canvas can talk to directly.
-    {
-        var pastedFromWeb = Clipboard.GetImage();
-
-        if (pastedFromWeb != null) return new[] { pastedFromWeb };
-
-        var droppedObject = Clipboard.GetDataObject();
-
-        if (droppedObject == null) return null;
-
-        List<BitmapSource> bitmaps = new List<BitmapSource>();
-
-        if (droppedObject.GetDataPresent(DataFormats.FileDrop))
-        {
-            var files = droppedObject.GetData(DataFormats.FileDrop, true) as string[];
-            bitmaps = BitmapService.GetFromUri(files).ToList();
-        }
-
-        foreach (var bitmap in bitmaps)
-            SaveBitmapToFile(bitmap);
-
-        return bitmaps.ToArray();
-    }
-
     public void AddImageToBoard()
     {
         var nrOfFils = Directory.GetFiles(_currentArtBoard.FullPath).Length;
     }
 
-    public ArtBoard OpenProjectFile(string fullPath)
+    public ArtBoard OpenArtBoard(string fullPath)
     {
-        _currentArtBoard = ArtBoard.Read(Path.GetDirectoryName(fullPath));
+        try
+        {
+            _currentArtBoard = ArtBoard.Read(Path.GetDirectoryName(fullPath));
+
+            foreach(var imageItem in _currentArtBoard.Images)
+                imageItem.LoadItemSource();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
 
         return _currentArtBoard;
     }
 
-    public async Task SaveImageOnArtBoard(ImageItem[] images)
+    public async Task SaveImageOnArtBoard(ImageItem[] imageItems)
     {
-        _currentArtBoard.Images = images;
+        _currentArtBoard.Images = imageItems;
         await Task.Run(() => ArtBoard.Save(_currentArtBoard, _currentArtBoard.FullPath));
     }
 
@@ -65,5 +59,10 @@ public class ArtBoardHandler
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
             encoder.Save(fileStream);
         }
+    }
+
+    private void SaveToGlobalArtBoardList()
+    {
+        //TODO: 
     }
 }

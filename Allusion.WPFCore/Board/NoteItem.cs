@@ -1,6 +1,6 @@
 ﻿using Allusion.WPFCore.Interfaces;
 
-namespace Allusion.WPFCore.Artboard;
+namespace Allusion.WPFCore.Board;
 
 public class NoteItem : IItem
 {
