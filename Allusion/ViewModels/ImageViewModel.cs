@@ -80,6 +80,10 @@ public class ImageViewModel : Screen
         _posX = 10;
         _posY = 40;
 
-        
+        AspectRatio = imageSource.Width / imageSource.Height;
+
+
     }
+
+    public double AspectRatio { get; set; }
 }

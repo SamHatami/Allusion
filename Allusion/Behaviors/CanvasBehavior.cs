@@ -1,12 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using Allusion.ViewModels;
+using Allusion.WPFCore.Service;
+using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using Allusion.Controls;
-using Allusion.ViewModels;
-using Allusion.WPFCore.Extensions;
-using Allusion.WPFCore.Helpers;
-using Microsoft.Xaml.Behaviors;
 
 namespace Allusion.Behaviors;
 
@@ -24,10 +20,14 @@ public class CanvasBehavior : Behavior<UIElement>
             GetDataContext();
         }
 
-        //AssociatedObject.MouseLeftButtonDown += OnMouseLeftButtonDown;
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.Drop += OnDrop;
-        //AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
+    }
+
+    protected override void OnDetaching()
+    {
+        AssociatedObject.MouseMove -= OnMouseMove;
+        AssociatedObject.Drop -= OnDrop;
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -39,23 +39,17 @@ public class CanvasBehavior : Behavior<UIElement>
     {
         if (_mainViewModel == null) return;
 
-        List<BitmapSource> bitmaps = new List<BitmapSource>();
-
         if (!e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             e.Effects = DragDropEffects.None;
         }
 
-        var bitmap = e.Data.GetBitmap();
-
-        var files = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-
-        bitmaps = BitmapHelper.GetImagesFromUri(files).ToList();
+        var bitmaps = ClipboardService.GetDroppedBitmaps(e.Data);
 
         _mainViewModel.AddDropppedImages(bitmaps.ToArray());
+
+        e.Handled = true;
     }
-
-
 
     private void OnMouseMove(object sender, MouseEventArgs e)
     {

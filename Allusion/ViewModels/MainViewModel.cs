@@ -1,12 +1,11 @@
-﻿using Caliburn.Micro;
+﻿using Allusion.WPFCore.Artboard;
+using Allusion.WPFCore.Handlers;
+using Allusion.WPFCore.Service;
+using Caliburn.Micro;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Allusion.WPFCore.Artboard;
-using Allusion.WPFCore.Handlers;
-using Allusion.WPFCore.Helpers;
 
 namespace Allusion.ViewModels;
 
@@ -59,7 +58,7 @@ public class MainViewModel : Screen
         Images.Clear();
         foreach (var imageItem in _artBoard.Images)
         {
-            var bitmap = BitmapHelper.GetImageFromUri(imageItem.ImageUri);
+            var bitmap = BitmapService.GetFromUri(imageItem.ImageUri);
             Images.Add(new ImageViewModel(bitmap)
             {
                 PosX = imageItem.PosX,

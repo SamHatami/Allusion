@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Allusion.ViewModels;
 
 namespace Allusion.Views
 {
@@ -18,11 +19,15 @@ namespace Allusion.Views
         {
             //Tried to do this with adorner, but having them active all the time renders all the thumbs on the top most layer
             //this is rather effective, except that you have to calculate the aspectRatio each time.
-            //Not sure how to do it otherwise.
+            //Not sure how to do it otherwise. But not the best place for it to live
 
             var thumb = sender as FrameworkElement;
+
             var contentControl = thumb.Parent as FrameworkElement;
-            var aspectRatio = contentControl.Height / contentControl.Width;
+            var vm = contentControl.DataContext as ImageViewModel;
+
+            var aspectRatio = vm.AspectRatio;
+
             // Calculate new width and height
 
             var horizontalScaleFactor = 1 + e.HorizontalChange * 0.1 / contentControl.Width;

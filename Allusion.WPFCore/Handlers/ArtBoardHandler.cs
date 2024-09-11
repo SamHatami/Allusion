@@ -1,9 +1,8 @@
 ﻿using Allusion.WPFCore.Artboard;
-using Allusion.WPFCore.Extensions;
-using Allusion.WPFCore.Helpers;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Service;
 using static System.Net.WebRequestMethods;
 
 namespace Allusion.WPFCore.Handlers;
@@ -22,17 +21,16 @@ public class ArtBoardHandler
 
         if (pastedFromWeb != null) return new[] { pastedFromWeb };
 
-
         var droppedObject = Clipboard.GetDataObject();
 
         if (droppedObject == null) return null;
 
         List<BitmapSource> bitmaps = new List<BitmapSource>();
-                
-        if(droppedObject.GetDataPresent(DataFormats.FileDrop))
+
+        if (droppedObject.GetDataPresent(DataFormats.FileDrop))
         {
             var files = droppedObject.GetData(DataFormats.FileDrop, true) as string[];
-            bitmaps = BitmapHelper.GetImagesFromUri(files).ToList();
+            bitmaps = BitmapService.GetFromUri(files).ToList();
         }
 
         foreach (var bitmap in bitmaps)

@@ -25,3 +25,25 @@ Add content to current artboard from a browser or file explorer:
 - Hopefully theme
 - Some hotkeys
 - Perhaps default artboard folder
+
+
+# Dev Notes
+ClipboardService
+- Handles all actions from the clipboard
+
+BitmapService
+
+
+- Copy/paste from web - the clipboard handles this as an image.
+- Drag and drop from web - the clipboard handles this a html data.
+
+- Copy/Paste & Drag and Drop from file explorer - the clipboard handles this as FileDrop which are filepaths.
+
+
+Copy paste are events in the window that are bound to the mainviewmodel via caliburn gesture action
+drops are consumed by the CanvasBehavior are a DragEvent (System.Windows.DragEventArgs)
+
+Each ImageItem are added to a single ImageViewModel, the view is a custom user control with a new dependency property called Selected which will be used for calls where the specific ImageViewModel will be involved in other events such as 
+- Delete
+- Move to other page
+- Add note / Remove note
