@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using IDataObject = System.Windows.IDataObject;
+using HtmlAgilityPack;
 
 namespace Allusion.WPFCore.Extensions;
 
@@ -31,6 +32,7 @@ public static class DataObjectExtension
             {
                 // Extract image URL or other information from HTML
                 string imageUrl = ExtractImageUrlFromHtml(htmlData);
+                HtmlTest(htmlData);
                 if (!string.IsNullOrEmpty(imageUrl))
                 {
                     using var client = new WebClient();
@@ -79,4 +81,15 @@ public static class DataObjectExtension
 
     //Note: For future reference regarading transparent channels.
     //https://stackoverflow.com/questions/44177115/copying-from-and-to-clipboard-loses-image-transparency?noredirect=1&lq=1
+
+    //Note2: HTMLAgilityPack might be of use...
+
+    private static void HtmlTest(string html)
+    {
+        var htmlDoc = new HtmlDocument();
+        htmlDoc.LoadHtml(html);
+
+        var node = htmlDoc.DocumentNode.SelectSingleNode("//img");
+        var imageSourec = node.Attributes["src"].Value;
+    }
 }

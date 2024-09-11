@@ -1,5 +1,4 @@
-﻿
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -53,7 +52,6 @@ public class MainViewModel : Screen
         var path = @"C:\Temp\project1.json";
         //var imagesFromCollection = Images.Select(i => new ImageItem(i.ImageSource., i.PosX, i.PosY, 1.0)).ToArray();
         //_artBoardHandler.SaveImageOnArtBoard(imagesFromCollection);
-
     }
 
     private void InitializeProject()
@@ -72,13 +70,12 @@ public class MainViewModel : Screen
 
     public void PasteOnCanvas(Point e)
     {
-        var pastedImages = _artBoardHandler.GetPastedBitmaps();
+        var pastedImages = ArtBoardHandler.GetPastedBitmaps();
 
-        if(pastedImages == null)  return;
+        if (pastedImages == null) return;
 
         foreach (var pasted in pastedImages)
             Images.Add(new ImageViewModel(pasted));
-
     }
 
     private void ExtractUrlFromDataObject()
