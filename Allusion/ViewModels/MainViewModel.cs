@@ -78,14 +78,16 @@ public class MainViewModel : Screen
         }
     }
 
-    public void PasteOnCanvas(Point e)
+    public void PasteOnCanvas()
     {
-        var items = _artBoardHandler.GetNewImageItems(0);
+        var items = _artBoardHandler.GetPastedImageItems(0);
 
-        if (items == null) return;
+        var bitmap = Clipboard.GetImage();
 
-        foreach (var item in items)
-            Images.Add(new ImageViewModel(item));
+        //if (items == null) return;
+
+        //foreach (var item in items)
+        //    Images.Add(new ImageViewModel(item));
     }
 
     private void ExtractUrlFromDataObject()

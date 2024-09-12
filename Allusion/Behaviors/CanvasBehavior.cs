@@ -3,13 +3,13 @@ using Allusion.WPFCore.Service;
 using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Input;
+using Allusion.WPFCore.Handlers;
 
 namespace Allusion.Behaviors;
 
 public class CanvasBehavior : Behavior<UIElement>
 {
     private MainViewModel? _mainViewModel; //Replace this with an event aggregation
-    private ClipboardService _clipboardService;
 
     protected override void OnAttached()
     {
@@ -21,7 +21,6 @@ public class CanvasBehavior : Behavior<UIElement>
             GetDataContext();
         }
 
-        _clipboardService = new ClipboardService();
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.Drop += OnDrop;
     }
@@ -46,9 +45,9 @@ public class CanvasBehavior : Behavior<UIElement>
             e.Effects = DragDropEffects.None;
         }
 
-        var bitmaps = _clipboardService.GetDroppedBitmaps(e.Data);
-
-        _mainViewModel.AddDropppedImages(bitmaps.ToArray());
+        ArtBoardHandler.DroppedNewObjects(e.Data);
+       
+        //_mainViewModel.AddDropppedImages(bitmaps.ToArray());
 
         e.Handled = true;
     }

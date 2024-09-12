@@ -4,12 +4,56 @@ using HtmlAgilityPack;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using IDataObject = System.Windows.IDataObject;
+using System.Diagnostics;
+using System.IO;
 
 namespace Allusion.WPFCore.Extensions;
 
 public static class DataObjectExtension
 {
-    public static async Task<BitmapSource>? GetBitmapAsync(this IDataObject dataObject)
+    public static BitmapSource[] GetBitmapFromLocal(this IDataObject dataObject)
+    {
+        //This is just so crazy... 
+        List<BitmapSource> bitmaps = [];
+
+        var formats = dataObject.GetFormats(true);
+        if (formats == null || formats.Length == 0) return null;
+
+        foreach (var f in formats)
+            Debug.WriteLine(" - " + f.ToString());
+
+        if (formats.Contains("FileContents"))
+        {
+            string[] filePaths = dataObject.GetData("FileContents") as string[];
+
+            return BitmapService.LoadFromUri(filePaths);
+
+        }
+
+        //if the image was pasted from explorer
+        if (formats.Contains("FileName"))
+        {
+            string[] filePaths= dataObject.GetData("FileName") as string[];
+
+            return BitmapService.LoadFromUri(filePaths);
+
+        }
+
+ 
+
+        if (formats.Contains("PNG"))
+        {
+            Debug.WriteLine("PNG");
+
+            using (MemoryStream ms = (MemoryStream)dataObject.GetData("PNG"))
+            {
+                ms.Position = 0;
+                //var bit = new Bitmap(ms);
+            }
+        }
+        return null;
+    }
+    public static async Task<BitmapSource>? GetWebBitmapAsync(this IDataObject dataObject)
     {
         if (dataObject.GetDataPresent(DataFormats.Bitmap))
         {

@@ -14,7 +14,7 @@
         Width="1024"
 
         cm:Message.Attach="
-        [Gesture Ctrl+V] = [Action PasteOnCanvas($mousepoint)];
+        [Gesture Ctrl+V] = [Action PasteOnCanvas];
         [Gesture Ctrl+O] = [OpenArtBoard];
         [Gesture Ctrl+S] = [SaveArtBoard];
         [Key Delete] = [Delete];">
@@ -89,8 +89,8 @@
         <Canvas x:Name="MainCanvas" Background="Transparent" AllowDrop="True">
             <Canvas.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Option 1" />
-                    <MenuItem Header="Option 2" />
+                    <MenuItem Header="Paste" IsEnabled="True"  cm:Message.Attach="[PasteOnCanvas]"/>
+                    <MenuItem Header="Save"  cm:Message.Attach="[SaveArtBoard]"/>
                     <MenuItem Header="Option 3" />
                 </ContextMenu>
             </Canvas.ContextMenu>

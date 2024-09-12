@@ -26,7 +26,7 @@ namespace Allusion.WPFCore.Service
             return bitmap;
         }
 
-        public static BitmapSource[] GetFromUri(string[]? fileUriStrings)
+        public static BitmapSource[] LoadFromUri(string[]? fileUriStrings)
         {
             if (fileUriStrings == null) return null;
 
@@ -49,7 +49,7 @@ namespace Allusion.WPFCore.Service
             return bitmaps.ToArray();
         }
 
-        private static BitmapImage LoadFromUri(string uri)
+        public static BitmapImage LoadFromUri(string uri)
         {
             return new BitmapImage(new Uri(uri));
         }

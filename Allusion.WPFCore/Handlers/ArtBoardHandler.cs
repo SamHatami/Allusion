@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Allusion.WPFCore.Board;
+using Allusion.WPFCore.Extensions;
 using Allusion.WPFCore.Service;
 
 namespace Allusion.WPFCore.Handlers;
@@ -9,24 +10,29 @@ namespace Allusion.WPFCore.Handlers;
 public class ArtBoardHandler
 {
     private ArtBoard? _currentArtBoard;
-    private ClipboardService _clipboardService = new();
     private BitmapService _bitmapService = new();
     private ImageItemService _imageItemService = new();
 
-    public ImageItem[] GetNewImageItems(int pageNr)
+    public ImageItem[] GetPastedImageItems(int pageNr)
     {
-        var dataObject = Clipboard.GetDataObject();
+        
 
-        var bitmaps = _clipboardService.GetPastedBitmaps();
+        var bitmaps = ClipboardService.GetPastedBitmaps();
 
         List<ImageItem> items = [];
-        foreach (var bitmap in bitmaps)
-        {
-            items.Add(_imageItemService.CreateImageItemFromDataObject(bitmap, dataObject));
-        }
+        //foreach (var bitmap in bitmaps)
+        //{
+        //    items.Add(_imageItemService.CreateImageItemFromDataObject(bitmap, dataObject));
+        //}
 
         return items.ToArray();
     }
+
+    //public ImageItem[] GetDroppedImageItems(IDataObject dataObject)
+    //{
+    //    var bitmaps = ClipboardService.GetDroppedBitmaps(dataObject);
+
+    //}
 
     public void AddImageToBoard()
     {
@@ -70,5 +76,11 @@ public class ArtBoardHandler
     private void SaveToGlobalArtBoardList()
     {
         //TODO:
+    }
+
+    public static void DroppedNewObjects(IDataObject dataobject)
+    {
+        
+        return;
     }
 }
