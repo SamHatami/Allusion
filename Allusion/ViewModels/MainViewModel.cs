@@ -11,7 +11,6 @@ namespace Allusion.ViewModels;
 
 public class MainViewModel : Screen
 {
-
     //TODO: Booleans on states -> enums
 
     public bool Saving;
@@ -42,7 +41,7 @@ public class MainViewModel : Screen
     public void OpenArtBoard()
     {
         //open viewmodel on current available artboards
-        _artBoardHandler.OpenArtBoard()
+        //_artBoardHandler.OpenArtBoard();
         var path = @"C:\Temp\project1.json";
 
         //Only for testing
@@ -59,7 +58,7 @@ public class MainViewModel : Screen
     public void SaveArtBoard()
     {
         var imageItems = Images.Select(i => i.Item).ToArray();
- 
+
         Task.Run(() => _artBoardHandler.SaveImageOnArtBoard(imageItems));
     }
 
@@ -67,7 +66,7 @@ public class MainViewModel : Screen
     {
         Images.Clear();
 
-        if(_artBoard.Images is null) return;
+        if (_artBoard.Images is null) return;
 
         foreach (var imageItem in _artBoard.Images)
         {
@@ -81,12 +80,12 @@ public class MainViewModel : Screen
 
     public void PasteOnCanvas(Point e)
     {
-        var pastedImages = ClipboardService.GetPastedBitmaps();
+        var items = _artBoardHandler.GetNewImageItems(0);
 
-        if (pastedImages == null) return;
+        if (items == null) return;
 
-        foreach (var pasted in pastedImages)
-            Images.Add(new ImageViewModel(pasted));
+        foreach (var item in items)
+            Images.Add(new ImageViewModel(item));
     }
 
     private void ExtractUrlFromDataObject()
@@ -108,11 +107,11 @@ public class MainViewModel : Screen
 
     public void AddDropppedImages(ImageSource[] bitmaps)
     {
-        var counter = bitmaps.Length;
-        foreach (var bitmap in bitmaps)
-        {
-            Images.Add(new ImageViewModel(bitmap) { PosX = 10 * counter, PosY = 10 * counter });
-            counter++;
-        }
+        //var counter = bitmaps.Length;
+        //foreach (var bitmap in bitmaps)
+        //{
+        //    Images.Add(new ImageViewModel(bitmap) { PosX = 10 * counter, PosY = 10 * counter });
+        //    counter++;
+        //}
     }
 }

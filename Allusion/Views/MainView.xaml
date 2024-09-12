@@ -17,23 +17,21 @@
         [Gesture Ctrl+V] = [Action PasteOnCanvas($mousepoint)];
         [Gesture Ctrl+O] = [OpenArtBoard];
         [Gesture Ctrl+S] = [SaveArtBoard];
-        [Key Delete] = [Delete];"
-        
-        >
+        [Key Delete] = [Delete];">
 
     <Window.Resources>
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
-            <Setter Property="Width" Value="15"/>
-            <Setter Property="Height" Value="15"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="15" />
+            <Setter Property="Height" Value="15" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
                         <Grid>
                             <Polygon Fill="#353535"  StrokeThickness="0"
-                                     Points="10,-5 -5,10 10,10"/>
+                                     Points="10,-5 -5,10 10,10" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -42,17 +40,17 @@
 
         <!-- Style for the ContextMenu -->
         <Style TargetType="ContextMenu">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Background" Value="#333333" />
             <!-- Background color -->
-            <Setter Property="BorderBrush" Value="#666666"/>
+            <Setter Property="BorderBrush" Value="#666666" />
             <!-- Border color -->
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ContextMenu">
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <StackPanel IsItemsHost="True" />
                         </Border>
@@ -63,25 +61,25 @@
 
         <!-- Style for MenuItem inside the ContextMenu -->
         <Style TargetType="MenuItem">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
             <!-- Text color -->
-            <Setter Property="Margin" Value="10,5,10,5"/>
+            <Setter Property="Margin" Value="10,5,10,5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="MenuItem">
                         <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter Content="{TemplateBinding Header}" 
-                                              HorizontalAlignment="Left" 
-                                              VerticalAlignment="Center"/>
+                            <ContentPresenter Content="{TemplateBinding Header}"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#555555"/>
-        
+                    <Setter Property="Background" Value="#555555" />
+
                     <!-- Hover color -->
                 </Trigger>
             </Style.Triggers>
@@ -91,9 +89,9 @@
         <Canvas x:Name="MainCanvas" Background="Transparent" AllowDrop="True">
             <Canvas.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Option 1"/>
-                    <MenuItem Header="Option 2"/>
-                    <MenuItem Header="Option 3"/>
+                    <MenuItem Header="Option 1" />
+                    <MenuItem Header="Option 2" />
+                    <MenuItem Header="Option 3" />
                 </ContextMenu>
             </Canvas.ContextMenu>
             <b:Interaction.Behaviors>
@@ -109,19 +107,16 @@
                     <DataTemplate>
                         <Grid     Width="{Binding  ImageSource.Width}"
                                   Height="{Binding ImageSource.Height}">
-                            <ContentControl cm:View.Model="{Binding}" IsHitTestVisible="True"/>
-                            <Thumb x:Name="ResizeThumb" Width="10" Height="10" 
+                            <ContentControl cm:View.Model="{Binding}" IsHitTestVisible="True" />
+                            <Thumb x:Name="ResizeThumb" Width="10" Height="10"
                                                        VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                                                       DragDelta="OnResizeThumbDragDelta" 
-                                                       Background="Gray" 
-                                                       Style="{StaticResource TriangleThumbStyle}"/>
+                                                       DragDelta="OnResizeThumbDragDelta"
+                                                       Background="Gray"
+                                                       Style="{StaticResource TriangleThumbStyle}" />
                             <b:Interaction.Behaviors>
                                 <behaviors:ImageBehavior />
                             </b:Interaction.Behaviors>
                         </Grid>
-
-                      
-
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemContainerStyle>

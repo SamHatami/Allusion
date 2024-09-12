@@ -12,14 +12,12 @@ public class ImageItemService //Note : could perhaps just be static methods insi
     {
     }
 
-    public void CreateImageItemFromDataObject(BitmapSource bitmap, IDataObject dataObject)
+    public ImageItem CreateImageItemFromDataObject(BitmapSource bitmap, IDataObject dataObject)
     {
-        if(dataObject.TryGetUrl(out string url));
-        ImageItem item = new ImageItem(url, 30, 30, 1, 0, bitmap);
-    }
+        if (dataObject.TryGetUrl(out string url)) ;
 
-    public static void RetrieveNewImages()
-    {
-        throw new NotImplementedException();
+        var randomPos = new Random().Next(10, 60);
+
+        return new ImageItem(url, randomPos, randomPos, 1, 0, bitmap);
     }
 }

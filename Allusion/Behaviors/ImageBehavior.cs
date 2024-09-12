@@ -20,21 +20,13 @@ public class ImageBehavior : Behavior<UIElement>
 
         if (!(VisualTreeHelper.GetParent(AssociatedObject) is ContentPresenter contentPresenter)) return;
 
-        _contentPresenter = contentPresenter;
+        _contentPresenter = contentPresenter; //The AssociatedObject cant be sized or get the canvas position since its inside a contentcontrol
 
         AssociatedObject.MouseLeftButtonDown += OnMouseLeftButtonDown;
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
 
         _mainCanvas = GetMainCanvas(AssociatedObject);
-
-        SetAdorner();
-    }
-
-    private void SetAdorner()
-    {
-        //var adornerLayer = AdornerLayer.GetAdornerLayer(AssociatedObject); //Should perhaps be contentPresenter?
-        //if (adornerLayer != null) adornerLayer.Add(new ImageAdorner(AssociatedObject));
     }
 
     protected override void OnDetaching()
@@ -48,12 +40,10 @@ public class ImageBehavior : Behavior<UIElement>
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         AssociatedObject.Focus();
-
-        var mousePos = e.GetPosition(_mainCanvas);
-
+        Mouse.OverrideCursor = Cursors.ScrollAll;
         _relativePosition = new Point(
-            Canvas.GetLeft(_contentPresenter) - mousePos.X,
-            Canvas.GetTop(_contentPresenter) - mousePos.Y
+            Canvas.GetLeft(_contentPresenter) - e.GetPosition(_mainCanvas).X,
+            Canvas.GetTop(_contentPresenter) - e.GetPosition(_mainCanvas).Y
         );
 
         AssociatedObject.CaptureMouse();
@@ -64,29 +54,20 @@ public class ImageBehavior : Behavior<UIElement>
     {
         if (AssociatedObject.IsMouseCaptured)
         {
-            var mouseCurrentPosition = e.GetPosition(_mainCanvas);
-
-            MoveSelected(mouseCurrentPosition);
+            Canvas.SetLeft(_contentPresenter, e.GetPosition(_mainCanvas).X + _relativePosition.X);
+            Canvas.SetTop(_contentPresenter, e.GetPosition(_mainCanvas).Y + _relativePosition.Y);
         }
 
         e.Handled = true;
     }
 
-    private void MoveSelected(Point mousePos)
-    {
-        var newX = mousePos.X + _relativePosition.X;
-        var newY = mousePos.Y + _relativePosition.Y;
-
-        if (double.IsNaN(newX) || double.IsNaN(newY))
-            return;
-
-        Canvas.SetLeft(_contentPresenter, newX);
-        Canvas.SetTop(_contentPresenter, newY);
-    }
-
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (AssociatedObject.IsMouseCaptured) AssociatedObject.ReleaseMouseCapture();
+        if (AssociatedObject.IsMouseCaptured)
+        {
+            Mouse.OverrideCursor = null;
+            AssociatedObject.ReleaseMouseCapture();
+        }
     }
 
     private Canvas GetMainCanvas(DependencyObject? element)

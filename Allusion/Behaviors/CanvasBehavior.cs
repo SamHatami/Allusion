@@ -9,6 +9,7 @@ namespace Allusion.Behaviors;
 public class CanvasBehavior : Behavior<UIElement>
 {
     private MainViewModel? _mainViewModel; //Replace this with an event aggregation
+    private ClipboardService _clipboardService;
 
     protected override void OnAttached()
     {
@@ -20,6 +21,7 @@ public class CanvasBehavior : Behavior<UIElement>
             GetDataContext();
         }
 
+        _clipboardService = new ClipboardService();
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.Drop += OnDrop;
     }
@@ -44,7 +46,7 @@ public class CanvasBehavior : Behavior<UIElement>
             e.Effects = DragDropEffects.None;
         }
 
-        var bitmaps = ClipboardService.GetDroppedBitmaps(e.Data);
+        var bitmaps = _clipboardService.GetDroppedBitmaps(e.Data);
 
         _mainViewModel.AddDropppedImages(bitmaps.ToArray());
 

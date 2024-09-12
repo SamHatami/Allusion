@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Allusion.ViewModels;
 
 namespace Allusion.Views
@@ -37,6 +38,16 @@ namespace Allusion.Views
 
             contentControl.Width = Math.Max(0, (contentControl.Width) * scaleFactor);
             contentControl.Height = Math.Max(0, (contentControl.Width) / aspectRatio);
+        }
+
+        private void ResizeThumb_OnDragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            Mouse.SetCursor(default);
+        }
+
+        private void ResizeThumb_OnDragStarted(object sender, DragStartedEventArgs e)
+        {
+            Mouse.SetCursor(Cursors.SizeAll);
         }
     }
 }

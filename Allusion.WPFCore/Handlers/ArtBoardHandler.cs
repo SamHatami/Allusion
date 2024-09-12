@@ -13,15 +13,21 @@ public class ArtBoardHandler
     private BitmapService _bitmapService = new();
     private ImageItemService _imageItemService = new();
 
-  
-    public void GetNewImageItems(int pageNr)
+    public ImageItem[] GetNewImageItems(int pageNr)
     {
         var dataObject = Clipboard.GetDataObject();
-        
-        var pastedImages = _clipboardService.GetPastedBitmaps();
 
-        ImageItemService.RetrieveNewImages();
+        var bitmaps = _clipboardService.GetPastedBitmaps();
+
+        List<ImageItem> items = [];
+        foreach (var bitmap in bitmaps)
+        {
+            items.Add(_imageItemService.CreateImageItemFromDataObject(bitmap, dataObject));
+        }
+
+        return items.ToArray();
     }
+
     public void AddImageToBoard()
     {
         var nrOfFils = Directory.GetFiles(_currentArtBoard.FullPath).Length;
@@ -33,7 +39,7 @@ public class ArtBoardHandler
         {
             _currentArtBoard = ArtBoard.Read(Path.GetDirectoryName(fullPath));
 
-            foreach(var imageItem in _currentArtBoard.Images)
+            foreach (var imageItem in _currentArtBoard.Images)
                 imageItem.LoadItemSource();
         }
         catch (Exception e)
@@ -63,6 +69,6 @@ public class ArtBoardHandler
 
     private void SaveToGlobalArtBoardList()
     {
-        //TODO: 
+        //TODO:
     }
 }
