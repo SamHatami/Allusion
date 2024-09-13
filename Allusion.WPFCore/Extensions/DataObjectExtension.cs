@@ -16,12 +16,14 @@ public static class DataObjectExtension
         //This is just so crazy... 
         List<BitmapSource> bitmaps = [];
 
+        //Get formats for this dataobject as helper for conversion
         var formats = dataObject.GetFormats(true);
         if (formats == null || formats.Length == 0) return null;
 
         foreach (var f in formats)
             Debug.WriteLine(" - " + f.ToString());
 
+        //Multiple file paste from explorer
         if (formats.Contains("FileContents"))
         {
             string[] filePaths = dataObject.GetData("FileContents") as string[];

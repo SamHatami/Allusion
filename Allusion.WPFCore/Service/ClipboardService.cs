@@ -20,12 +20,14 @@ namespace Allusion.WPFCore.Service
                 var res = downloadTask.Result;
             }
 
-            if (Clipboard.ContainsImage()) //Usually from web or snapshot
+            if (Clipboard.ContainsImage()) //Usually copy/paste single from web or snapshot
             {
                 var pasteFromWeb = Clipboard.GetImage();
+
+                return new []{BitmapService.ToBitmapImage(pasteFromWeb)};
             }
 
-            if (Clipboard.ContainsFileDropList()) //usually from system
+            if (Clipboard.ContainsFileDropList()) //usually copy/paste single or multi from system
             {
                 return GetImagesFromClipboard().ToArray() ;
             }
@@ -37,7 +39,7 @@ namespace Allusion.WPFCore.Service
             return null;
         }
 
-        public static ImageItem[]? GetDroppedBitmaps(IDataObject droppedObject)
+        public static ImageItem[]? GetDroppedOnCanvasBitmaps(IDataObject droppedObject)
         {
             //Try getting bitmap if dropped object was from browser
             var getBitmapAsync = Task.Run(droppedObject.GetWebBitmapAsync);
@@ -65,6 +67,8 @@ namespace Allusion.WPFCore.Service
             return imageitems.ToArray();
         }
 
+
+        //https://weblog.west-wind.com/posts/2020/Sep/16/Retrieving-Images-from-the-Clipboard-and-WPF-Image-Control-Woes
         private static List<BitmapImage> GetImagesFromClipboard()
         {
             var images = new List<BitmapImage>();
