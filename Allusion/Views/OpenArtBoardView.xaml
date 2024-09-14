@@ -3,8 +3,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:Allusion.ViewModels"
+        xmlns:fav ="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+        xmlns:cm="http://caliburnmicro.com"
+        d:DataContext="{d:DesignInstance Type=viewModels:OpenArtBoardViewModel}"
         mc:Ignorable="d"
-        Title="Open or Choose Art Board" Height="300" Width="600" WindowStyle="None">
+        Title="Open or Choose Art Board" Height="300" Width="600" 
+        WindowStyle="None" WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        cm:Message.Attach="[Key Escape] = [Cancel]">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -18,7 +25,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="Global Art Board Folder" />
-            <TextBox Grid.Row="1" />
+            <TextBox Grid.Row="1" Text="{Binding GlobalFolder}"/>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -27,7 +34,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Content="Art Boards" />
-            <ListBox Grid.Row="1" x:Name="ArtBoards" VerticalAlignment="Stretch" />
+            <ListBox Grid.Row="1" x:Name="ArtBoards" VerticalAlignment="Stretch" ItemsSource="{Binding ArtBoardPaths }"/>
         </Grid>
 
         <Grid Row="2">
@@ -38,7 +45,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions> 
             <Button Grid.Column="0" x:Name="NewArtBoard" Content="New" Margin="5,10,5,5"/>
-            <Button Grid.Column="2" x:Name="Accept" Content="Open" Margin="5,10,5,5"/>
+            <Button Grid.Column="2" x:Name="Open" Content="Open" Margin="5,10,5,5"/>
             <Button Grid.Column="3" x:Name="Cancel" Content="Cancel" Margin="5,10,5,5"/>
         </Grid>
     </Grid>

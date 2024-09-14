@@ -5,11 +5,12 @@ using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Media;
-using Allusion.WPFCore;
+using Allusion.Views;
+using Allusion.WPFCore.Events;
 
 namespace Allusion.ViewModels;
 
-public class MainViewModel : Screen, IHandle<NewImageDrops>
+public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHandle<NewBoardEvent>
 {
     //TODO: Booleans on states -> enums
 
@@ -22,6 +23,7 @@ public class MainViewModel : Screen, IHandle<NewImageDrops>
     private string _text;
     public ArtBoardHandler BoardHandler { get; }
     private IEventAggregator _events { get;}
+    private IWindowManager _windowManager;
 
     public string Text
     {
@@ -33,32 +35,35 @@ public class MainViewModel : Screen, IHandle<NewImageDrops>
         }
     }
 
-    public MainViewModel()
+    public MainViewModel(IWindowManager windowManager, IEventAggregator events, ArtBoardHandler artBoardHandler)
     {
-        _events= new EventAggregator();
+        _windowManager = windowManager;
+        _events = events;
         _events.SubscribeOnBackgroundThread(this);
-        BoardHandler = new ArtBoardHandler(_events);
-        //Move to project-handler, testing json seriazible for now
- 
-        OpenArtBoard();
+        BoardHandler =  artBoardHandler;
+        //OpenArtBoard();
+    }
+
+    public void PackToView()
+    {
+        //Perhaps use https://github.com/ThomasMiz/RectpackSharp
     }
 
     public void NewArtBoard()
     {
-        //show new artboard dialog (new name and ok button)
+        var option = _windowManager.ShowDialogAsync(IoC.Get<NewBoardViewModel>());
 
-        BoardHandler.CreateNewArtBoard();
-
+        //Handled with Event, see IHandle.
     }
 
-    public void OpenArtBoard()
+    public Task OpenArtBoard()
     {
-        //open viewmodel on current available artboards
-        //_artBoardHandler.OpenArtBoard();
 
-        BoardHandler.CreateNewArtBoard();
+        var option = _windowManager.ShowDialogAsync(IoC.Get<OpenArtBoardViewModel>());
 
-        InitializeProject();
+        InitializeArtBoard();
+
+        return Task.CompletedTask;
     }
 
     public async Task SaveArtBoard()
@@ -68,7 +73,7 @@ public class MainViewModel : Screen, IHandle<NewImageDrops>
         await BoardHandler.SaveImageOnArtBoard(imageItems);
     }
 
-    private void InitializeProject()
+    private void InitializeArtBoard()
     {
         Images.Clear();
 
@@ -109,10 +114,18 @@ public class MainViewModel : Screen, IHandle<NewImageDrops>
 
 
 
-    public Task HandleAsync(NewImageDrops message, CancellationToken cancellationToken)
+    public Task HandleAsync(NewImageDropsEvent message, CancellationToken cancellationToken)
     {
         foreach (var item in message.DroppedItems)
             Images.Add(new ImageViewModel(item));
+
+        return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(NewBoardEvent message, CancellationToken cancellationToken)
+    {
+        
+        BoardHandler.CreateNewArtBoard(message.Name);
 
         return Task.CompletedTask;
     }

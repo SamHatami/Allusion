@@ -15,10 +15,10 @@ public class ImageItemService //Note : could perhaps just be static methods insi
 
     public ImageItem CreateImageItemFromBitmapImages(BitmapImage bitmap)
     {
-        var randomPos = new Random().Next(10, 60);
+        var randomPos = new Random().NextDouble()*50+10;
 
         var path = BitmapService.GetUrl(bitmap);
         
-        return new ImageItem(path, randomPos, randomPos, 1, 0, bitmap);
+        return new ImageItem(path,randomPos, randomPos, 1, 0, bitmap);
     }
 }

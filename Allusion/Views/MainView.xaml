@@ -15,9 +15,10 @@
         Width="1024"
 
         cm:Message.Attach="
-        [Gesture Ctrl+V] = [Action PasteOnCanvas];
+        [Gesture Ctrl+V] = [PasteOnCanvas];
         [Gesture Ctrl+O] = [OpenArtBoard];
         [Gesture Ctrl+S] = [SaveArtBoard];
+        [Gesture Ctrl+N] = [NewArtBoard];
         [Key Delete] = [Delete];">
 
     <Window.Resources>

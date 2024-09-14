@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Allusion.WPFCore.Board;
+using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Extensions;
 using Allusion.WPFCore.Service;
 using Caliburn.Micro;
@@ -40,14 +41,14 @@ public class ArtBoardHandler
 
     public void AddImageToBoard()
     {
-        var nrOfFils = Directory.GetFiles(CurrentArtBoard.FullPath).Length;
+        var nrOfFils = Directory.GetFiles(CurrentArtBoard.ImageFolder).Length;
     }
 
     public ArtBoard OpenArtBoard(string fullPath ="")
     {
         try
         {
-            var path = string.IsNullOrEmpty(fullPath) ? CurrentArtBoard.FullPath : fullPath;
+            var path = string.IsNullOrEmpty(fullPath) ? CurrentArtBoard.ImageFolder : fullPath;
 
             CurrentArtBoard = ArtBoard.Read(Path.GetDirectoryName(path));
 
@@ -68,8 +69,9 @@ public class ArtBoardHandler
 
     public void CreateNewArtBoard(string name = "UntitledArtBoard")
     {
-        var artboardPath = Path.Combine(CurrentConfiguration.GlobalFolder, $"{name}.json");
+        var artboardPath = Path.Combine(CurrentConfiguration.GlobalFolder,name);
         CurrentArtBoard = new ArtBoard(name, artboardPath);
+        ArtBoard.Save(CurrentArtBoard);
     }
     public async Task SaveImageOnArtBoard(ImageItem[] imageItems)
     {
@@ -81,18 +83,10 @@ public class ArtBoardHandler
         }
        
 
-        await Task.Run(() => ArtBoard.Save(CurrentArtBoard, CurrentArtBoard.FullPath));
+        await Task.Run(() => ArtBoard.Save(CurrentArtBoard));
     }
 
-    private static void SaveBitmapToFile(BitmapSource bitmap)
-    {
-        using (var fileStream = new FileStream(@"C:\Temp\" + "1.png", FileMode.Create))
-        {
-            BitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            encoder.Save(fileStream);
-        }
-    }
+
 
     private void SaveToGlobalArtBoardList()
     {
@@ -113,7 +107,7 @@ public class ArtBoardHandler
             images.Add(_imageItemService.CreateImageItemFromBitmapImages(bitmap));
         }
 
-        _ = _events.PublishOnBackgroundThreadAsync(new NewImageDrops(images.ToArray()));
+        _ = _events.PublishOnBackgroundThreadAsync(new NewImageDropsEvent(images.ToArray()));
         
     }
 }

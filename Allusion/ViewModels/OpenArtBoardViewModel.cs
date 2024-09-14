@@ -11,10 +11,10 @@ namespace Allusion.ViewModels
     public class OpenArtBoardViewModel : Screen
     {
         private readonly ArtBoardHandler _artBoardHandler;
-        private readonly EventAggregator _events;
+        private readonly IEventAggregator _events;
         public const string Title = "Open or Create new Art board";
 
-        private BindableCollection<string> ArtBoardPaths { get; set; }= new BindableCollection<string>();
+        public BindableCollection<string> ArtBoardPaths { get; set; }= new BindableCollection<string>();
 
         private string _globalFolder;
 
@@ -28,13 +28,30 @@ namespace Allusion.ViewModels
             }
         }
 
-        public OpenArtBoardViewModel(ArtBoardHandler artBoardHandler, EventAggregator events)
+        public OpenArtBoardViewModel(ArtBoardHandler artBoardHandler, IEventAggregator events)
         {
             _artBoardHandler = artBoardHandler;
             _events = events;
 
             GlobalFolder = _artBoardHandler.CurrentConfiguration.GlobalFolder;
-            _artBoardHandler.GetAllArtBoardFolders();
+
+            ArtBoardPaths.AddRange(_artBoardHandler.GetAllArtBoardFolders());
+        }
+
+        public Task Cancel()
+        {
+            return TryCloseAsync(false);
+        }
+
+        public Task Open()
+        {
+            return TryCloseAsync(true);
+        }
+
+        public void New()
+        {
+
+            _artBoardHandler.CreateNewArtBoard();
         }
     }
 }

@@ -23,8 +23,10 @@ public class AllusionConfiguration
     }
 
     [JsonIgnore]
-    public string DefaultFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Allusion");
+    public static string DefaultFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Allusion");
 
+    public static string DataFolder { get; } =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Allusion");
     private static string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "AllusionConfiguration.json");
     public static AllusionConfiguration Read()
     {

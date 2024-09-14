@@ -1,13 +1,13 @@
 ﻿using System.Windows.Controls.Primitives;
 using Allusion.WPFCore.Board;
 
-namespace Allusion.WPFCore;
+namespace Allusion.WPFCore.Events;
 
-public class NewImageDrops
+public class NewImageDropsEvent
 {
     public ImageItem[] DroppedItems { get; set; }
 
-    public NewImageDrops(ImageItem[] droppedItems )
+    public NewImageDropsEvent(ImageItem[] droppedItems)
     {
         DroppedItems = droppedItems;
     }
