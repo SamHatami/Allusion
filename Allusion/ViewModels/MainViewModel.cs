@@ -1,15 +1,15 @@
-﻿using Allusion.WPFCore.Handlers;
-using Allusion.WPFCore.Service;
+﻿using Allusion.WPFCore.Board;
+using Allusion.WPFCore.Handlers;
 using Caliburn.Micro;
 using System.Diagnostics;
-using System.IO;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Media;
-using Allusion.WPFCore.Board;
+using Allusion.WPFCore;
 
 namespace Allusion.ViewModels;
 
-public class MainViewModel : Screen
+public class MainViewModel : Screen, IHandle<NewImageDrops>
 {
     //TODO: Booleans on states -> enums
 
@@ -20,7 +20,8 @@ public class MainViewModel : Screen
 
     private ArtBoard _artBoard;
     private string _text;
-    private ArtBoardHandler _artBoardHandler;
+    public ArtBoardHandler BoardHandler { get; }
+    private IEventAggregator _events { get;}
 
     public string Text
     {
@@ -34,60 +35,59 @@ public class MainViewModel : Screen
 
     public MainViewModel()
     {
-        _artBoardHandler = new ArtBoardHandler();
+        _events= new EventAggregator();
+        _events.SubscribeOnBackgroundThread(this);
+        BoardHandler = new ArtBoardHandler(_events);
         //Move to project-handler, testing json seriazible for now
+ 
+        OpenArtBoard();
+    }
+
+    public void NewArtBoard()
+    {
+        //show new artboard dialog (new name and ok button)
+
+        BoardHandler.CreateNewArtBoard();
+
     }
 
     public void OpenArtBoard()
     {
         //open viewmodel on current available artboards
         //_artBoardHandler.OpenArtBoard();
-        var path = @"C:\Temp\project1.json";
 
-        //Only for testing
-        _artBoard = ArtBoard.Read(Path.GetDirectoryName(path));
-        if (_artBoard == null)
-        {
-            _artBoard = new ArtBoard("AllusionTestProject1");
-            ArtBoard.Save(_artBoard, path);
-        }
+        BoardHandler.CreateNewArtBoard();
 
         InitializeProject();
     }
 
-    public void SaveArtBoard()
+    public async Task SaveArtBoard()
     {
         var imageItems = Images.Select(i => i.Item).ToArray();
 
-        Task.Run(() => _artBoardHandler.SaveImageOnArtBoard(imageItems));
+        await BoardHandler.SaveImageOnArtBoard(imageItems);
     }
 
     private void InitializeProject()
     {
         Images.Clear();
 
-        if (_artBoard.Images is null) return;
-
-        foreach (var imageItem in _artBoard.Images)
-        {
+        foreach (var imageItem in BoardHandler.CurrentArtBoard.Images)
             Images.Add(new ImageViewModel(imageItem)
             {
                 PosX = imageItem.PosX,
                 PosY = imageItem.PosY
             });
-        }
     }
 
-    public void PasteOnCanvas()
+    public async Task PasteOnCanvas()
     {
-        var items = _artBoardHandler.GetPastedImageItems(0);
+        var items = await BoardHandler.GetPastedImageItems(0);
 
-        var bitmap = Clipboard.GetImage();
+        if (items == null) return;
 
-        //if (items == null) return;
-
-        //foreach (var item in items)
-        //    Images.Add(new ImageViewModel(item));
+        foreach (var item in items)
+            Images.Add(new ImageViewModel(item));
     }
 
     private void ExtractUrlFromDataObject()
@@ -107,13 +107,13 @@ public class MainViewModel : Screen
         Text = "Pressed delete";
     }
 
-    public void AddDropppedImages(ImageSource[] bitmaps)
+
+
+    public Task HandleAsync(NewImageDrops message, CancellationToken cancellationToken)
     {
-        //var counter = bitmaps.Length;
-        //foreach (var bitmap in bitmaps)
-        //{
-        //    Images.Add(new ImageViewModel(bitmap) { PosX = 10 * counter, PosY = 10 * counter });
-        //    counter++;
-        //}
+        foreach (var item in message.DroppedItems)
+            Images.Add(new ImageViewModel(item));
+
+        return Task.CompletedTask;
     }
 }

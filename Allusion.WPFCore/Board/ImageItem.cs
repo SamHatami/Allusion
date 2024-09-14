@@ -15,16 +15,16 @@ public class ImageItem : IItem
     public string Description { get; set; }
     public int MemberOfPage { get; set; }
 
-    [JsonIgnore] public BitmapSource Source { get; set; }
+    [JsonIgnore] public BitmapImage SourceImage { get; private set; }
 
-    public ImageItem(string imageUri, double posX, double posY, double scale, int pagerNr, BitmapSource source)
+    public ImageItem(string imageUri, double posX, double posY, double scale, int pagerNr, BitmapImage image)
     {
         ImageUri = imageUri;
         PosX = posX;
         PosY = posY;
         Scale = scale;
         MemberOfPage = pagerNr;
-        Source = source;
+        SourceImage = image;
     }
 
     public void LoadItemSource()
@@ -33,13 +33,13 @@ public class ImageItem : IItem
 
         try
         {
-            Source = BitmapService.GetFromUri(ImageUri);
+            SourceImage = BitmapService.GetFromUri(ImageUri);
 
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            //Could not load image from url ....
+            //Could not load SourceImage from url ....
             throw;
         }
     }

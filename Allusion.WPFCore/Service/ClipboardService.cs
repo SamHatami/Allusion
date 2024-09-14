@@ -6,52 +6,55 @@ using Allusion.WPFCore.Extensions;
 
 namespace Allusion.WPFCore.Service
 {
-    public static class ClipboardService
+    
+    public class ClipboardService
     {
-        public static BitmapImage[]? GetPastedBitmaps()  //Make this static that both mainview or canvas can talk to directly.
+        private BitmapService _bitmapService = new BitmapService();
+        private DataObjectHelper _dataObjectHelper = new DataObjectHelper();
+        public async Task<BitmapImage[]> GetPastedBitmaps()  //Make this static that both mainview or canvas can talk to directly.
         {
-            if (Clipboard.ContainsText()) //When pasting image Uri from web 
+            //TODO: Convert to strategy-pattern
+            List<BitmapImage> bitmapImages = new List<BitmapImage>();
+
+            if (Clipboard.ContainsText()) //When pasting SourceImage Uri from web 
             {
                 var pastedUriObject = Clipboard.GetDataObject();
 
-                var downloadTask = Task.Run(() => pastedUriObject.GetWebBitmapAsync());
-                downloadTask.Wait();
+                var bitmapSources = await _dataObjectHelper.GetWebBitmapAsync(pastedUriObject);
 
-                var res = downloadTask.Result;
+
+                if (bitmapSources is null) 
+                    
+                    bitmapSources = BitmapService.GetFromUri(_dataObjectHelper.GetLocalFileUrl(pastedUriObject));
+
+                bitmapImages.Add(_bitmapService.ToBitmapImage(bitmapSources));
             }
 
-            if (Clipboard.ContainsImage()) //Usually copy/paste single from web or snapshot
+            else if (Clipboard.ContainsImage()) //Usually copy/paste single from web or snapshot
             {
                 var pasteFromWeb = Clipboard.GetImage();
-
-                return new []{BitmapService.ToBitmapImage(pasteFromWeb)};
+                var bitmapImage = _bitmapService.ToBitmapImage(pasteFromWeb);
+                bitmapImages.Add(bitmapImage);
             }
 
-            if (Clipboard.ContainsFileDropList()) //usually copy/paste single or multi from system
+            else if (Clipboard.ContainsFileDropList()) //usually copy/paste single or multi from system
             {
-                return GetImagesFromClipboard().ToArray() ;
+                bitmapImages.AddRange(GetImagesFromClipboard());
             }
 
-            var pastedfromSystem = Clipboard.GetDataObject();
-
-            //var bitmaps = pastedfromSystem.GetBitmapFromLocal();
-
-            return null;
+            return bitmapImages.ToArray();
         }
 
-        public static ImageItem[]? GetDroppedOnCanvasBitmaps(IDataObject droppedObject)
+        public async Task<BitmapImage[]>? GetDroppedOnCanvasBitmaps(IDataObject droppedObject) //should not handle SourceImage items
         {
+            //TODO: Convert to strategy-pattern
+            List<BitmapImage> bitmapImages = [];
             //Try getting bitmap if dropped object was from browser
-            var getBitmapAsync = Task.Run(droppedObject.GetWebBitmapAsync);
+            var droppedWebBitmap = await _dataObjectHelper.GetWebBitmapAsync(droppedObject).ConfigureAwait(false);
 
-            getBitmapAsync.Wait();
+            if (droppedWebBitmap is not null) 
+                bitmapImages.Add(droppedWebBitmap);
 
-            if (getBitmapAsync.Result is not null)
-            {
-                return null ;
-            }
-
-            List<ImageItem> imageitems = new List<ImageItem>();
 
             if (droppedObject.GetDataPresent(DataFormats.FileDrop))
             {
@@ -59,17 +62,16 @@ namespace Allusion.WPFCore.Service
 
                 foreach (var file in files)
                 {
-                    var bitmap = BitmapService.GetFromUri(file);
-                    imageitems.Add(new ImageItem(file, 0, 0, 1, 0, bitmap));
+                    bitmapImages.Add(BitmapService.GetFromUri(file));
                 }
             }
 
-            return imageitems.ToArray();
+            return bitmapImages.ToArray();
         }
 
 
         //https://weblog.west-wind.com/posts/2020/Sep/16/Retrieving-Images-from-the-Clipboard-and-WPF-Image-Control-Woes
-        private static List<BitmapImage> GetImagesFromClipboard()
+        private List<BitmapImage> GetImagesFromClipboard()
         {
             var images = new List<BitmapImage>();
 
@@ -88,7 +90,7 @@ namespace Allusion.WPFCore.Service
                         catch (Exception ex)
                         {
                             // Handle or log the exception as needed
-                            MessageBox.Show($"Error loading image {file}: {ex.Message}");
+                            MessageBox.Show($"Error loading SourceImage {file}: {ex.Message}");
                         }
                     }
                 }
@@ -99,7 +101,7 @@ namespace Allusion.WPFCore.Service
 
         private static bool IsImageFile(string filePath)
         {
-            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp",".tif" };
             return imageExtensions.Contains(Path.GetExtension(filePath).ToLower());
         }
     }

@@ -7,6 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:behaviors="clr-namespace:Allusion.Behaviors"
         xmlns:viewModels="clr-namespace:Allusion.ViewModels"
+        xmlns:fav ="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         mc:Ignorable="d"
         Title="MainView"
@@ -113,10 +114,14 @@
                                                        DragDelta="OnResizeThumbDragDelta"
                                                        Background="Gray"
                                                        Style="{StaticResource TriangleThumbStyle}" />
+                            <!--<fav:IconImage Icon="Cross" x:Name="MoveCrossIcon" />-->
+
                             <b:Interaction.Behaviors>
                                 <behaviors:ImageBehavior />
                             </b:Interaction.Behaviors>
+
                         </Grid>
+                 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemContainerStyle>

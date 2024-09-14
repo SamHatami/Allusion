@@ -4,49 +4,58 @@ using System.Windows.Media.Imaging;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Extensions;
 using Allusion.WPFCore.Service;
+using Caliburn.Micro;
 
 namespace Allusion.WPFCore.Handlers;
 
 public class ArtBoardHandler
 {
-    private ArtBoard? _currentArtBoard;
+    public ArtBoard? CurrentArtBoard { get; private set; }
+    public AllusionConfiguration CurrentConfiguration { get; private set; }
+    private readonly IEventAggregator _events;
     private BitmapService _bitmapService = new();
     private ImageItemService _imageItemService = new();
+    private ClipboardService _clipboardService = new();
 
-    public ImageItem[] GetPastedImageItems(int pageNr)
+    public ArtBoardHandler(IEventAggregator events)
     {
-        
+        _events = events;
+        CurrentConfiguration = AllusionConfiguration.Read();
+        CreateNewArtBoard();
+    }
 
-        var bitmaps = ClipboardService.GetPastedBitmaps();
+    public async Task<ImageItem[]> GetPastedImageItems(int pageNr)
+    {
+        var bitmaps = await _clipboardService.GetPastedBitmaps();
 
         List<ImageItem> items = [];
-        //foreach (var bitmap in bitmaps)
-        //{
-        //    items.Add(_imageItemService.CreateImageItemFromDataObject(bitmap, dataObject));
-        //}
+        foreach (var bitmap in bitmaps)
+        {
+            items.Add(_imageItemService.CreateImageItemFromBitmapImages(bitmap));
+        }
 
         return items.ToArray();
     }
 
-    //public ImageItem[] GetDroppedImageItems(IDataObject dataObject)
-    //{
-    //    var bitmaps = ClipboardService.GetDroppedBitmaps(dataObject);
-
-    //}
 
     public void AddImageToBoard()
     {
-        var nrOfFils = Directory.GetFiles(_currentArtBoard.FullPath).Length;
+        var nrOfFils = Directory.GetFiles(CurrentArtBoard.FullPath).Length;
     }
 
-    public ArtBoard OpenArtBoard(string fullPath)
+    public ArtBoard OpenArtBoard(string fullPath ="")
     {
         try
         {
-            _currentArtBoard = ArtBoard.Read(Path.GetDirectoryName(fullPath));
+            var path = string.IsNullOrEmpty(fullPath) ? CurrentArtBoard.FullPath : fullPath;
 
-            foreach (var imageItem in _currentArtBoard.Images)
-                imageItem.LoadItemSource();
+            CurrentArtBoard = ArtBoard.Read(Path.GetDirectoryName(path));
+
+            if (CurrentArtBoard == null) return null; //Do not do this
+            {
+                foreach (var imageItem in CurrentArtBoard.Images)
+                    imageItem.LoadItemSource();
+            }
         }
         catch (Exception e)
         {
@@ -54,13 +63,25 @@ public class ArtBoardHandler
             throw;
         }
 
-        return _currentArtBoard;
+        return CurrentArtBoard;
     }
 
+    public void CreateNewArtBoard(string name = "UntitledArtBoard")
+    {
+        var artboardPath = Path.Combine(CurrentConfiguration.GlobalFolder, $"{name}.json");
+        CurrentArtBoard = new ArtBoard(name, artboardPath);
+    }
     public async Task SaveImageOnArtBoard(ImageItem[] imageItems)
     {
-        _currentArtBoard.Images = imageItems;
-        await Task.Run(() => ArtBoard.Save(_currentArtBoard, _currentArtBoard.FullPath));
+        foreach (var imageItem in imageItems)
+        {
+            if(imageItem.SourceImage.IsEqual(imageItem.SourceImage)) continue;
+
+            CurrentArtBoard.Images.Add(imageItem);
+        }
+       
+
+        await Task.Run(() => ArtBoard.Save(CurrentArtBoard, CurrentArtBoard.FullPath));
     }
 
     private static void SaveBitmapToFile(BitmapSource bitmap)
@@ -78,9 +99,21 @@ public class ArtBoardHandler
         //TODO:
     }
 
-    public static void DroppedNewObjects(IDataObject dataobject)
+    public string[] GetAllArtBoardFolders()
     {
+        return Directory.GetDirectories(CurrentConfiguration.GlobalFolder);
+    }
+
+    public async Task DroppedNewObjects(IDataObject dataobject)
+    {
+        var bitmaps =await _clipboardService.GetDroppedOnCanvasBitmaps(dataobject);
+        List<ImageItem> images = new List<ImageItem>();
+        foreach (var bitmap in bitmaps)
+        {
+            images.Add(_imageItemService.CreateImageItemFromBitmapImages(bitmap));
+        }
+
+        _ = _events.PublishOnBackgroundThreadAsync(new NewImageDrops(images.ToArray()));
         
-        return;
     }
 }

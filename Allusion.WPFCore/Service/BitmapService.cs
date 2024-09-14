@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Net.Http;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -15,17 +17,15 @@ namespace Allusion.WPFCore.Service
 
             if (!File.Exists(uriString)) return null;
 
-            try
+            if (Application.Current.Dispatcher.CheckAccess())
             {
-                bitmap = new BitmapImage(new Uri(uriString));
+                return LoadImageFromUri(uriString);
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e);
-                throw;
+                return Application.Current.Dispatcher.Invoke(() => LoadImageFromUri(uriString));
             }
 
-            return bitmap;
         }
 
         public static BitmapImage[] LoadFromUri(string[]? fileUriStrings)
@@ -51,12 +51,39 @@ namespace Allusion.WPFCore.Service
             return bitmaps.ToArray();
         }
 
-        public static BitmapImage LoadFromUri(string uri)
+        public BitmapImage LoadFromUri(string uri)
         {
             return new BitmapImage(new Uri(uri));
         }
 
-        BitmapImage LoadImageFromUri(string imageUri)
+        public static string GetUrl (BitmapImage bitmapSource)
+        {
+            string url = string.Empty;
+            try
+            {
+                if (bitmapSource.UriSource is not null)
+                {
+                    url = bitmapSource.UriSource.AbsolutePath;
+            
+                }
+
+                if (bitmapSource.BaseUri is not null)
+                {
+                    url = bitmapSource.BaseUri.AbsolutePath;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            url = "UnknownSource";
+            return url;
+        }
+
+        private static BitmapImage LoadImageFromUri(string imageUri)
         {
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -67,22 +94,34 @@ namespace Allusion.WPFCore.Service
             return bitmapImage;
         }
 
-        public static async Task<BitmapSource>? DownloadAndConvert(string url)
+        public async Task<BitmapImage>? DownloadAndConvert(string url)
         {
             if (string.IsNullOrEmpty(url)) return null;
             using var client = new HttpClient();
 
-            var bytes = await client.GetByteArrayAsync(url);
+            BitmapSource bitmapSource = null;
 
-            var bitmap = CreateFromBytes(bytes);
+            try
+            {
+                 var bytes = await client.GetByteArrayAsync(url);
+                 bitmapSource = CreateFromBytes(bytes);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+
+            
             // Create a MemoryStream from the byte array
 
-            return bitmap;
+            return ToBitmapImage(bitmapSource);
         }
 
-        public static BitmapImage ToBitmapImage(BitmapSource source)
+        public BitmapImage ToBitmapImage(BitmapSource source)
         {
             BitmapImage bitmapImage = new BitmapImage();
+
+            if (source is null) return bitmapImage;
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -105,7 +144,7 @@ namespace Allusion.WPFCore.Service
             return bitmapImage;
         }
 
-        private static void SaveToFile(BitmapSource bitmap)
+        private static void SaveToFile(BitmapImage bitmap)
         {
             using (var fileStream = new FileStream(@"C:\Temp\" + "1.png", FileMode.Create))
             {

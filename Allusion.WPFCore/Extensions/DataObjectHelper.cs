@@ -9,11 +9,13 @@ using System.IO;
 
 namespace Allusion.WPFCore.Extensions;
 
-public static class DataObjectExtension
+public class DataObjectHelper
 {
-    public static BitmapSource[] GetBitmapFromLocal(this IDataObject dataObject)
+    private BitmapService _bitmapService = new();
+
+    public BitmapSource[] GetBitmapFromLocal(IDataObject dataObject)
     {
-        //This is just so crazy... 
+        //This is just so crazy...
         List<BitmapSource> bitmaps = [];
 
         //Get formats for this dataobject as helper for conversion
@@ -29,64 +31,60 @@ public static class DataObjectExtension
             string[] filePaths = dataObject.GetData("FileContents") as string[];
 
             return BitmapService.LoadFromUri(filePaths);
-
         }
 
-        //if the image was pasted from explorer
+        //if the SourceImage was pasted from explorer
         if (formats.Contains("FileName"))
         {
-            string[] filePaths= dataObject.GetData("FileName") as string[];
+            string[] filePaths = dataObject.GetData("FileName") as string[];
 
             return BitmapService.LoadFromUri(filePaths);
-
         }
-
- 
 
         if (formats.Contains("PNG"))
         {
             Debug.WriteLine("PNG");
 
-            using (MemoryStream ms = (MemoryStream)dataObject.GetData("PNG"))
+            using (var ms = (MemoryStream)dataObject.GetData("PNG"))
             {
                 ms.Position = 0;
                 //var bit = new Bitmap(ms);
             }
         }
+
         return null;
-    }
-    public static async Task<BitmapSource>? GetWebBitmapAsync(this IDataObject dataObject)
+    } //This is handled by the clipboardService
+
+    public async Task<BitmapImage> GetWebBitmapAsync(IDataObject dataObject)
     {
         if (dataObject.GetDataPresent(DataFormats.Bitmap))
         {
-            if (dataObject.GetData(DataFormats.Bitmap) is BitmapSource bitmap) return bitmap;
+            if (dataObject.GetData(DataFormats.Bitmap) is BitmapImage bitmap) return bitmap;
         }
 
-        // Check if the data contains HTML (could include the image URL)
+        // Check if the data contains HTML (could include the SourceImage URL)
         else if (dataObject.GetDataPresent(DataFormats.Html))
         {
-            BitmapSource bitmap = null;
-            if(!TryGetUrl(dataObject, out string imageUrl))
-            {bitmap = await BitmapService.DownloadAndConvert(imageUrl);}
+            BitmapImage bitmap = null;
+            if (!TryGetUrl(dataObject, out var imageUrl)) bitmap = await _bitmapService.DownloadAndConvert(imageUrl);
 
             return bitmap;
         }
-        // Check if the data contains plain text. Need to check if its a valid url
+        // Check if the data contains plain text. Need to check if its a valid url ?
         else if (dataObject.GetDataPresent(DataFormats.Text))
         {
             var textData = dataObject.GetData(DataFormats.Text) as string;
-            if (!string.IsNullOrEmpty(textData))
-            {
-                var bitmap = await BitmapService.DownloadAndConvert(textData);
-                // You could handle the URL or plain text here
+            if (string.IsNullOrEmpty(textData)) return null;
 
-                return bitmap;
-            }
+            var bitmap = await _bitmapService.DownloadAndConvert(textData);
+            // You could handle the URL or plain text here
+            return bitmap;
         }
 
         return null;
     }
-    public static bool TryGetUrl(this IDataObject dataObject, out string url)
+
+    public static bool TryGetUrl(IDataObject dataObject, out string url)
     {
         try
         {
@@ -112,6 +110,19 @@ public static class DataObjectExtension
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    public string GetLocalFileUrl(IDataObject dataObject)
+    {
+        var path = string.Empty;
+        if (dataObject.GetDataPresent(DataFormats.StringFormat))
+        {
+            path = dataObject.GetData(DataFormats.StringFormat) as string;
+
+            path = path.Trim('"');
+        }
+
+        return path;
     }
 
     private static string HtmlTest(string html)

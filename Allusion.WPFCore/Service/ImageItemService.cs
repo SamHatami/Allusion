@@ -8,16 +8,17 @@ namespace Allusion.WPFCore.Service;
 
 public class ImageItemService //Note : could perhaps just be static methods inside the ImageItem class....
 {
+    private BitmapService _bitmapService = new BitmapService();
     public ImageItemService()
     {
     }
 
-    public ImageItem CreateImageItemFromDataObject(BitmapSource bitmap, IDataObject dataObject)
+    public ImageItem CreateImageItemFromBitmapImages(BitmapImage bitmap)
     {
-        if (dataObject.TryGetUrl(out string url)) ;
-
         var randomPos = new Random().Next(10, 60);
 
-        return new ImageItem(url, randomPos, randomPos, 1, 0, bitmap);
+        var path = BitmapService.GetUrl(bitmap);
+        
+        return new ImageItem(path, randomPos, randomPos, 1, 0, bitmap);
     }
 }

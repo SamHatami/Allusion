@@ -10,7 +10,6 @@ namespace Allusion.Behaviors;
 public class CanvasBehavior : Behavior<UIElement>
 {
     private MainViewModel? _mainViewModel; //Replace this with an event aggregation
-
     protected override void OnAttached()
     {
         base.OnAttached();
@@ -36,7 +35,7 @@ public class CanvasBehavior : Behavior<UIElement>
         GetDataContext();
     }
 
-    private void OnDrop(object sender, DragEventArgs e)
+    private async void OnDrop(object sender, DragEventArgs e)
     {
         if (_mainViewModel == null) return;
 
@@ -45,9 +44,7 @@ public class CanvasBehavior : Behavior<UIElement>
             e.Effects = DragDropEffects.None;
         }
 
-        ArtBoardHandler.DroppedNewObjects(e.Data);
-       
-        //_mainViewModel.AddDropppedImages(bitmaps.ToArray());
+        await _mainViewModel.BoardHandler.DroppedNewObjects(e.Data);
 
         e.Handled = true;
     }

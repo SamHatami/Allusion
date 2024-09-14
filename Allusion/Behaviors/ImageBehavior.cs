@@ -25,8 +25,10 @@ public class ImageBehavior : Behavior<UIElement>
         AssociatedObject.MouseLeftButtonDown += OnMouseLeftButtonDown;
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
-
+        
         _mainCanvas = GetMainCanvas(AssociatedObject);
+
+        
     }
 
     protected override void OnDetaching()
@@ -39,6 +41,8 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        //Disable cursor icon
+        //enable move icon
         AssociatedObject.Focus();
         Mouse.OverrideCursor = Cursors.ScrollAll;
         _relativePosition = new Point(
@@ -52,6 +56,7 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void OnMouseMove(object sender, MouseEventArgs e)
     {
+        //move the icon aswell
         if (AssociatedObject.IsMouseCaptured)
         {
             Canvas.SetLeft(_contentPresenter, e.GetPosition(_mainCanvas).X + _relativePosition.X);

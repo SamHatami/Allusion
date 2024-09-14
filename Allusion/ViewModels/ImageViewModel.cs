@@ -101,7 +101,7 @@ public class ImageViewModel : Screen
 
     public ImageViewModel(ImageItem item)
     {
-        Item = item;
+        _item = item;
         Initialize();
 
         AspectRatio = _imageSource.Width / _imageSource.Height;
@@ -109,9 +109,9 @@ public class ImageViewModel : Screen
 
     private void Initialize()
     {
-        ImageSource = _item.Source;
-        PosX = _posX;
-        PosY = _posY;
+        ImageSource = _item.SourceImage;
+        _posX = _item.PosX;
+        _posY = _item.PosY;
         Description = _item.Description;
     }
 
