@@ -17,7 +17,7 @@ public class ImageItemService //Note : could perhaps just be static methods insi
 
         var path = BitmapService.GetUrl(bitmap);
 
-        var item = new ImageItem(path, randomPos, randomPos, 1, 0);
+        var item = new ImageItem(path, randomPos, randomPos, 1);
         item.SetSourceImage(bitmap);
         return item;
     }

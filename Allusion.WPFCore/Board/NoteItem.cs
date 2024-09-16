@@ -6,5 +6,5 @@ public class NoteItem : IItem
 {
     public string Title { get; set; }
     public string Content { get; set; }
-    public int MemberOfPage { get; set; }
+    public Guid MemberOfPage { get; set; }
 }

@@ -18,9 +18,9 @@
         cm:Message.Attach="
         [Gesture Ctrl+Z] = [UndoRemove];
         [Gesture Ctrl+V] = [PasteOnCanvas];
-        [Gesture Ctrl+O] = [OpenRefBoard];
+        [Gesture Ctrl+O] = [OpenRefBoardDialog];
         [Gesture Ctrl+S] = [SaveRefBoard];
-        [Gesture Ctrl+N] = [NewRefBoard];
+        [Gesture Ctrl+N] = [NewRefBoardDialog];
         [Key Delete] = [Delete]">
 
     <Window.Resources>
@@ -92,6 +92,10 @@
 
     </Window.Resources>
     <Grid Background="DimGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Canvas Background="Transparent" x:Name="InfoCanvas" IsHitTestVisible="True">
             <TextBox BorderThickness="0"
                      IsHitTestVisible="True"

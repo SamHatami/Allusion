@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using Allusion.WPFCore.Board;
+﻿using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Allusion.WPFCore.Service;
 using Caliburn.Micro;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -15,8 +15,8 @@ public class RefBoardHandler : IReferenceBoardHandler
     public AllusionConfiguration CurrentConfiguration { get; private set; }
     private readonly IEventAggregator _events;
     private BitmapService _bitmapService = new();
-    private ImageItemService _imageItemService = new();
-    private ClipboardService _clipboardService = new();
+    private readonly ImageItemService _imageItemService = new();
+    private readonly ClipboardService _clipboardService = new();
 
     public RefBoardHandler(IEventAggregator events, AllusionConfiguration configuration)
     {
@@ -34,30 +34,38 @@ public class RefBoardHandler : IReferenceBoardHandler
         return items.ToArray();
     }
 
-    public void AddImageToBoard()
+    public void AddImage(ImageItem imageItem, BoardPage page)
     {
-        var nrOfFils = Directory.GetFiles(CurrentRefBoard.BaseFolder).Length;
+        var nrFiles = Directory.GetFiles(CurrentRefBoard.BaseFolder).Length;
+
+        if (page.ImageItems.Contains(imageItem)) return;
+
+        imageItem.MemberOfPage = page.BoardId;
+        page.ImageItems.Add(imageItem);
+        var fullFileName = Path.Combine(CurrentRefBoard.BaseFolder, nrFiles + 1 + "_" + ".png");
+        imageItem.ItemPath = fullFileName;
     }
 
-    public void RemoveImageFromBoard()
+    public void RemoveImage(ImageItem imageItem)
     {
-        throw new NotImplementedException();
+        Debug.Assert(CurrentRefBoard != null, nameof(CurrentRefBoard) + " != null");
+
+        var page = CurrentRefBoard.Pages.Single(p => p.BoardId == imageItem.MemberOfPage);
+        if (page.ImageItems.Contains(imageItem)) return; 
+
+        page.ImageItems.Remove(imageItem);
     }
 
     public void OpenRefBoard(string fullPath = "")
     {
         try
         {
-            //Något som inte stämmer här.
-            //Konstigt med gemensam datafolder? Ja. knsttigt om man vill spara eller göra en backup på den.
             var path = string.IsNullOrEmpty(fullPath) ? CurrentRefBoard.BaseFolder : fullPath;
 
             if (!File.Exists(path)) return; //använd catchen
 
             CurrentRefBoard = ReferenceBoard.Read(path);
 
-            foreach (var imageItem in CurrentRefBoard.Images)
-                imageItem.LoadItemSource();
             _events.PublishOnBackgroundThreadAsync(new OpenRefBoardEvent(CurrentRefBoard));
         }
         catch (Exception e)
@@ -78,17 +86,6 @@ public class RefBoardHandler : IReferenceBoardHandler
     public async Task<bool> SaveRefBoard(ImageItem[] imageItems)
     {
         bool saved;
-
-        for (var i = 0; i < imageItems.Length; i++)
-        {
-            //TODO: Check if image already is added, also reverse when read.
-            //if(imageItem.SourceImage.IsEqual(imageItem.SourceImage)) continue;
-            if (CurrentRefBoard.Images.Contains(imageItems[0])) continue;
-
-            CurrentRefBoard.Images.Add(imageItems[i]);
-            var fullFileName = Path.Combine(CurrentRefBoard.BaseFolder, i + ".png");
-            imageItems[i].ImagePath = fullFileName;
-        }
 
         try
         {

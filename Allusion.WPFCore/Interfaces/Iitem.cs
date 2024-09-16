@@ -2,5 +2,5 @@
 
 public interface IItem
 {
-    int MemberOfPage { get; set; }
+    Guid MemberOfPage { get; set; }
 }

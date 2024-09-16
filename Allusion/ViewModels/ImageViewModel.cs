@@ -140,14 +140,13 @@ public class ImageViewModel : Screen
         _item.Description = Description;
         _item.PosX = PosX;
         _item.PosY = PosY;
-        _item.MemberOfPage = _pageMember;
 
         return _item;
     }
 
     public void ImageClick(ModifierKeys modifier)
     {
-        //this comes from code-behind since I couldnt get the Modifier argument sent to the viewmodel from actions
+        //this comes from code-behind since I couldn't get the Modifier argument sent to the viewmodel from actions
         Selected = true;
         bool multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
         _events.PublishOnCurrentThreadAsync(new ImageSelectedEvent(this, multiSelect));

@@ -9,37 +9,50 @@ namespace Allusion.WPFCore.Board;
 [Serializable]
 public class ImageItem : IItem
 {
-    public string ImagePath { get; set; }
+    public string ItemPath { get; set; }
     public double PosX { get; set; }
     public double PosY { get; set; }
-    public double Scale { get; set; } = 1;
-    public string Description { get; set; } = String.Empty;
-    public int MemberOfPage { get; set; } = 0;
+    public double Scale { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public Guid MemberOfPage { get; set; } = Guid.Empty;
 
-    [JsonIgnore] 
-    public BitmapImage SourceImage { get; private set; }
+    [JsonIgnore] private BitmapImage _sourceImage;
+    [JsonIgnore] public BitmapImage SourceImage
+    {
+        get
+        {
+            if (_loaded) return _sourceImage;
+
+            LoadItemSource();
+            _loaded = true;
+
+            return _sourceImage;
+        }
+        private set => _sourceImage = value;
+    }
+
+    [JsonIgnore] private bool _loaded;
 
     [JsonConstructor]
-    public ImageItem(string imagePath, double posX, double posY, double scale, int memberOfPage)
+    public ImageItem(string itemPath, double posX, double posY, double scale)
     {
-        ImagePath = imagePath;
+        ItemPath = itemPath;
         PosX = posX;
         PosY = posY;
         Scale = scale;
-        MemberOfPage = memberOfPage;
     }
 
     public void SetSourceImage(BitmapImage bitmap)
     {
-        SourceImage = bitmap;
+        _sourceImage = bitmap;
     }
     public void LoadItemSource()
     {
-        if (string.IsNullOrEmpty(ImagePath)) return;
+        if (string.IsNullOrEmpty(ItemPath)) return;
 
         try
         {
-            SourceImage = BitmapService.GetFromUri(ImagePath);
+            _sourceImage = BitmapService.GetFromUri(ItemPath);
 
         }
         catch (Exception e)

@@ -1,4 +1,5 @@
-﻿using Allusion.WPFCore.Board;
+﻿using System.Net.Mime;
+using Allusion.WPFCore.Board;
 using System.Windows;
 
 namespace Allusion.WPFCore.Interfaces;
@@ -18,9 +19,9 @@ public interface IReferenceBoardHandler
 
     public Task<bool> SaveRefBoard(ImageItem[] imageItems);
 
-    public void AddImageToBoard();
+    public void AddImage(ImageItem item, BoardPage page);
 
-    public void RemoveImageFromBoard();
+    public void RemoveImage(ImageItem item);
 
     public RefBoardInfo[] GetAllRefBoardInfos();
 }

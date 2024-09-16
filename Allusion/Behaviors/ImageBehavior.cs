@@ -68,12 +68,9 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (AssociatedObject.IsMouseCaptured)
-        {
-            Mouse.OverrideCursor = null;
-            AssociatedObject.ReleaseMouseCapture();
-            
-        }
+        if (!AssociatedObject.IsMouseCaptured) return;
+        Mouse.OverrideCursor = null;
+        AssociatedObject.ReleaseMouseCapture();
     }
 
     private Canvas GetMainCanvas(DependencyObject? element)

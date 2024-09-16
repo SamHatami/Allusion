@@ -1,8 +1,10 @@
-﻿using Allusion.WPFCore.Events;
+﻿using Allusion.WPFCore.Board;
+using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Allusion.ViewModels;
 
@@ -20,6 +22,19 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
     private List<ImageViewModel> _imageBin = [];
 
     private bool BoardIsModified;
+
+    private BoardPage _activeBoardPage;
+
+    public BoardPage ActiveBoardPage
+    {
+        get => _activeBoardPage;
+        set
+        {
+            _activeBoardPage = value;
+            NotifyOfPropertyChange(nameof(ActiveBoardPage));
+        }
+    }
+
     private string _activeRefBoardName;
 
     public string ActiveRefBoardName
@@ -91,7 +106,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
         return dialog.DialogResult;
     }
 
-    public async Task NewRefBoard()
+    public async Task NewRefBoardDialog()
     {
         if (BoardIsModified)
         {
@@ -120,7 +135,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
         _windowManager.ShowDialogAsync(IoC.Get<NewRefBoardViewModel>());
     }
 
-    public async Task OpenRefBoard()
+    public async Task OpenRefBoardDialog()
     {
         if (BoardIsModified)
         {
@@ -157,8 +172,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
     {
         var imageItems = Images.Select(i => i.Item).ToArray();
 
-        await BoardHandler
-            .SaveRefBoard(imageItems); //needs to be sent from viewport so positions and scale can be transfered
+        await BoardHandler.SaveRefBoard(imageItems);
+        //needs to be sent from viewport so positions and scale can be transfered
 
         BoardIsModified = false;
     }
@@ -167,9 +182,10 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
     {
         BoardIsModified = false;
         ActiveRefBoardName = BoardHandler.CurrentRefBoard.Name;
+        _activeBoardPage = BoardHandler.CurrentRefBoard.Pages[0];
         Images.Clear();
 
-        foreach (var imageItem in BoardHandler.CurrentRefBoard.Images)
+        foreach (var imageItem in _activeBoardPage.ImageItems)
             Images.Add(new ImageViewModel(imageItem, _events)
             {
                 PosX = imageItem.PosX,
@@ -181,14 +197,20 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
     {
         var items = await BoardHandler.GetPastedImageItems(0);
 
-        if (items == null) return;
-
-        foreach (var item in items)
-            Images.Add(new ImageViewModel(item, _events));
-
-        BoardIsModified = true;
+        AddImageItems(items);
     }
 
+    private void AddImageItems(ImageItem[] items)
+    {
+        foreach (var item in items)
+        {
+            Images.Add(new ImageViewModel(item, _events));
+            BoardHandler.AddImage(item, _activeBoardPage);
+        }
+
+        BoardIsModified = true;
+
+    }
     private void ExtractUrlFromDataObject()
     {
         var dataObject = Clipboard.GetDataObject();
@@ -208,23 +230,22 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
         _imageBin.Add(Images.Single(i => i == _selectedImage));
 
         Images.Remove(_selectedImage);
-
+        BoardHandler.RemoveImage(_selectedImage.Item);
     }
 
-    public void UndeRemove() //Key Gesture: Ctrl-z
+    public void UndoRemove() //Key Gesture: Ctrl-z
     {
-        if(_imageBin.Count == 0) return;
+        //TODO: Not done. Mind black out
+        if (_imageBin.Count == 0) return;
 
         Images.Add(_imageBin.Last());
-        _imageBin.RemoveAt(_imageBin.Count-1);
+        
+        _imageBin.RemoveAt(_imageBin.Count - 1);
     }
 
     public Task HandleAsync(NewImageDropsEvent message, CancellationToken cancellationToken)
     {
-        foreach (var item in message.DroppedItems)
-            Images.Add(new ImageViewModel(item, _events));
-
-        BoardIsModified = true;
+        AddImageItems(message.DroppedItems);
 
         return Task.CompletedTask;
     }
@@ -250,10 +271,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
 
         //Deselect from hear instead of aggregating yet another event to all of them.
         foreach (var image in Images)
-        {
-            if(image != _selectedImage)
+            if (image != _selectedImage)
                 image.Selected = false;
-        }
 
         return Task.CompletedTask;
     }
@@ -262,6 +281,5 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
     {
         foreach (var image in Images)
             image.Selected = false;
-        
     }
 }
