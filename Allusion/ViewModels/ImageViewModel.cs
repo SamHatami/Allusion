@@ -1,7 +1,10 @@
-﻿using Allusion.WPFCore.Board;
+﻿using System.Reflection.Metadata;
+using System.Windows.Input;
+using Allusion.WPFCore.Board;
 using Caliburn.Micro;
 using System.Windows.Media;
 using Allusion.WPFCore.Events;
+using Microsoft.VisualBasic.Devices;
 
 namespace Allusion.ViewModels;
 
@@ -140,5 +143,24 @@ public class ImageViewModel : Screen
         _item.MemberOfPage = _pageMember;
 
         return _item;
+    }
+
+    public void ImageClick(ModifierKeys modifier)
+    {
+        //this comes from code-behind since I couldnt get the Modifier argument sent to the viewmodel from actions
+        Selected = true;
+        bool multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
+        _events.PublishOnCurrentThreadAsync(new ImageSelectedEvent(this, multiSelect));
+    }
+}
+
+public class ImageSelectedEvent
+{
+    public ImageViewModel ImageViewModel { get; }
+    public bool MultiSelect { get; }
+    public ImageSelectedEvent(ImageViewModel imageViewModel,bool multiSelect)
+    {
+        ImageViewModel = imageViewModel;
+        MultiSelect = multiSelect;
     }
 }

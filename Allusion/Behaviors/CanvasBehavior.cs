@@ -3,6 +3,7 @@ using Allusion.WPFCore.Service;
 using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Input;
+using Allusion.Controls;
 using Allusion.WPFCore.Handlers;
 
 namespace Allusion.Behaviors;
@@ -21,7 +22,16 @@ public class CanvasBehavior : Behavior<UIElement>
         }
 
         AssociatedObject.MouseMove += OnMouseMove;
+        AssociatedObject.MouseLeftButtonDown += OnMouseLeftButtonDown;
         AssociatedObject.Drop += OnDrop;
+    }
+
+    private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is not ImageControl)
+        {
+            _mainViewModel.DeselectAll();
+        }
     }
 
     protected override void OnDetaching()

@@ -16,11 +16,12 @@
         Width="1024"
 
         cm:Message.Attach="
+        [Gesture Ctrl+Z] = [UndoRemove];
         [Gesture Ctrl+V] = [PasteOnCanvas];
         [Gesture Ctrl+O] = [OpenRefBoard];
         [Gesture Ctrl+S] = [SaveRefBoard];
         [Gesture Ctrl+N] = [NewRefBoard];
-        [Key Delete] = [Delete];">
+        [Key Delete] = [Delete]">
 
     <Window.Resources>
         <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
@@ -91,6 +92,18 @@
 
     </Window.Resources>
     <Grid Background="DimGray">
+        <Canvas Background="Transparent" x:Name="InfoCanvas" IsHitTestVisible="True">
+            <TextBox BorderThickness="0"
+                     IsHitTestVisible="True"
+                     Margin="5"
+                     Background="Transparent"
+                     Text ="{Binding ActiveRefBoardName, UpdateSourceTrigger=PropertyChanged}" 
+                     IsReadOnly="{Binding SettingBoardName, Converter={StaticResource InverseBoolConverter}}"
+                     cm:Message.Attach="[Event MouseDoubleClick] = [EditBoardName]; [Key Enter] = [EditBoardName];"
+                     Focusable="True"/>
+
+            <!--Enable rename here by double click-->
+        </Canvas>
         <Canvas x:Name="MainCanvas" Background="Transparent" AllowDrop="True">
             <Canvas.ContextMenu>
                 <ContextMenu>
@@ -136,16 +149,6 @@
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
         </Canvas>
-        <Canvas Background="Transparent" x:Name="InfoCanvas" IsHitTestVisible="False">
-            <TextBox BorderThickness="0"
-                     Margin="5"
-                     Background="Transparent"
-                     Text ="{Binding ActiveRefBoardName, UpdateSourceTrigger=PropertyChanged}" 
-                     IsReadOnly="{Binding SettingBoardName, Converter={StaticResource InverseBoolConverter}}"
-                     cm:Message.Attach="[Event MouseDoubleClick] = [EditBoardName]; [Key Enter] = [EditBoardName];"
-                     Focusable="True"/>
-                
-            <!--Enable rename here by double click-->
-        </Canvas>
+
     </Grid>
 </Window>

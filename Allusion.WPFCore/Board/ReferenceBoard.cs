@@ -60,6 +60,15 @@ public class ReferenceBoard
 
     }
 
+    public static string[] GetImagePathsFromFolder(ReferenceBoard refBoard)
+    {
+
+        var allFiles = Directory.GetFiles(refBoard.BaseFolder);
+        var imagePaths = allFiles.Where(f => f.EndsWith(".png")).ToArray();
+
+        return imagePaths;
+    }
+
     private static void SaveImagesToDisc(ReferenceBoard board)
     {
         if (!Directory.Exists(board.BaseFolder))

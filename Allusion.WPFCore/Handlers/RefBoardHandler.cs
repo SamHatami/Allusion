@@ -81,8 +81,7 @@ public class RefBoardHandler : IReferenceBoardHandler
 
         for (var i = 0; i < imageItems.Length; i++)
         {
-            //TODO: Check if image already is added.
-            //foreach (var imageItem in imageItems)
+            //TODO: Check if image already is added, also reverse when read.
             //if(imageItem.SourceImage.IsEqual(imageItem.SourceImage)) continue;
             if (CurrentRefBoard.Images.Contains(imageItems[0])) continue;
 

@@ -72,6 +72,7 @@ public class ImageBehavior : Behavior<UIElement>
         {
             Mouse.OverrideCursor = null;
             AssociatedObject.ReleaseMouseCapture();
+            
         }
     }
 

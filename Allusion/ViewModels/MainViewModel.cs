@@ -7,14 +7,17 @@ using System.Windows;
 namespace Allusion.ViewModels;
 
 public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHandle<NewRefBoardEvent>,
-    IHandle<BoardIsModfiedEvent>
+    IHandle<BoardIsModfiedEvent>, IHandle<ImageSelectedEvent>
 {
     //TODO: Booleans on states -> enums
 
     public bool Saving;
     public bool Loading;
 
+    private ImageViewModel _selectedImage;
     public BindableCollection<ImageViewModel> Images { get; set; } = [];
+
+    private List<ImageViewModel> _imageBin = [];
 
     private bool BoardIsModified;
     private string _activeRefBoardName;
@@ -200,9 +203,20 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
         BoardIsModified = true;
     }
 
-    public void Delete()
+    public void Delete() //Key: Delete
     {
-        Text = "Pressed delete";
+        _imageBin.Add(Images.Single(i => i == _selectedImage));
+
+        Images.Remove(_selectedImage);
+
+    }
+
+    public void UndeRemove() //Key Gesture: Ctrl-z
+    {
+        if(_imageBin.Count == 0) return;
+
+        Images.Add(_imageBin.Last());
+        _imageBin.RemoveAt(_imageBin.Count-1);
     }
 
     public Task HandleAsync(NewImageDropsEvent message, CancellationToken cancellationToken)
@@ -228,5 +242,26 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageDropsEvent>, IHa
         BoardIsModified = message.IsModfied;
 
         return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(ImageSelectedEvent message, CancellationToken cancellationToken)
+    {
+        _selectedImage = message.ImageViewModel;
+
+        //Deselect from hear instead of aggregating yet another event to all of them.
+        foreach (var image in Images)
+        {
+            if(image != _selectedImage)
+                image.Selected = false;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public void DeselectAll()
+    {
+        foreach (var image in Images)
+            image.Selected = false;
+        
     }
 }
