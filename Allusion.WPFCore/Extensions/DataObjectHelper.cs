@@ -107,7 +107,7 @@ public class DataObjectHelper
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Trace.WriteLine(e);
             throw;
         }
     }

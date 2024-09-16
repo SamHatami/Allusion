@@ -8,7 +8,7 @@ using Caliburn.Micro;
 
 namespace Allusion.ViewModels
 {
-    public class NewBoardViewModel : Screen
+    public class NewRefBoardViewModel : Screen
     {
         private IEventAggregator _events;
 
@@ -23,7 +23,7 @@ namespace Allusion.ViewModels
                 NotifyOfPropertyChange(nameof(NewBoardName));
             }
         }
-        public NewBoardViewModel(IEventAggregator events)
+        public NewRefBoardViewModel(IEventAggregator events)
         {
             _events = events;
         }
@@ -33,7 +33,7 @@ namespace Allusion.ViewModels
             if (string.IsNullOrEmpty(NewBoardName))
                 return Task.CompletedTask;
 
-            _events.PublishOnBackgroundThreadAsync(new NewBoardEvent(NewBoardName));
+            _events.PublishOnBackgroundThreadAsync(new NewRefBoardEvent(NewBoardName));
 
             return TryCloseAsync(true);
         }

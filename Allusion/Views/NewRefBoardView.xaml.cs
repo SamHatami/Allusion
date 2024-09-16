@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Allusion.Views
 {
     /// <summary>
-    /// Interaction logic for NewBoardView.xaml
+    /// Interaction logic for NewRefBoardView.xaml
     /// </summary>
-    public partial class NewBoardView : Window
+    public partial class NewRefBoardView : Window
     {
-        public NewBoardView()
+        public NewRefBoardView()
         {
             InitializeComponent();
         }

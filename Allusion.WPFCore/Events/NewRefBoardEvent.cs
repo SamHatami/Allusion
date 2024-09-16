@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Allusion.WPFCore.Events
 {
-    public class NewBoardEvent
+    public class NewRefBoardEvent
     {
         public string Name { get; set; } 
-        public NewBoardEvent(string name)
+        public NewRefBoardEvent(string name)
         {
             Name = name;
         }

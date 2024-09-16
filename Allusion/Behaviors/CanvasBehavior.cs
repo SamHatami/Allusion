@@ -44,7 +44,7 @@ public class CanvasBehavior : Behavior<UIElement>
             e.Effects = DragDropEffects.None;
         }
 
-        await _mainViewModel.BoardHandler.DroppedNewObjects(e.Data);
+        await _mainViewModel.BoardHandler.GetDroppedImageItems(e.Data);
 
         e.Handled = true;
     }

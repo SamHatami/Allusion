@@ -3,11 +3,11 @@
 namespace Allusion.Views;
 
 /// <summary>
-/// Interaction logic for OperArtBoardView.xaml
+/// Interaction logic for OperRefBoardView.xaml
 /// </summary>
-public partial class OpenArtBoardView : Window
+public partial class OpenRefBoardView : Window
 {
-    public OpenArtBoardView()
+    public OpenRefBoardView()
     {
         InitializeComponent();
     }

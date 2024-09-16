@@ -4,14 +4,18 @@ using System.Windows.Input;
 using Allusion.Input;
 using Allusion.ViewModels;
 using Allusion.Views;
+using Allusion.WPFCore;
 using Allusion.WPFCore.Handlers;
+using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
+using Autofac;
+using Autofac.Core;
 
 namespace Allusion;
 
 public class Bootstrapper : BootstrapperBase
 {
-    private SimpleContainer container;
+    private SimpleContainer _container;
 
     public Bootstrapper()
     {
@@ -22,30 +26,47 @@ public class Bootstrapper : BootstrapperBase
     {
         CreateKeyMagic();
         ConfigMessageBinder();
+        var config = AllusionConfiguration.Read();
+        //var builder = new ContainerBuilder();
 
-        container = new SimpleContainer();
+        //builder.RegisterType<WindowManager>().AsImplementedInterfaces().SingleInstance();
+        //builder.RegisterType<EventAggregator>().AsImplementedInterfaces().SingleInstance();
+        //builder.RegisterInstance(config).AsSelf();
+        //builder.RegisterType<RefBoardHandler>().AsImplementedInterfaces().SingleInstance();
 
-        container.Singleton<IWindowManager, WindowManager>();
-        container.Singleton<IEventAggregator, EventAggregator>();
-        container.PerRequest<ArtBoardHandler>();
-        container.PerRequest<MainViewModel>();
-        container.PerRequest<OpenArtBoardViewModel>();
-        container.PerRequest<NewBoardViewModel>();
+        //builder.RegisterType<MainViewModel>().AsSelf().SingleInstance();
+        //builder.RegisterType<OpenRefBoardViewModel>().AsSelf().InstancePerRequest();
+        //builder.RegisterType<NewRefBoardViewModel>().AsSelf().InstancePerRequest();
+        //builder.RegisterType<DialogViewModel>().AsSelf().InstancePerRequest();
+
+        //container = builder.Build();
+
+        _container = new SimpleContainer();
+
+        _container.Singleton<IWindowManager, WindowManager>();
+        _container.Singleton<IEventAggregator, EventAggregator>();
+        _container.Singleton<IReferenceBoardHandler, RefBoardHandler>();
+        _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
+        _container.PerRequest<MainViewModel>();
+        _container.PerRequest<OpenRefBoardViewModel>();
+        _container.PerRequest<NewRefBoardViewModel>();
+        _container.PerRequest<DialogViewModel>();
+
     }
 
     protected override object GetInstance(Type service, string key)
     {
-        return container.GetInstance(service, key);
+        return _container.GetInstance(service, key);
     }
 
     protected override IEnumerable<object> GetAllInstances(Type service)
     {
-        return container.GetAllInstances(service);
+        return _container.GetAllInstances(service);
     }
 
     protected override void BuildUp(object instance)
     {
-        container.BuildUp(instance);
+        _container.BuildUp(instance);
     }
 
     protected override IEnumerable<Assembly> SelectAssemblies()

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Media;
@@ -35,7 +36,7 @@ public class BitmapService
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Trace.WriteLine(e);
                 throw;
             }
         }
@@ -59,7 +60,7 @@ public class BitmapService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Trace.WriteLine(e);
             throw;
         }
 
