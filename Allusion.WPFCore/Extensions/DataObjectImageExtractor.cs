@@ -6,12 +6,18 @@ using System.Windows.Media.Imaging;
 using IDataObject = System.Windows.IDataObject;
 using System.Diagnostics;
 using System.IO;
+using Allusion.WPFCore.Interfaces;
 
 namespace Allusion.WPFCore.Extensions;
 
-public class DataObjectHelper
+public class DataObjectImageExtractor
 {
-    private BitmapService _bitmapService = new();
+    private readonly IBitmapService _bitmapService;
+
+    public DataObjectImageExtractor(IBitmapService bitmapService)
+    {
+        _bitmapService = bitmapService;
+    }
 
     public BitmapSource[] GetBitmapFromLocal(IDataObject dataObject)
     {
@@ -22,15 +28,12 @@ public class DataObjectHelper
         var formats = dataObject.GetFormats(true);
         if (formats == null || formats.Length == 0) return null;
 
-        foreach (var f in formats)
-            Debug.WriteLine(" - " + f.ToString());
-
         //Multiple file paste from explorer
         if (formats.Contains("FileContents"))
         {
-            string[] filePaths = dataObject.GetData("FileContents") as string[];
+            var filePaths = dataObject.GetData("FileContents") as string[];
 
-            return BitmapService.LoadFromUri(filePaths);
+            return _bitmapService.LoadFromUri(filePaths);
         }
 
         //if the SourceImage was pasted from explorer
@@ -38,7 +41,7 @@ public class DataObjectHelper
         {
             string[] filePaths = dataObject.GetData("FileName") as string[];
 
-            return BitmapService.LoadFromUri(filePaths);
+            return _bitmapService.LoadFromUri(filePaths);
         }
 
         if (formats.Contains("PNG"))
@@ -55,61 +58,41 @@ public class DataObjectHelper
         return null;
     } //This is handled by the clipboardService
 
-    public async Task<BitmapImage> GetWebBitmapAsync(IDataObject dataObject)
+    public async Task<BitmapImage?> GetWebBitmapAsync(IDataObject dataObject)
     {
         if (dataObject.GetDataPresent(DataFormats.Bitmap))
-        {
-            if (dataObject.GetData(DataFormats.Bitmap) is BitmapImage bitmap) return bitmap;
-        }
-
+            return dataObject.GetData(DataFormats.Bitmap) as BitmapImage;
+        
         // Check if the data contains HTML (could include the SourceImage URL)
-        else if (dataObject.GetDataPresent(DataFormats.Html))
+        if (dataObject.GetDataPresent(DataFormats.Html))
         {
-            BitmapImage bitmap = null;
-            if (!TryGetUrl(dataObject, out var imageUrl)) bitmap = await _bitmapService.DownloadAndConvert(imageUrl);
+            BitmapImage? bitmap = null;
+            if (TryGetUrl(dataObject, out var imageUrl)) 
+                return await _bitmapService.DownloadAndConvert(imageUrl);
 
-            return bitmap;
         }
         // Check if the data contains plain text. Need to check if its a valid url ?
         else if (dataObject.GetDataPresent(DataFormats.Text))
         {
             var textData = dataObject.GetData(DataFormats.Text) as string;
-            if (string.IsNullOrEmpty(textData)) return null;
-
-            var bitmap = await _bitmapService.DownloadAndConvert(textData);
+            return await _bitmapService.DownloadAndConvert(textData);
             // You could handle the URL or plain text here
-            return bitmap;
         }
 
         return null;
     }
 
-    public static bool TryGetUrl(IDataObject dataObject, out string url)
+    private bool TryGetUrl(IDataObject dataObject, out string url)
     {
-        try
+        if (!dataObject.GetDataPresent(DataFormats.Html))
         {
-            if (!dataObject.GetDataPresent(DataFormats.Html))
-            {
-                url = string.Empty;
-                return false;
-            }
-
-            var htmlData = dataObject.GetData(DataFormats.Html) as string;
-
-            if (string.IsNullOrEmpty(htmlData))
-            {
-                url = string.Empty;
-                return false;
-            }
-
-            url = HtmlTest(htmlData);
-            return true;
+            url = string.Empty;
+            return false;
         }
-        catch (Exception e)
-        {
-            Trace.WriteLine(e);
-            throw;
-        }
+
+        var htmlData = dataObject.GetData(DataFormats.Html) as string;
+        url = HtmlTest(htmlData);
+        return !string.IsNullOrEmpty(url);
     }
 
     public string GetLocalFileUrl(IDataObject dataObject)
@@ -131,8 +114,10 @@ public class DataObjectHelper
         htmlDoc.LoadHtml(html);
 
         var node = htmlDoc.DocumentNode.SelectSingleNode("//img");
+        if (node is null) return String.Empty;
         var imageSource = node.Attributes["src"].Value;
 
         return imageSource;
     }
+
 }

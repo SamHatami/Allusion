@@ -21,23 +21,48 @@ public static class BitmapImageExtensions
     public static byte[] ToBytes(this BitmapImage image)
     {
         var data = new byte[] { };
-        if (image != null)
-            try
-            {
-                var encoder = new BmpBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(image));
-                using (var ms = new MemoryStream())
-                {
-                    encoder.Save(ms);
-                    data = ms.ToArray();
-                }
 
-                return data;
-            }
-            catch (Exception ex)
+        try
+        {
+            var encoder = new BmpBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(image));
+            using (var ms = new MemoryStream())
             {
+                encoder.Save(ms);
+                data = ms.ToArray();
             }
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+        }
 
         return data;
+    }
+
+    public static BitmapImage? ConvertToBitmapImage(this BitmapSource source)
+    {
+        var bitmapImage = new BitmapImage();
+
+        if (source is null) return bitmapImage;
+
+        using var memoryStream = new MemoryStream();
+        // Encode the BitmapSource to the stream
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(source));
+        encoder.Save(memoryStream);
+
+        // Rewind the stream
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        // Create BitmapImage and load the stream
+        bitmapImage.BeginInit();
+        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+        bitmapImage.StreamSource = memoryStream;
+        bitmapImage.EndInit();
+        bitmapImage.Freeze(); // Optionally freeze to make it cross-thread accessible
+
+        return bitmapImage;
     }
 }

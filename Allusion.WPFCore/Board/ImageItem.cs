@@ -21,7 +21,7 @@ public class ImageItem : IItem
     {
         get
         {
-            if (_loaded) return _sourceImage;
+            if (_loaded) return _sourceImage; 
 
             LoadItemSource();
             _loaded = true;
@@ -45,6 +45,7 @@ public class ImageItem : IItem
     public void SetSourceImage(BitmapImage bitmap)
     {
         _sourceImage = bitmap;
+        _loaded = true;
     }
     public void LoadItemSource()
     {

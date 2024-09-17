@@ -10,6 +10,7 @@ using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using Autofac;
 using Autofac.Core;
+using Allusion.ViewModels.Dialogs;
 
 namespace Allusion;
 
@@ -32,7 +33,7 @@ public class Bootstrapper : BootstrapperBase
         //builder.RegisterType<WindowManager>().AsImplementedInterfaces().SingleInstance();
         //builder.RegisterType<EventAggregator>().AsImplementedInterfaces().SingleInstance();
         //builder.RegisterInstance(config).AsSelf();
-        //builder.RegisterType<RefBoardHandler>().AsImplementedInterfaces().SingleInstance();
+        //builder.RegisterType<ReferenceBoardManager>().AsImplementedInterfaces().SingleInstance();
 
         //builder.RegisterType<MainViewModel>().AsSelf().SingleInstance();
         //builder.RegisterType<OpenRefBoardViewModel>().AsSelf().InstancePerRequest();
@@ -45,7 +46,7 @@ public class Bootstrapper : BootstrapperBase
 
         _container.Singleton<IWindowManager, WindowManager>();
         _container.Singleton<IEventAggregator, EventAggregator>();
-        _container.Singleton<IReferenceBoardHandler, RefBoardHandler>();
+        _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
         _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
         _container.PerRequest<MainViewModel>();
         _container.PerRequest<OpenRefBoardViewModel>();

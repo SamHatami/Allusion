@@ -1,37 +1,42 @@
 ﻿using Allusion.WPFCore.Extensions;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Interfaces;
+using Caliburn.Micro;
 
 namespace Allusion.WPFCore.Service;
 
-public class ClipboardService
+public class ClipboardService: IClipboardService
 {
-    private BitmapService _bitmapService = new();
-    private DataObjectHelper _dataObjectHelper = new();
+    private readonly IEventAggregator _events;
+    private readonly DataObjectImageExtractor _dataObjectImageExtractor;
+    private readonly IBitmapService _bitmapService;
 
-    public async Task<BitmapImage[]>
-        GetPastedBitmaps() //Make this static that both mainview or canvas can talk to directly.
+    public ClipboardService(IEventAggregator events, IBitmapService bitmapService)
+    {
+        _events = events;
+        _bitmapService = bitmapService;
+        _dataObjectImageExtractor = new DataObjectImageExtractor(_bitmapService);
+    }
+    public async Task<BitmapImage?[]> GetPastedBitmaps() 
     {
         //TODO: Convert to strategy-pattern
-        List<BitmapImage> bitmapImages = new();
+        List<BitmapImage?> bitmapImages = new();
 
         if (Clipboard.ContainsText()) //When pasting SourceImage Uri from web
         {
             var pastedUriObject = Clipboard.GetDataObject();
 
-            var bitmapSources = await _dataObjectHelper.GetWebBitmapAsync(pastedUriObject);
+            var bitmapSources = await _dataObjectImageExtractor.GetWebBitmapAsync(pastedUriObject) ?? _bitmapService.GetFromUri(_dataObjectImageExtractor.GetLocalFileUrl(pastedUriObject));
 
-            if (bitmapSources is null)
-
-                bitmapSources = BitmapService.GetFromUri(_dataObjectHelper.GetLocalFileUrl(pastedUriObject));
-
-            bitmapImages.Add(_bitmapService.ToBitmapImage(bitmapSources));
+            bitmapImages.Add(bitmapSources.ConvertToBitmapImage());
         }
         else if (Clipboard.ContainsImage()) //Usually copy/paste single from web or snapshot
         {
             var pasteFromWeb = Clipboard.GetImage();
-            var bitmapImage = _bitmapService.ToBitmapImage(pasteFromWeb);
+            var bitmapImage = pasteFromWeb.ConvertToBitmapImage();
             bitmapImages.Add(bitmapImage);
         }
         else if (Clipboard.ContainsFileDropList()) //usually copy/paste single or multi from system
@@ -42,23 +47,21 @@ public class ClipboardService
         return bitmapImages.ToArray();
     }
 
-    public async Task<BitmapImage[]>?
-        GetDroppedOnCanvasBitmaps(IDataObject droppedObject) //should not handle SourceImage items
+    public async Task<BitmapImage?[]>? GetDroppedOnCanvasBitmaps(IDataObject droppedObject) //should not handle SourceImage items
     {
         //TODO: Convert to strategy-pattern
         List<BitmapImage> bitmapImages = [];
         //Try getting bitmap if dropped object was from browser
-        var droppedWebBitmap = await _dataObjectHelper.GetWebBitmapAsync(droppedObject).ConfigureAwait(false);
+        var droppedWebBitmap = await _dataObjectImageExtractor.GetWebBitmapAsync(droppedObject).ConfigureAwait(false);
 
         if (droppedWebBitmap is not null)
             bitmapImages.Add(droppedWebBitmap);
 
-        if (droppedObject.GetDataPresent(DataFormats.FileDrop))
-        {
-            var files = droppedObject.GetData(DataFormats.FileDrop, true) as string[];
+        if (!droppedObject.GetDataPresent(DataFormats.FileDrop)) return bitmapImages.ToArray();
 
-            foreach (var file in files) bitmapImages.Add(BitmapService.GetFromUri(file));
-        }
+        var files = droppedObject.GetData(DataFormats.FileDrop, true) as string[];
+
+        bitmapImages.AddRange(files.Select(file => _bitmapService.GetFromUri(file)));
 
         return bitmapImages.ToArray();
     }
@@ -93,4 +96,7 @@ public class ClipboardService
         string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tif", ".tga" };
         return imageExtensions.Contains(Path.GetExtension(filePath).ToLower());
     }
+
+
 }
+

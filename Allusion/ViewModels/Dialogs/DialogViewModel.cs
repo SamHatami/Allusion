@@ -1,6 +1,6 @@
 ﻿using Screen = Caliburn.Micro.Screen;
 
-namespace Allusion.ViewModels;
+namespace Allusion.ViewModels.Dialogs;
 
 public class DialogViewModel : Screen
 {

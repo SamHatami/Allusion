@@ -14,12 +14,13 @@
         Title="MainView"
         Height="1024"
         Width="1024"
+        Topmost="True"
 
         cm:Message.Attach="
         [Gesture Ctrl+Z] = [UndoRemove];
         [Gesture Ctrl+V] = [PasteOnCanvas];
         [Gesture Ctrl+O] = [OpenRefBoardDialog];
-        [Gesture Ctrl+S] = [SaveRefBoard];
+        [Gesture Ctrl+S] = [Save];
         [Gesture Ctrl+N] = [NewRefBoardDialog];
         [Key Delete] = [Delete]">
 
@@ -96,7 +97,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Canvas Background="Transparent" x:Name="InfoCanvas" IsHitTestVisible="True">
+        <Grid Grid.Row="0" Background="#272524" x:Name="InfoCanvas" IsHitTestVisible="True">
             <TextBox BorderThickness="0"
                      IsHitTestVisible="True"
                      Margin="5"
@@ -107,12 +108,12 @@
                      Focusable="True"/>
 
             <!--Enable rename here by double click-->
-        </Canvas>
-        <Canvas x:Name="MainCanvas" Background="Transparent" AllowDrop="True">
+        </Grid>
+        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Transparent" AllowDrop="True">
             <Canvas.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Paste" IsEnabled="True"  cm:Message.Attach="[PasteOnCanvas]"/>
-                    <MenuItem Header="Save"  cm:Message.Attach="[SaveRefBoard]"/>
+                    <MenuItem Header="Save"  cm:Message.Attach="[Save]"/>
                     <MenuItem Header="Option 3" />
                 </ContextMenu>
             </Canvas.ContextMenu>

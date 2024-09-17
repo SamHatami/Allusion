@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 
-namespace Allusion.ViewModels
+namespace Allusion.ViewModels.Dialogs
 {
     public class NewRefBoardViewModel : Screen
     {

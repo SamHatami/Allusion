@@ -19,6 +19,8 @@ namespace Allusion.WPFCore.Board
 
         public BoardPage(ReferenceBoard parentBoard)
         {
+            if(parentBoard is null) return; //Not good if this is the case
+
             ParentBoard = parentBoard;
             BoardId = Guid.NewGuid();
             SetFolders();

@@ -9,16 +9,16 @@ using Allusion.WPFCore.Handlers;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 
-namespace Allusion.ViewModels
+namespace Allusion.ViewModels.Dialogs
 {
     public class OpenRefBoardViewModel : Screen
     {
-        private readonly IReferenceBoardHandler _refBoardHandler;
+        private readonly IReferenceBoardManager _refBoardManager;
         private readonly IEventAggregator _events;
         private readonly IWindowManager _windowManager;
         public const string Title = "Open or Create new Art board";
 
-        public BindableCollection<RefBoardInfo> RefBoardPaths { get; set; }= [];
+        public BindableCollection<RefBoardInfo> RefBoardPaths { get; set; } = [];
 
         private string _globalFolder;
 
@@ -41,20 +41,20 @@ namespace Allusion.ViewModels
             {
                 _selectedRefBoard = value;
                 NotifyOfPropertyChange(nameof(SelectedRefBoard));
-                
+
             }
         }
 
-        public OpenRefBoardViewModel(IReferenceBoardHandler refBoardHandler, IEventAggregator events, IWindowManager windowManager)
+        public OpenRefBoardViewModel(IReferenceBoardManager refBoardManager, IEventAggregator events, IWindowManager windowManager)
         {
-            _refBoardHandler = refBoardHandler;
+            _refBoardManager = refBoardManager;
             _events = events;
             _windowManager = windowManager;
 
-            GlobalFolder = _refBoardHandler.CurrentConfiguration.GlobalFolder;
+            GlobalFolder = _refBoardManager.CurrentConfiguration.GlobalFolder;
 
-            RefBoardPaths.AddRange(_refBoardHandler.GetAllRefBoardInfos());
-   
+            RefBoardPaths.AddRange(_refBoardManager.GetAllRefBoardInfos());
+
         }
 
         public Task Cancel()
@@ -64,7 +64,7 @@ namespace Allusion.ViewModels
 
         public Task Open()
         {
-            _refBoardHandler.OpenRefBoard(SelectedRefBoard.FilePath);
+            _refBoardManager.Open(SelectedRefBoard.FilePath);
             return TryCloseAsync(true);
         }
 
@@ -73,7 +73,7 @@ namespace Allusion.ViewModels
             var newBoardWin = _windowManager.ShowDialogAsync(new NewRefBoardViewModel(_events)).Result ?? false;
 
             if (newBoardWin)
-                this.TryCloseAsync(true);
+                TryCloseAsync(true);
         }
     }
 }

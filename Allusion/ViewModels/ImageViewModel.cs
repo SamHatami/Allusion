@@ -1,10 +1,8 @@
-﻿using System.Reflection.Metadata;
-using System.Windows.Input;
-using Allusion.WPFCore.Board;
-using Caliburn.Micro;
-using System.Windows.Media;
+﻿using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
-using Microsoft.VisualBasic.Devices;
+using Caliburn.Micro;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Allusion.ViewModels;
 
@@ -58,8 +56,6 @@ public class ImageViewModel : Screen
 
             _description = value;
             NotifyOfPropertyChange(nameof(Description));
-            
-
         }
     }
 
@@ -80,7 +76,7 @@ public class ImageViewModel : Screen
         get => _posX;
         set
         {
-            if(value != _posX)
+            if (value != _posX)
                 _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
 
             _posX = value;
@@ -95,7 +91,7 @@ public class ImageViewModel : Screen
         get => _posY;
         set
         {
-            if(value != _posY)
+            if (value != _posY)
                 _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
 
             _posY = value;
@@ -110,7 +106,7 @@ public class ImageViewModel : Screen
         get => _pageMember;
         set
         {
-            if(value != _pageMember)
+            if (value != _pageMember)
                 _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
 
             _pageMember = value;
@@ -123,8 +119,6 @@ public class ImageViewModel : Screen
         _item = item;
         _events = events;
         Initialize();
-
-        AspectRatio = _imageSource.Width / _imageSource.Height;
     }
 
     private void Initialize()
@@ -133,6 +127,7 @@ public class ImageViewModel : Screen
         _posX = _item.PosX;
         _posY = _item.PosY;
         Description = _item.Description;
+        AspectRatio = _imageSource.Width / _imageSource.Height;
     }
 
     private ImageItem TransferToItem()
@@ -148,7 +143,7 @@ public class ImageViewModel : Screen
     {
         //this comes from code-behind since I couldn't get the Modifier argument sent to the viewmodel from actions
         Selected = true;
-        bool multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
+        var multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
         _events.PublishOnCurrentThreadAsync(new ImageSelectedEvent(this, multiSelect));
     }
 }
@@ -157,7 +152,8 @@ public class ImageSelectedEvent
 {
     public ImageViewModel ImageViewModel { get; }
     public bool MultiSelect { get; }
-    public ImageSelectedEvent(ImageViewModel imageViewModel,bool multiSelect)
+
+    public ImageSelectedEvent(ImageViewModel imageViewModel, bool multiSelect)
     {
         ImageViewModel = imageViewModel;
         MultiSelect = multiSelect;
