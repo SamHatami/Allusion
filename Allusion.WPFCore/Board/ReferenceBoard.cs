@@ -4,6 +4,9 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Documents;
+using Allusion.WPFCore.Interfaces;
+using Allusion.WPFCore.Utilities;
+using Microsoft.VisualBasic;
 
 namespace Allusion.WPFCore.Board;
 
@@ -97,10 +100,6 @@ public class ReferenceBoard
             Directory.CreateDirectory(board.BackupFolder);
     }
 
-    public static void Rename(ReferenceBoard board, string newName)
-    {
-
-    }
     
     private static string[] GetImagePathsFromFolder(BoardPage page)
     {
@@ -120,6 +119,6 @@ public class ReferenceBoard
         }
 
         foreach (var image in page.ImageItems)
-            BitmapService.SaveToFile(image.SourceImage, image.ItemPath);
+            BitmapUtils.SaveToFile(image.SourceImage, image.ItemPath);
     }
 }

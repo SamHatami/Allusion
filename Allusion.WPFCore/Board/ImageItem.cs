@@ -3,12 +3,15 @@ using Allusion.WPFCore.Interfaces;
 using Allusion.WPFCore.Service;
 using System.Text.Json.Serialization;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Utilities;
 
 namespace Allusion.WPFCore.Board;
 
 [Serializable]
 public class ImageItem : IItem
 {
+    private readonly IBitmapService _bitmapService;
+    private readonly ImageItemService _itemService;
     public string ItemPath { get; set; }
     public double PosX { get; set; }
     public double PosY { get; set; }
@@ -34,8 +37,9 @@ public class ImageItem : IItem
     [JsonIgnore] private bool _loaded;
 
     [JsonConstructor]
-    public ImageItem(string itemPath, double posX, double posY, double scale)
+    public ImageItem(string itemPath, double posX, double posY, double scale, IBitmapService bitmapService)
     {
+        _bitmapService = bitmapService;
         ItemPath = itemPath;
         PosX = posX;
         PosY = posY;
@@ -53,7 +57,7 @@ public class ImageItem : IItem
 
         try
         {
-            _sourceImage = BitmapService.GetFromUri(ItemPath);
+            _sourceImage = _bitmapService.GetFromUri(ItemPath) ?? BitmapUtils.DefaultImage();
 
         }
         catch (Exception e)

@@ -54,4 +54,9 @@ internal static class BitmapUtils
         url = string.IsNullOrEmpty(url) ? "UnknownSource" : url;
         return url;
     }
+
+    public static BitmapImage DefaultImage()
+    {
+        return new BitmapImage(new Uri("pack://application:,,,/Resources/DefaultNoImage.png"));
+    }
 }

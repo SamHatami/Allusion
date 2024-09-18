@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using Autofac;
 using Autofac.Core;
 using Allusion.ViewModels.Dialogs;
+using IConfiguration = Allusion.WPFCore.IConfiguration;
 
 namespace Allusion;
 
@@ -27,7 +28,7 @@ public class Bootstrapper : BootstrapperBase
     {
         CreateKeyMagic();
         ConfigMessageBinder();
-        var config = AllusionConfiguration.Read();
+        var config = IConfiguration.Read();
         //var builder = new ContainerBuilder();
 
         //builder.RegisterType<WindowManager>().AsImplementedInterfaces().SingleInstance();
@@ -47,7 +48,7 @@ public class Bootstrapper : BootstrapperBase
         _container.Singleton<IWindowManager, WindowManager>();
         _container.Singleton<IEventAggregator, EventAggregator>();
         _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
-        _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
+        _container.RegisterInstance(typeof(IConfiguration),"Config",config);
         _container.PerRequest<MainViewModel>();
         _container.PerRequest<OpenRefBoardViewModel>();
         _container.PerRequest<NewRefBoardViewModel>();

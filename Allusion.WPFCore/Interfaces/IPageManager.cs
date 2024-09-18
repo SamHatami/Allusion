@@ -11,4 +11,7 @@ public interface IPageManager
     public void AddNoteToImage(ImageItem item, BoardPage page, NoteItem note);
 
     public void AddNote(BoardPage page, NoteItem note);
+
+    public void RenamePage(BoardPage page, string newName);
+
 }

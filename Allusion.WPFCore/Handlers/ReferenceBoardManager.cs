@@ -11,12 +11,11 @@ namespace Allusion.WPFCore.Handlers;
 
 public class ReferenceBoardManager : IReferenceBoardManager
 {
-    public ReferenceBoard? CurrentRefBoard { get; private set; }
-    public AllusionConfiguration CurrentConfiguration { get; private set; }
+    public IConfiguration CurrentConfiguration { get; private set; }
     private readonly IEventAggregator _events;
     private BitmapService _bitmapService = new();
 
-    public ReferenceBoardManager(IEventAggregator events, AllusionConfiguration configuration)
+    public ReferenceBoardManager(IEventAggregator events, IConfiguration configuration)
     {
         _events = events;
         CurrentConfiguration = configuration;
@@ -24,40 +23,48 @@ public class ReferenceBoardManager : IReferenceBoardManager
 
     
 
-    public ReferenceBoard Open(string fullPath = "")
+    public ReferenceBoard? Open(string fullPath = "")
     {
+        if (!File.Exists(fullPath)) return null;
+
+        ReferenceBoard? openedRefBoard;
         try
         {
-            var path = string.IsNullOrEmpty(fullPath) ? CurrentRefBoard.BaseFolder : fullPath;
-
-            if (!File.Exists(path)) return ; //använd catchen
-
-            CurrentRefBoard = ReferenceBoard.Read(path);
-
-            _events.PublishOnBackgroundThreadAsync(new OpenRefBoardEvent(CurrentRefBoard));
+            openedRefBoard = ReferenceBoard.Read(fullPath);
         }
         catch (Exception e)
-
         {
             Trace.WriteLine(e);
+            //TODO: NLOG
             throw;
         }
+
+        return openedRefBoard;
     }
 
-    public void CreateNew(string name = "UntitledRefBoard")
+    public ReferenceBoard CreateNew(string name = "UntitledRefBoard")
     {
         var RefBoardPath = Path.Combine(CurrentConfiguration.GlobalFolder, name);
-        CurrentRefBoard = new ReferenceBoard(name, RefBoardPath);
-        ReferenceBoard.Save(CurrentRefBoard);
+        var newRefBoard = new ReferenceBoard(name, RefBoardPath);
+        ReferenceBoard.Save(newRefBoard);
+
+        return newRefBoard;
     }
 
-    public async Task<bool> Save()
+    public void RenameBoard(ReferenceBoard board, string newName)
+    {
+        board.Name = newName;
+        var newFolder = Path.Combine(CurrentConfiguration.GlobalFolder, newName);
+        Directory.Move(board.BaseFolder,newFolder);
+    }
+
+    public async Task<bool> Save(ReferenceBoard referenceBoard)
     {
         bool saved;
 
         try
         {
-            saved = await Task.Run(() => ReferenceBoard.Save(CurrentRefBoard));
+            saved = await Task.Run(() => ReferenceBoard.Save(referenceBoard));
         }
         catch (Exception e)
         {
@@ -66,6 +73,18 @@ public class ReferenceBoardManager : IReferenceBoardManager
         }
 
         return saved;
+    }
+
+    public BoardPage AddPage(ReferenceBoard board, string pageName ="")
+    {
+        var newPage = new BoardPage(board){Name = string.IsNullOrEmpty(pageName) ? $"{board.Pages.Count+1}" : pageName};
+        board.Pages.Add(newPage);
+        return newPage;
+    }
+
+    public void DeletePage(ReferenceBoard board, BoardPage page)
+    {
+        board.Pages.Remove(page);
     }
 
     private string[] GetAllRefBoardFolders()

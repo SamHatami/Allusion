@@ -43,4 +43,10 @@ public class PageManager : IPageManager
 
         page.ImageItems.Remove(imageItem);
     }
+
+    public void RenamePage(BoardPage page, string newName)
+    {
+        page.Name = newName;
+    }
+
 }

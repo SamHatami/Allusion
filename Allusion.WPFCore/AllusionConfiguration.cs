@@ -29,19 +29,19 @@ public class AllusionConfiguration : IConfiguration
     public static string DataFolder { get; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Allusion");
 
-    private static string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "AllusionConfiguration.json");
+    private static string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "IConfiguration.json");
 
-    public static AllusionConfiguration Read()
+    public static IConfiguration Read()
     {
         if (!File.Exists(_configPath)) CreateNew();
 
         var rawFile = File.ReadAllText(_configPath);
-        var configuration = JsonSerializer.Deserialize<AllusionConfiguration>(rawFile);
+        var configuration = JsonSerializer.Deserialize<IConfiguration>(rawFile);
 
         return configuration;
     }
 
-    public static void Save(AllusionConfiguration config)
+    public static void Save(IConfiguration config)
     {
         File.WriteAllText(_configPath, JsonSerializer.Serialize(config));
     }

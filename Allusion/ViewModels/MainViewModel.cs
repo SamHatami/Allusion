@@ -17,7 +17,12 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
     public bool Saving;
     public bool Loading;
 
+
+    
     private ImageViewModel _selectedImage;
+
+    public BindableCollection<PageViewModel> Pages { get; set; } = [];
+    
     public BindableCollection<ImageViewModel> Images { get; set; } = [];
 
     private List<ImageViewModel> _imageBin = [];
@@ -52,7 +57,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
 
     private string _text;
     public IReferenceBoardManager BoardManager { get; }
-    private IEventAggregator _events { get; }
+    public IEventAggregator EventAggregator { get; }
     private IWindowManager _windowManager;
 
     private bool _settingBoardName;
@@ -173,7 +178,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
     {
         var imageItems = Images.Select(i => i.Item).ToArray();
 
-        await BoardManager.Save(imageItems);
+        await BoardManager.Save(board);
         //needs to be sent from viewport so positions and scale can be transfered
 
         BoardIsModified = false;
@@ -202,16 +207,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
         AddImageItems(items);
     }
 
-    private void AddImageItems(ImageItem[] items)
-    {
-        foreach (var item in items)
-        {
-            Images.Add(new ImageViewModel(item, _events));
-            BoardManager.AddImage(item, _activeBoardPage);
-        }
 
-        BoardIsModified = true;
-    }
 
 
     public void Delete() //Key: Delete

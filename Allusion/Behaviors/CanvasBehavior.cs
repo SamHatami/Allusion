@@ -4,13 +4,16 @@ using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Input;
 using Allusion.Controls;
+using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Handlers;
+using Caliburn.Micro;
 
 namespace Allusion.Behaviors;
 
 public class CanvasBehavior : Behavior<UIElement>
 {
     private MainViewModel? _mainViewModel; //Replace this with an event aggregation
+    private IEventAggregator _events;
     protected override void OnAttached()
     {
         base.OnAttached();
@@ -19,6 +22,8 @@ public class CanvasBehavior : Behavior<UIElement>
         {
             element.DataContextChanged += OnDataContextChanged;
             GetDataContext();
+            if(_mainViewModel is not null) 
+                _events = _mainViewModel.EventAggregator;
         }
 
         AssociatedObject.MouseMove += OnMouseMove;
@@ -54,7 +59,8 @@ public class CanvasBehavior : Behavior<UIElement>
             e.Effects = DragDropEffects.None;
         }
 
-        await _mainViewModel.BoardManager.GetDroppedImageItems(e.Data);
+
+        await _events.PublishOnBackgroundThreadAsync(new DragDropEvent(e.Data));
 
         e.Handled = true;
     }

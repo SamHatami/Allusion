@@ -3,6 +3,7 @@ using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Utilities;
 
 namespace Allusion.WPFCore.Service;
 
@@ -46,9 +47,9 @@ public class ImageItemService : IHandle<DragDropEvent>
     {
         var randomPos = new Random().NextDouble() * 50 + 10;
 
-        var path = BitmapService.GetUrl(bitmap);
+        var path = BitmapUtils.GetUrl(bitmap);
 
-        var item = new ImageItem(path, randomPos, randomPos, 1);
+        var item = new ImageItem(path, randomPos, randomPos, 1, _bitmapService);
         item.SetSourceImage(bitmap);
         return item;
     }
