@@ -22,7 +22,7 @@
         [Gesture Ctrl+O] = [OpenRefBoardDialog];
         [Gesture Ctrl+S] = [Save];
         [Gesture Ctrl+N] = [NewRefBoardDialog];
-        [Key Delete] = [Delete]">
+        [Key Remove] = [Remove]">
 
     <Window.Resources>
         <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>

@@ -144,18 +144,25 @@ public class ImageViewModel : Screen
         //this comes from code-behind since I couldn't get the Modifier argument sent to the viewmodel from actions
         Selected = true;
         var multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
-        _events.PublishOnCurrentThreadAsync(new ImageSelectedEvent(this, multiSelect));
+        _events.PublishOnCurrentThreadAsync(new ImageSelectionEvent(this, SelectionType.Multi));
     }
 }
 
-public class ImageSelectedEvent
+public class ImageSelectionEvent
 {
-    public ImageViewModel ImageViewModel { get; }
-    public bool MultiSelect { get; }
+    public ImageViewModel ImageViewModel { get; } //Don't want core to handle this....
+    public SelectionType Type { get; }
 
-    public ImageSelectedEvent(ImageViewModel imageViewModel, bool multiSelect)
+    public ImageSelectionEvent(ImageViewModel imageViewModel, SelectionType type)
     {
         ImageViewModel = imageViewModel;
-        MultiSelect = multiSelect;
+        Type = type;
     }
+}
+
+public enum SelectionType
+{
+    Single,
+    Multi,
+    DeSelect
 }

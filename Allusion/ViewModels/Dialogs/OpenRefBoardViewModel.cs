@@ -64,7 +64,13 @@ namespace Allusion.ViewModels.Dialogs
 
         public Task Open()
         {
-            _refBoardManager.Open(SelectedRefBoard.FilePath);
+            var openedRefBoard = _refBoardManager.Open(SelectedRefBoard.FilePath);
+
+            if (openedRefBoard is null) 
+                //TODO: Some message or exception here?
+                return Task.CompletedTask;
+
+            _events.PublishOnBackgroundThreadAsync(openedRefBoard);
             return TryCloseAsync(true);
         }
 
@@ -74,6 +80,16 @@ namespace Allusion.ViewModels.Dialogs
 
             if (newBoardWin)
                 TryCloseAsync(true);
+        }
+    }
+
+    public class BoardOpenedEvent
+    {
+        public ReferenceBoard Board { get; }
+
+        public BoardOpenedEvent(ReferenceBoard board)
+        {
+            Board = board;
         }
     }
 }

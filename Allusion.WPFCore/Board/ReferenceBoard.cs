@@ -122,3 +122,11 @@ public class ReferenceBoard
             BitmapUtils.SaveToFile(image.SourceImage, image.ItemPath);
     }
 }
+
+public enum BoardState
+{
+    Idle,
+    Saving,
+    Loading,
+    Modified
+}

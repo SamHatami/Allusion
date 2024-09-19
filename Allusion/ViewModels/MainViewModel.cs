@@ -9,8 +9,8 @@ using System.Windows.Controls;
 
 namespace Allusion.ViewModels;
 
-public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHandle<NewRefBoardEvent>,
-    IHandle<BoardIsModfiedEvent>, IHandle<ImageSelectedEvent>
+public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
+    IHandle<BoardIsModfiedEvent>, IHandle<BoardOpenedEvent>
 {
     //TODO: Booleans on states -> enums
 
@@ -27,7 +27,14 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
 
     private List<ImageViewModel> _imageBin = [];
 
-    private bool BoardIsModified;
+    private bool BoardIsModified; //TODO: Byt till BoardState 
+
+    private ReferenceBoard _activeReferenceBoard;
+    public ReferenceBoard ActiveReferenceBoard
+    {
+        get => _activeReferenceBoard;
+        set { _activeReferenceBoard = value; NotifyOfPropertyChange(nameof(ActiveRefBoardName)); }
+    }
 
     private BoardPage _activeBoardPage;
 
@@ -42,7 +49,6 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
     }
 
     private string _activeRefBoardName;
-
     public string ActiveRefBoardName
     {
         get => _activeRefBoardName;
@@ -51,13 +57,13 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
             _activeRefBoardName = value;
             NotifyOfPropertyChange(nameof(ActiveRefBoardName));
             if (SettingBoardName)
-                BoardManager.CurrentRefBoard.Name = ActiveRefBoardName;
+                ActiveReferenceBoard.Name = ActiveRefBoardName;
         }
     }
 
     private string _text;
     public IReferenceBoardManager BoardManager { get; }
-    public IEventAggregator EventAggregator { get; }
+    public IEventAggregator Events { get; }
     private IWindowManager _windowManager;
 
     private bool _settingBoardName;
@@ -86,8 +92,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
         IReferenceBoardManager refBoardManager)
     {
         _windowManager = windowManager;
-        _events = events;
-        _events.SubscribeOnBackgroundThread(this);
+        Events = events;
+        Events.SubscribeOnBackgroundThread(this);
         BoardManager = refBoardManager;
         SettingBoardName = false;
     }
@@ -143,6 +149,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
 
     public async Task OpenRefBoardDialog()
     {
+        //replace with something else.
         if (BoardIsModified)
         {
             var dialogResult = ShowBoardModifiedSaveDialog();
@@ -178,7 +185,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
     {
         var imageItems = Images.Select(i => i.Item).ToArray();
 
-        await BoardManager.Save(board);
+        await BoardManager.Save(_activeReferenceBoard);
         //needs to be sent from viewport so positions and scale can be transfered
 
         BoardIsModified = false;
@@ -201,7 +208,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
 
     public async Task PasteOnCanvas()
     {
-        _events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent())
+        Events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent())
         var items = await BoardManager.GetPastedImageItems(0);
 
         AddImageItems(items);
@@ -210,7 +217,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
 
 
 
-    public void Delete() //Key: Delete
+    public void Remove() //Key: Remove
     {
         _imageBin.Add(Images.Single(i => i == _selectedImage));
 
@@ -245,28 +252,13 @@ public class MainViewModel : Conductor<object>, IHandle<NewImageItemsEvent>, IHa
         return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ImageSelectedEvent message, CancellationToken cancellationToken)
-    {
-        _selectedImage = message.ImageViewModel;
 
-        //Deselect from hear instead of aggregating yet another event to all of them.
-        foreach (var image in Images)
-            if (image != _selectedImage)
-                image.Selected = false;
+    public Task HandleAsync(BoardOpenedEvent message, CancellationToken cancellationToken)
+    {
+        ActiveReferenceBoard = message.Board;
+        InitializeRefBoard();
 
         return Task.CompletedTask;
     }
 
-    public void DeselectAll()
-    {
-        foreach (var image in Images)
-            image.Selected = false;
-    }
-
-    public Task HandleAsync(NewImageItemsEvent message, CancellationToken cancellationToken)
-    {
-        AddImageItems(message.Items);
-        
-        return Task.CompletedTask;
-    }
 }

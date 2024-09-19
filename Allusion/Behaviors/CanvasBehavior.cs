@@ -23,7 +23,7 @@ public class CanvasBehavior : Behavior<UIElement>
             element.DataContextChanged += OnDataContextChanged;
             GetDataContext();
             if(_mainViewModel is not null) 
-                _events = _mainViewModel.EventAggregator;
+                _events = _mainViewModel.Events;
         }
 
         AssociatedObject.MouseMove += OnMouseMove;
@@ -34,9 +34,7 @@ public class CanvasBehavior : Behavior<UIElement>
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (e.OriginalSource is not ImageControl)
-        {
-            _mainViewModel.DeselectAll();
-        }
+            _events.PublishOnBackgroundThreadAsync(new ImageSelectionEvent(null, SelectionType.DeSelect));
     }
 
     protected override void OnDetaching()

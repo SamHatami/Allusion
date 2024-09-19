@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
-namespace Allusion.WPFCore.Handlers;
+namespace Allusion.WPFCore.Managers;
 
 public class ReferenceBoardManager : IReferenceBoardManager
 {
@@ -21,7 +21,7 @@ public class ReferenceBoardManager : IReferenceBoardManager
         CurrentConfiguration = configuration;
     }
 
-    
+
 
     public ReferenceBoard? Open(string fullPath = "")
     {
@@ -55,7 +55,7 @@ public class ReferenceBoardManager : IReferenceBoardManager
     {
         board.Name = newName;
         var newFolder = Path.Combine(CurrentConfiguration.GlobalFolder, newName);
-        Directory.Move(board.BaseFolder,newFolder);
+        Directory.Move(board.BaseFolder, newFolder);
     }
 
     public async Task<bool> Save(ReferenceBoard referenceBoard)
@@ -75,9 +75,9 @@ public class ReferenceBoardManager : IReferenceBoardManager
         return saved;
     }
 
-    public BoardPage AddPage(ReferenceBoard board, string pageName ="")
+    public BoardPage AddPage(ReferenceBoard board, string pageName = "")
     {
-        var newPage = new BoardPage(board){Name = string.IsNullOrEmpty(pageName) ? $"{board.Pages.Count+1}" : pageName};
+        var newPage = new BoardPage(board) { Name = string.IsNullOrEmpty(pageName) ? $"{board.Pages.Count + 1}" : pageName };
         board.Pages.Add(newPage);
         return newPage;
     }
@@ -90,7 +90,7 @@ public class ReferenceBoardManager : IReferenceBoardManager
     private string[] GetAllRefBoardFolders()
     {
         return Directory.GetDirectories(CurrentConfiguration.GlobalFolder);
-    }   
+    }
 
     public RefBoardInfo[] GetAllRefBoardInfos()
     {

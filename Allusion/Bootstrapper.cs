@@ -5,13 +5,13 @@ using Allusion.Input;
 using Allusion.ViewModels;
 using Allusion.Views;
 using Allusion.WPFCore;
-using Allusion.WPFCore.Handlers;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using Autofac;
 using Autofac.Core;
 using Allusion.ViewModels.Dialogs;
 using IConfiguration = Allusion.WPFCore.IConfiguration;
+using Allusion.WPFCore.Managers;
 
 namespace Allusion;
 
@@ -32,7 +32,7 @@ public class Bootstrapper : BootstrapperBase
         //var builder = new ContainerBuilder();
 
         //builder.RegisterType<WindowManager>().AsImplementedInterfaces().SingleInstance();
-        //builder.RegisterType<EventAggregator>().AsImplementedInterfaces().SingleInstance();
+        //builder.RegisterType<Events>().AsImplementedInterfaces().SingleInstance();
         //builder.RegisterInstance(config).AsSelf();
         //builder.RegisterType<ReferenceBoardManager>().AsImplementedInterfaces().SingleInstance();
 
