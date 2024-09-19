@@ -10,8 +10,8 @@ using Caliburn.Micro;
 using Autofac;
 using Autofac.Core;
 using Allusion.ViewModels.Dialogs;
-using IConfiguration = Allusion.WPFCore.IConfiguration;
 using Allusion.WPFCore.Managers;
+using Allusion.WPFCore.Service;
 
 namespace Allusion;
 
@@ -28,27 +28,17 @@ public class Bootstrapper : BootstrapperBase
     {
         CreateKeyMagic();
         ConfigMessageBinder();
-        var config = IConfiguration.Read();
-        //var builder = new ContainerBuilder();
-
-        //builder.RegisterType<WindowManager>().AsImplementedInterfaces().SingleInstance();
-        //builder.RegisterType<Events>().AsImplementedInterfaces().SingleInstance();
-        //builder.RegisterInstance(config).AsSelf();
-        //builder.RegisterType<ReferenceBoardManager>().AsImplementedInterfaces().SingleInstance();
-
-        //builder.RegisterType<MainViewModel>().AsSelf().SingleInstance();
-        //builder.RegisterType<OpenRefBoardViewModel>().AsSelf().InstancePerRequest();
-        //builder.RegisterType<NewRefBoardViewModel>().AsSelf().InstancePerRequest();
-        //builder.RegisterType<DialogViewModel>().AsSelf().InstancePerRequest();
-
-        //container = builder.Build();
-
+        var config = AllusionConfiguration.Read();
         _container = new SimpleContainer();
 
         _container.Singleton<IWindowManager, WindowManager>();
         _container.Singleton<IEventAggregator, EventAggregator>();
+        _container.PerRequest<IBitmapService, BitmapService>();
+        _container.Singleton<IClipboardService, ClipboardService>();
+
         _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
-        _container.RegisterInstance(typeof(IConfiguration),"Config",config);
+        _container.Singleton<IPageManager, PageManager>();
+        _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
         _container.PerRequest<MainViewModel>();
         _container.PerRequest<OpenRefBoardViewModel>();
         _container.PerRequest<NewRefBoardViewModel>();

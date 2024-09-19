@@ -11,11 +11,11 @@ namespace Allusion.WPFCore.Managers;
 
 public class ReferenceBoardManager : IReferenceBoardManager
 {
-    public IConfiguration CurrentConfiguration { get; private set; }
+    public AllusionConfiguration CurrentConfiguration { get; private set; }
     private readonly IEventAggregator _events;
     private BitmapService _bitmapService = new();
 
-    public ReferenceBoardManager(IEventAggregator events, IConfiguration configuration)
+    public ReferenceBoardManager(IEventAggregator events, AllusionConfiguration configuration)
     {
         _events = events;
         CurrentConfiguration = configuration;

@@ -11,11 +11,12 @@ public class PageManager : IPageManager
     private readonly ImageItemService _imageItemService;
     private readonly IEventAggregator _events;
 
-    public PageManager(ImageItemService imageItemService)
+    public PageManager(IEventAggregator events, IClipboardService clipboardService)
     {
-        _imageItemService = imageItemService;
+        _events = events;
+        _imageItemService = new ImageItemService(events, clipboardService);
     }
-
+    
     public void AddImage(ImageItem imageItem, BoardPage page)
     {
         var nrFiles = Directory.GetFiles(page.PageFolder).Length;

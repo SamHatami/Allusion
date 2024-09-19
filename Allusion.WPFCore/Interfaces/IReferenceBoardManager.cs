@@ -7,7 +7,7 @@ namespace Allusion.WPFCore.Interfaces;
 
 public interface IReferenceBoardManager
 {
-    public IConfiguration CurrentConfiguration { get; } //as IAllusionConfiguration
+    public AllusionConfiguration CurrentConfiguration { get; } //as IAllusionConfiguration
 
     public ReferenceBoard Open(string fullPath = "");
 

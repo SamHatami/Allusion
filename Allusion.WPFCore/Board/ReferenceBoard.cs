@@ -1,15 +1,11 @@
-﻿using System.Diagnostics;
-using Allusion.WPFCore.Service;
+﻿using Allusion.WPFCore.Utilities;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows.Documents;
-using Allusion.WPFCore.Interfaces;
-using Allusion.WPFCore.Utilities;
-using Microsoft.VisualBasic;
 
 namespace Allusion.WPFCore.Board;
 
+[Serializable]
 public class ReferenceBoard
 {
     public string Name { get; set; }
@@ -18,24 +14,24 @@ public class ReferenceBoard
 
     public List<BoardPage> Pages { get; set; } = [];
 
-
     public ReferenceBoard(string name, string baseFolder)
     {
         Name = name;
         BaseFolder = baseFolder;
-        BackupFolder = Path.Combine(BaseFolder, "Old");
 
+
+
+        Intialize();
+    }
+
+    private void Intialize()
+    {
+        BackupFolder = Path.Combine(BaseFolder, "Old");
         Directory.CreateDirectory(BaseFolder);
         Directory.CreateDirectory(Path.Combine(BackupFolder));
 
-        IntializePages();
-    }
-
-    private void IntializePages()
-    {
         if (Pages.Count == 0)
             Pages.Add(new BoardPage(this));
-        
     }
 
     public static ReferenceBoard? Read(string projectFileFullPath)
@@ -43,8 +39,18 @@ public class ReferenceBoard
         if (!File.Exists(projectFileFullPath)) return null;
 
         var projectJson = File.ReadAllText(projectFileFullPath);
+        ReferenceBoard project = null;
 
-        var project = JsonSerializer.Deserialize<ReferenceBoard>(projectJson);
+        try
+        {
+            project = JsonSerializer.Deserialize<ReferenceBoard>(projectJson);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
 
         return project;
     }
@@ -65,6 +71,7 @@ public class ReferenceBoard
                 RemoveDeletedImages(page);
                 SaveImagesToDisc(page);
             }
+
             saveSuccess = true;
         }
         catch (Exception e)
@@ -82,15 +89,15 @@ public class ReferenceBoard
         var items = page.ImageItems.Select(i => i.ItemPath).ToArray();
         foreach (var path in imagePaths)
         {
-            if(items.Contains(path)) continue;
+            if (items.Contains(path)) continue;
 
             //TODO: Create separate fileName helper ?  for both creation and backup
             var toFile = Path.Combine(
-                page.BackupFolder, 
-                DateTime.Today.ToShortDateString()+"_"+
+                page.BackupFolder,
+                DateTime.Today.ToShortDateString() + "_" +
                 Path.GetFileName(path));
 
-            File.Move(path,toFile);
+            File.Move(path, toFile);
         }
     }
 
@@ -100,10 +107,8 @@ public class ReferenceBoard
             Directory.CreateDirectory(board.BackupFolder);
     }
 
-    
     private static string[] GetImagePathsFromFolder(BoardPage page)
     {
-
         var allFiles = Directory.GetFiles(page.PageFolder);
         var imagePaths = allFiles.Where(f => f.EndsWith(".png")).ToArray();
 

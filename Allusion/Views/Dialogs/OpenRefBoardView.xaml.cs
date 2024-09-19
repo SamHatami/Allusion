@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Allusion.Views;
+namespace Allusion.Views.Dialogs;
 
 /// <summary>
 /// Interaction logic for OperRefBoardView.xaml

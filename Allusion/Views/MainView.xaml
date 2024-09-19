@@ -17,32 +17,14 @@
         Topmost="True"
 
         cm:Message.Attach="
-        [Gesture Ctrl+Z] = [UndoRemove];
         [Gesture Ctrl+V] = [PasteOnCanvas];
-        [Gesture Ctrl+O] = [OpenRefBoardDialog];
         [Gesture Ctrl+S] = [Save];
-        [Gesture Ctrl+N] = [NewRefBoardDialog];
-        [Key Remove] = [Remove]">
+        [Gesture Ctrl+O] = [OpenRefBoardDialog];
+        [Gesture Ctrl+N] = [NewRefBoardDialog];">
 
     <Window.Resources>
         <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
-        <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
-            <Setter Property="Width" Value="15" />
-            <Setter Property="Height" Value="15" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Thumb">
-                        <Grid>
-                            <Polygon Fill="#353535"  StrokeThickness="0"
-                                     Points="10,-5 -5,10 10,10" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+       
 
         <!-- Style for the ContextMenu -->
         <Style TargetType="ContextMenu">
@@ -97,63 +79,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="#272524" x:Name="InfoCanvas" IsHitTestVisible="True">
-            <TextBox BorderThickness="0"
-                     IsHitTestVisible="True"
-                     Margin="5"
-                     Background="Transparent"
-                     Text ="{Binding ActiveRefBoardName, UpdateSourceTrigger=PropertyChanged}" 
-                     IsReadOnly="{Binding SettingBoardName, Converter={StaticResource InverseBoolConverter}}"
-                     cm:Message.Attach="[Event MouseDoubleClick] = [EditBoardName]; [Key Enter] = [EditBoardName];"
-                     Focusable="True"/>
-
-            <!--Enable rename here by double click-->
-        </Grid>
-        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Transparent" AllowDrop="True">
-            <Canvas.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Paste" IsEnabled="True"  cm:Message.Attach="[PasteOnCanvas]"/>
-                    <MenuItem Header="Save"  cm:Message.Attach="[Save]"/>
-                    <MenuItem Header="Option 3" />
-                </ContextMenu>
-            </Canvas.ContextMenu>
-            <b:Interaction.Behaviors>
-                <behaviors:CanvasBehavior />
-            </b:Interaction.Behaviors>
-            <ItemsControl ItemsSource="{Binding Images}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid     Width="{Binding  ImageSource.Width}"
-                                  Height="{Binding ImageSource.Height}">
-                            <ContentControl cm:View.Model="{Binding}" IsHitTestVisible="True" />
-                            <Thumb x:Name="ResizeThumb" Width="10" Height="10"
-                                                       VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                                                       DragDelta="OnResizeThumbDragDelta"
-                                                       Background="Gray"
-                                                       Style="{StaticResource TriangleThumbStyle}" />
-                            <!--<fav:IconImage Icon="Cross" x:Name="MoveCrossIcon" />-->
-
-                            <b:Interaction.Behaviors>
-                                <behaviors:ImageBehavior />
-                            </b:Interaction.Behaviors>
-
-                        </Grid>
-                 
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemContainerStyle>
-                    <Style>
-                        <Setter Property="Canvas.Left" Value="{Binding PosX, Mode = TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <Setter Property="Canvas.Top" Value="{Binding PosY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-            </ItemsControl>
-        </Canvas>
-
+        <ContentControl Grid.Row="1" cm:View.Model="{Binding RefBoardViewModel}"/>
     </Grid>
 </Window>

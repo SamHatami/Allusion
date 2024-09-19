@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace Allusion.WPFCore;
 
 [Serializable]
-public class AllusionConfiguration : IConfiguration
+public class AllusionConfiguration 
 {
     private string _globalFolder = string.Empty;
 
@@ -29,19 +29,19 @@ public class AllusionConfiguration : IConfiguration
     public static string DataFolder { get; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Allusion");
 
-    private static string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "IConfiguration.json");
+    private static string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "AllusionConfiguration.json");
 
-    public static IConfiguration Read()
+    public static AllusionConfiguration Read()
     {
         if (!File.Exists(_configPath)) CreateNew();
 
         var rawFile = File.ReadAllText(_configPath);
-        var configuration = JsonSerializer.Deserialize<IConfiguration>(rawFile);
+        var configuration = JsonSerializer.Deserialize<AllusionConfiguration>(rawFile);
 
         return configuration;
     }
 
-    public static void Save(IConfiguration config)
+    public static void Save(AllusionConfiguration config)
     {
         File.WriteAllText(_configPath, JsonSerializer.Serialize(config));
     }

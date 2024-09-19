@@ -3,10 +3,11 @@ using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 using System.Windows.Input;
 using System.Windows.Media;
+using Allusion.WPFCore.Interfaces;
 
 namespace Allusion.ViewModels;
 
-public class ImageViewModel : Screen
+public class ImageViewModel : PropertyChangedBase, IRemovableItem
 {
     private ImageItem _item;
     private readonly IEventAggregator _events;

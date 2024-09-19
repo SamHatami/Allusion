@@ -2,10 +2,11 @@
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
+using Allusion.WPFCore.Managers;
 using Caliburn.Micro;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
+using Allusion.Views;
+using Allusion.WPFCore;
 
 namespace Allusion.ViewModels;
 
@@ -17,96 +18,36 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     public bool Saving;
     public bool Loading;
 
+    private bool BoardIsModified; //TODO: Byt till BoardState
 
-    
-    private ImageViewModel _selectedImage;
+    private ReferenceBoard _currentRefBoard { get; set; }
 
-    public BindableCollection<PageViewModel> Pages { get; set; } = [];
-    
-    public BindableCollection<ImageViewModel> Images { get; set; } = [];
-
-    private List<ImageViewModel> _imageBin = [];
-
-    private bool BoardIsModified; //TODO: Byt till BoardState 
-
-    private ReferenceBoard _activeReferenceBoard;
-    public ReferenceBoard ActiveReferenceBoard
+    private ReferenceBoardViewModel _refBoardViewModel;
+    public ReferenceBoardViewModel RefBoardViewModel
     {
-        get => _activeReferenceBoard;
-        set { _activeReferenceBoard = value; NotifyOfPropertyChange(nameof(ActiveRefBoardName)); }
-    }
-
-    private BoardPage _activeBoardPage;
-
-    public BoardPage ActiveBoardPage
-    {
-        get => _activeBoardPage;
+        get => _refBoardViewModel;
         set
         {
-            _activeBoardPage = value;
-            NotifyOfPropertyChange(nameof(ActiveBoardPage));
+            _refBoardViewModel = value;
+            NotifyOfPropertyChange(nameof(RefBoardViewModel));
         }
     }
 
-    private string _activeRefBoardName;
-    public string ActiveRefBoardName
-    {
-        get => _activeRefBoardName;
-        set
-        {
-            _activeRefBoardName = value;
-            NotifyOfPropertyChange(nameof(ActiveRefBoardName));
-            if (SettingBoardName)
-                ActiveReferenceBoard.Name = ActiveRefBoardName;
-        }
-    }
-
-    private string _text;
-    public IReferenceBoardManager BoardManager { get; }
-    public IEventAggregator Events { get; }
-    private IWindowManager _windowManager;
-
-    private bool _settingBoardName;
-
-    public bool SettingBoardName
-    {
-        get => _settingBoardName;
-        set
-        {
-            _settingBoardName = value;
-            NotifyOfPropertyChange(nameof(SettingBoardName));
-        }
-    }
-
-    public string Text
-    {
-        get => _text;
-        set
-        {
-            _text = value;
-            NotifyOfPropertyChange(nameof(Text));
-        }
-    }
+    private readonly IEventAggregator _events;//
+    private readonly IReferenceBoardManager _boardManager;
+    private readonly IWindowManager _windowManager;
+    private readonly AllusionConfiguration _configuration;
 
     public MainViewModel(IWindowManager windowManager, IEventAggregator events,
-        IReferenceBoardManager refBoardManager)
+        IReferenceBoardManager refBoardManager, AllusionConfiguration configuration)
     {
         _windowManager = windowManager;
-        Events = events;
-        Events.SubscribeOnBackgroundThread(this);
-        BoardManager = refBoardManager;
-        SettingBoardName = false;
+        _configuration = configuration;
+        _events = events;
+        _events.SubscribeOnBackgroundThread(this);
+        _boardManager = refBoardManager;
     }
 
-    public void EditBoardName()
-    {
-        SettingBoardName = !_settingBoardName;
-    }
-
-    public void FitToView()
-    {
-        //Perhaps use https://github.com/ThomasMiz/RectpackSharp
-    }
 
     private DialogResultType ShowBoardModifiedSaveDialog()
     {
@@ -127,7 +68,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
             switch (dialogResult)
             {
                 case DialogResultType.Yes:
-                    await SaveRefBoard();
+                    await _refBoardViewModel.Save();
                     ShowNewRefBoardDialog();
                     break;
 
@@ -157,7 +98,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
             switch (dialogResult)
             {
                 case DialogResultType.Yes:
-                    await SaveRefBoard();
+                    await _refBoardViewModel.Save();
                     await ShowOpenBoardDialog();
                     break;
 
@@ -176,70 +117,31 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     private async Task ShowOpenBoardDialog()
     {
-        var option = await _windowManager.ShowDialogAsync(IoC.Get<OpenRefBoardViewModel>()) ?? false;
-
-        if (option) InitializeRefBoard();
-    }
-
-    public async Task SaveRefBoard()
-    {
-        var imageItems = Images.Select(i => i.Item).ToArray();
-
-        await BoardManager.Save(_activeReferenceBoard);
-        //needs to be sent from viewport so positions and scale can be transfered
-
-        BoardIsModified = false;
-    }
-
-    private void InitializeRefBoard()
-    {
-        BoardIsModified = false;
-        ActiveRefBoardName = BoardManager.CurrentRefBoard.Name;
-        _activeBoardPage = BoardManager.CurrentRefBoard.Pages[0];
-        Images.Clear();
-
-        foreach (var imageItem in _activeBoardPage.ImageItems)
-            Images.Add(new ImageViewModel(imageItem, _events)
-            {
-                PosX = imageItem.PosX,
-                PosY = imageItem.PosY
-            });
+        await _windowManager.ShowDialogAsync(IoC.Get<OpenRefBoardViewModel>());
     }
 
     public async Task PasteOnCanvas()
     {
-        Events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent())
-        var items = await BoardManager.GetPastedImageItems(0);
-
-        AddImageItems(items);
+        await _events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent());
     }
-
-
-
 
     public void Remove() //Key: Remove
     {
-        _imageBin.Add(Images.Single(i => i == _selectedImage));
-
-        Images.Remove(_selectedImage);
-        BoardManager.RemoveImage(_selectedImage.Item);
+        //DeleteEvent -> any pageviewmodel who has the state active + selected image will remove that
     }
 
     public void UndoRemove() //Key Gesture: Ctrl-z
     {
-        //TODO: Not done. Mind black out
-        if (_imageBin.Count == 0) return;
 
-        Images.Add(_imageBin.Last());
-
-        _imageBin.RemoveAt(_imageBin.Count - 1);
     }
 
-
-
+    public async Task Save()
+    {
+        await RefBoardViewModel.Save();
+    }
     public Task HandleAsync(NewRefBoardEvent message, CancellationToken cancellationToken)
     {
-        BoardManager.CreateNew(message.Name);
+        _currentRefBoard = _boardManager.CreateNew(message.Name);
         InitializeRefBoard();
 
         return Task.CompletedTask;
@@ -252,13 +154,18 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         return Task.CompletedTask;
     }
 
-
     public Task HandleAsync(BoardOpenedEvent message, CancellationToken cancellationToken)
     {
-        ActiveReferenceBoard = message.Board;
+        _currentRefBoard = message.Board;
         InitializeRefBoard();
 
         return Task.CompletedTask;
     }
 
+    private void InitializeRefBoard()
+    {
+        BoardIsModified = false;
+        Debug.Assert(_boardManager is not null, "Holup");
+        RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard);
+    }
 }

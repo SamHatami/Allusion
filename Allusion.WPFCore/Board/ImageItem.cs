@@ -10,8 +10,7 @@ namespace Allusion.WPFCore.Board;
 [Serializable]
 public class ImageItem : IItem
 {
-    private readonly IBitmapService _bitmapService;
-    private readonly ImageItemService _itemService;
+
     public string ItemPath { get; set; }
     public double PosX { get; set; }
     public double PosY { get; set; }
@@ -19,6 +18,9 @@ public class ImageItem : IItem
     public string Description { get; set; } = string.Empty;
     public Guid MemberOfPage { get; set; } = Guid.Empty;
 
+
+    [JsonIgnore] private readonly IBitmapService _bitmapService = new BitmapService();
+    [JsonIgnore] private readonly ImageItemService _itemService;
     [JsonIgnore] private BitmapImage _sourceImage;
     [JsonIgnore] public BitmapImage SourceImage
     {
@@ -37,9 +39,8 @@ public class ImageItem : IItem
     [JsonIgnore] private bool _loaded;
 
     [JsonConstructor]
-    public ImageItem(string itemPath, double posX, double posY, double scale, IBitmapService bitmapService)
+    public ImageItem(string itemPath, double posX, double posY, double scale)
     {
-        _bitmapService = bitmapService;
         ItemPath = itemPath;
         PosX = posX;
         PosY = posY;

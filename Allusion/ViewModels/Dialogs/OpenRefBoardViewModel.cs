@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Allusion.WPFCore.Board;
-using Allusion.WPFCore.Handlers;
+using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 
@@ -70,7 +70,7 @@ namespace Allusion.ViewModels.Dialogs
                 //TODO: Some message or exception here?
                 return Task.CompletedTask;
 
-            _events.PublishOnBackgroundThreadAsync(openedRefBoard);
+            _events.PublishOnBackgroundThreadAsync(new BoardOpenedEvent(openedRefBoard));
             return TryCloseAsync(true);
         }
 

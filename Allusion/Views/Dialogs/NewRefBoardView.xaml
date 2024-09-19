@@ -1,4 +1,4 @@
-﻿<Window x:Class="Allusion.Views.NewRefBoardView"
+﻿<Window x:Class="Allusion.Views.Dialogs.NewRefBoardView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Create new ReferenceBoard"  Width="300" WindowStartupLocation="CenterOwner"
         SizeToContent="Height" WindowStyle="None"
-        xmlns:viewModels="clr-namespace:Allusion.ViewModels"
-        d:DataContext="{d:DesignInstance Type=viewModels:NewRefBoardViewModel}"
+        xmlns:dialogs="clr-namespace:Allusion.ViewModels.Dialogs"
+        d:DataContext="{d:DesignInstance Type=dialogs:NewRefBoardViewModel}"
         cm:Message.Attach=
         "[Key Escape] = [Cancel];
         [Key Enter] = [Ok]">

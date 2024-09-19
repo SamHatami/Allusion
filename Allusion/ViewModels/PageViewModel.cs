@@ -8,10 +8,12 @@ using Caliburn.Micro;
 
 namespace Allusion.ViewModels;
 
-public class PageViewModel : PropertyChangedBase, IHandle<NewImageItemsEvent>, IHandle<ImageSelectionEvent>
+public class PageViewModel : PropertyChangedBase , IRemovableItem, IItemOwner,IHandle<NewImageItemsEvent>, IHandle<ImageSelectionEvent>
 {
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
+
+    private bool _isActive;
 
     private ImageViewModel _selectedImage;
     public ImageViewModel SelectedImage
@@ -20,48 +22,48 @@ public class PageViewModel : PropertyChangedBase, IHandle<NewImageItemsEvent>, I
         set { _selectedImage = value; NotifyOfPropertyChange(nameof(SelectedImage));}
     } //Bound to DependencyObject in View
 
-    private string _activePageName;
-    public string ActivePageName
+    private string _displayName;
+    public string DisplayName
     {
-        get => _activePageName;
+        get => _displayName;
         set
         {
-            _activePageName = value;
-            NotifyOfPropertyChange(nameof(ActivePageName));
+            _displayName = value;
+            NotifyOfPropertyChange(nameof(DisplayName));
         }
     }
-
-
-    private BoardPage _activePage;
-    public BoardPage ActivePage
+    
+    private BoardPage _page;
+    public BoardPage Page
     {
-        get => _activePage;
+        get => _page;
         set
         {
-            _activePage = value;
-            NotifyOfPropertyChange(nameof(ActivePage));
+            _page = value;
+            NotifyOfPropertyChange(nameof(Page));
         }
     }
 
     public BindableCollection<ImageViewModel> Images { get; set; }
-    private List<ImageViewModel> _imageBin; //remove action temporary holds objects here
 
     public PageViewModel(IPageManager pageManager, IEventAggregator events, BoardPage page)
     {
         _pageManager = pageManager;
         _events = events;
-        _activePage = page;
+        _page = page;
         _events.SubscribeOnBackgroundThread(this);
         Images = new BindableCollection<ImageViewModel>();
 
         InitializePage();
     }
 
+
     private void InitializePage()
     {
         //BoardIsModified = false;
+        if(_page.ImageItems is null) return;
 
-        foreach (var imageItem in _activePage.ImageItems)
+        foreach (var imageItem in _page.ImageItems)
             Images.Add(new ImageViewModel(imageItem, _events)
             {
                 PosX = imageItem.PosX,
@@ -74,10 +76,11 @@ public class PageViewModel : PropertyChangedBase, IHandle<NewImageItemsEvent>, I
         var itemsAdded = false;
         foreach (var item in items)
         {
-            if (ActivePage.ImageItems.Contains(item)) 
+            if (Page.ImageItems.Contains(item)) 
                 continue; //override contains and isequal with a bitmap service comparor something
 
             Images.Add(new ImageViewModel(item, _events));
+            Page.ImageItems.Add(item);
             itemsAdded = true;
 
         }
@@ -94,6 +97,12 @@ public class PageViewModel : PropertyChangedBase, IHandle<NewImageItemsEvent>, I
     {
 
     }
+
+    public void FitToView()
+    {
+        //Perhaps use https://github.com/ThomasMiz/RectpackSharp
+    }
+
 
     public Task HandleAsync(NewImageItemsEvent message, CancellationToken cancellationToken)
     {
@@ -117,7 +126,7 @@ public class PageViewModel : PropertyChangedBase, IHandle<NewImageItemsEvent>, I
                 _selectedImage = message.ImageViewModel;
                 break;
         }
-        _selectedImage = message.ImageViewModel;
+        SelectedImage = message.ImageViewModel;
 
         //Deselect from hear instead of aggregating yet another event to all of them.
         foreach (var image in Images)
@@ -126,4 +135,11 @@ public class PageViewModel : PropertyChangedBase, IHandle<NewImageItemsEvent>, I
 
         return Task.CompletedTask;
     }
+
+    public void ReAddItem(IRemovableItem item) // Used by the sessionmanager
+    {
+        if(item is ImageViewModel image)
+            Images.Add(image);
+    }
+
 }

@@ -3,17 +3,17 @@ using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Interfaces;
 using Allusion.WPFCore.Utilities;
 
 namespace Allusion.WPFCore.Service;
 
-public class ImageItemService : IHandle<DragDropEvent> 
+public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEvent>
 {
     private readonly IEventAggregator _events;
-    private readonly ClipboardService _clipboardService;
-    private BitmapService _bitmapService = new();
+    private readonly IClipboardService _clipboardService;
 
-    public ImageItemService(IEventAggregator events, ClipboardService clipboardService)
+    public ImageItemService(IEventAggregator events, IClipboardService clipboardService)
     {
         _events = events;
         _clipboardService = clipboardService;
@@ -24,23 +24,23 @@ public class ImageItemService : IHandle<DragDropEvent>
     {
         var bitmaps = await _clipboardService.GetPastedBitmaps();
 
-        CreateAndPublishItems(bitmaps);
+        await CreateAndPublishItems(bitmaps);
     }
 
-    private void CreateAndPublishItems(BitmapImage?[] bitmaps)
+    private async Task CreateAndPublishItems(BitmapImage?[] bitmaps)
     {
         List<ImageItem> items = [];
 
         var imageItems = bitmaps.Select(bitmap => CreateImageItemFromBitmapImages(bitmap)).ToArray();
 
-        _events.PublishOnBackgroundThreadAsync(new NewImageItemsEvent(imageItems));
+        await _events.PublishOnBackgroundThreadAsync(new NewImageItemsEvent(imageItems));
     }
 
     public async Task GetDroppedImageItems(IDataObject dataobject) //allt detta ska till clipboardservice?
     {
         var bitmaps = await _clipboardService.GetDroppedOnCanvasBitmaps(dataobject);
 
-        CreateAndPublishItems(bitmaps);
+        await CreateAndPublishItems(bitmaps);
     }
 
     public ImageItem CreateImageItemFromBitmapImages(BitmapImage bitmap)
@@ -49,13 +49,19 @@ public class ImageItemService : IHandle<DragDropEvent>
 
         var path = BitmapUtils.GetUrl(bitmap);
 
-        var item = new ImageItem(path, randomPos, randomPos, 1, _bitmapService);
+        var item = new ImageItem(path, randomPos, randomPos, 1);
         item.SetSourceImage(bitmap);
         return item;
     }
 
     public async Task HandleAsync(DragDropEvent message, CancellationToken cancellationToken)
     {
-        await GetDroppedImageItems(message.DataObject);
+        var dropPoint = message.DropPosition; //Do something useful with this.
+        await GetDroppedImageItems(message.DataObject); //published from CanvasBehavior
+    }
+
+    public async Task HandleAsync(PasteOnCanvasEvent message, CancellationToken cancellationToken)
+    {
+        await GetPastedImageItems(); //published from MainViewModel
     }
 }
