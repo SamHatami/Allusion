@@ -71,7 +71,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     private void InitializePage()
     {
-
+         //Remove any imageitems without valid files.
+        _pageManager.CleanPage(_page);
         //BoardIsModified = false;
         if (_page.ImageItems is null) return;
 

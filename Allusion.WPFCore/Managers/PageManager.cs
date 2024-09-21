@@ -16,7 +16,24 @@ public class PageManager : IPageManager
         _events = events;
         _imageItemService = new ImageItemService(events, clipboardService);
     }
-    
+
+    //Health check if there a hidden items or some other issues that might arrive in the future
+    public void CleanPage(BoardPage page)
+    {
+        List<ImageItem> itemsToRemove = new List<ImageItem>();
+        foreach (var item in page.ImageItems)
+        {
+            if (!File.Exists(item.ItemPath))
+                itemsToRemove.Add(item);
+        }
+
+        foreach (var item in itemsToRemove)
+        {
+            page.ImageItems.Remove(item);
+
+        }
+
+    }
     public void AddImage(ImageItem imageItem, BoardPage page)
     {
         var randomFileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
@@ -30,6 +47,7 @@ public class PageManager : IPageManager
         page.ImageItems.Add(imageItem);
 
     }
+
 
     public void AddNoteToImage(ImageItem item, BoardPage page, NoteItem note)
     {
@@ -62,7 +80,7 @@ public class PageManager : IPageManager
 
         foreach (var item in page.ImageItems)
         {
-            item.ItemPath.Replace(directory, newDirectory);
+            item.ItemPath = item.ItemPath.Replace(directory, newDirectory);
         }
     }
 

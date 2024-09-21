@@ -4,6 +4,7 @@ namespace Allusion.WPFCore.Interfaces;
 
 public interface IPageManager
 {
+    public void CleanPage(BoardPage page);
     public void AddImage(ImageItem item, BoardPage page);
 
     public void RemoveImage(ImageItem item, BoardPage page);
