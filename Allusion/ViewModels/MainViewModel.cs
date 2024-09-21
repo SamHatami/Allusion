@@ -22,8 +22,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     private ReferenceBoard _currentRefBoard { get; set; }
 
-    private ReferenceBoardViewModel _refBoardViewModel;
-    public ReferenceBoardViewModel RefBoardViewModel
+    private ReferenceBoardViewModel? _refBoardViewModel;
+    public ReferenceBoardViewModel? RefBoardViewModel
     {
         get => _refBoardViewModel;
         set
@@ -128,6 +128,12 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     public void Remove() //Key: Remove
     {
         //DeleteEvent -> any pageviewmodel who has the state active + selected image will remove that
+        RefBoardViewModel?.RemoveSelectedImage();
+    }
+
+    public void RemovePage()
+    {
+            RefBoardViewModel?.RemoveActivePage();
     }
 
     public void UndoRemove() //Key Gesture: Ctrl-z
@@ -137,6 +143,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public async Task Save()
     {
+        if(RefBoardViewModel is null) return;
         await RefBoardViewModel.Save();
     }
     public Task HandleAsync(NewRefBoardEvent message, CancellationToken cancellationToken)

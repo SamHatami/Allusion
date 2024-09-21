@@ -1,14 +1,13 @@
 ﻿using Allusion.WPFCore.Extensions;
-using System.Diagnostics;
+using Allusion.WPFCore.Interfaces;
+using Caliburn.Micro;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Allusion.WPFCore.Interfaces;
-using Caliburn.Micro;
 
 namespace Allusion.WPFCore.Service;
 
-public class ClipboardService: IClipboardService
+public class ClipboardService : IClipboardService
 {
     private readonly IEventAggregator _events;
     private readonly DataObjectImageExtractor _dataObjectImageExtractor;
@@ -20,34 +19,54 @@ public class ClipboardService: IClipboardService
         _bitmapService = bitmapService;
         _dataObjectImageExtractor = new DataObjectImageExtractor(_bitmapService);
     }
-    public async Task<BitmapImage?[]> GetPastedBitmaps() 
+
+    public async Task<BitmapImage?[]> GetPastedBitmaps()
     {
-        //TODO: Convert to strategy-pattern
         List<BitmapImage?> bitmapImages = new();
+        IDataObject? pastedUriObject = null;
 
-        if (Clipboard.ContainsText()) //When pasting SourceImage Uri from web
+        // Access the clipboard on the UI thread
+        if (Clipboard.ContainsText()) // When pasting SourceImage Uri from web
         {
-            var pastedUriObject = Clipboard.GetDataObject();
+            pastedUriObject = Clipboard.GetDataObject();
+            var bitmapSources = await _dataObjectImageExtractor.GetWebBitmapAsync(pastedUriObject)
+                                    ?? _bitmapService.GetFromUri(
+                                        _dataObjectImageExtractor.GetLocalFileUrl(pastedUriObject));
 
-            var bitmapSources = await _dataObjectImageExtractor.GetWebBitmapAsync(pastedUriObject) ?? _bitmapService.GetFromUri(_dataObjectImageExtractor.GetLocalFileUrl(pastedUriObject));
+                bitmapImages.Add(bitmapSources.ConvertToBitmapImage());
+        }
+        else if (Clipboard.ContainsImage()) // Usually copy/paste single from web or snapshot
+        {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    bitmapImages.Add(GetImage());
+                });
+        
+        }
+        else if (Clipboard.ContainsFileDropList()) // Usually copy/paste single or multi from system
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                bitmapImages.AddRange(GetImagesFromClipboard());
 
-            bitmapImages.Add(bitmapSources.ConvertToBitmapImage());
+            });
         }
-        else if (Clipboard.ContainsImage()) //Usually copy/paste single from web or snapshot
-        {
-            var pasteFromWeb = Clipboard.GetImage();
-            var bitmapImage = pasteFromWeb.ConvertToBitmapImage();
-            bitmapImages.Add(bitmapImage);
-        }
-        else if (Clipboard.ContainsFileDropList()) //usually copy/paste single or multi from system
-        {
-            bitmapImages.AddRange(GetImagesFromClipboard());
-        }
+
+        // If a web bitmap needs to be fetched asynchronously
 
         return bitmapImages.ToArray();
     }
 
-    public async Task<BitmapImage?[]>? GetDroppedOnCanvasBitmaps(IDataObject droppedObject) //should not handle SourceImage items
+    private BitmapImage GetImage()
+    {
+        var pasteFromWeb = Clipboard.GetImage();
+        var bitmapImage = pasteFromWeb.ConvertToBitmapImage();
+
+        return bitmapImage;
+    }
+
+    public async Task<BitmapImage?[]>?
+        GetDroppedOnCanvasBitmaps(IDataObject droppedObject) //should not handle SourceImage items
     {
         //TODO: Convert to strategy-pattern
         List<BitmapImage> bitmapImages = [];
@@ -78,6 +97,8 @@ public class ClipboardService: IClipboardService
                 if (IsImageFile(file))
                     try
                     {
+                        //UI-Thread
+
                         var image = new BitmapImage(new Uri(file));
                         images.Add(image);
                     }
@@ -96,7 +117,4 @@ public class ClipboardService: IClipboardService
         string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tif", ".tga" };
         return imageExtensions.Contains(Path.GetExtension(filePath).ToLower());
     }
-
-
 }
-

@@ -49,6 +49,8 @@ namespace Allusion.Views
 
             contentControl.Width = Math.Max(0, (contentControl.Width) * scaleFactor);
             contentControl.Height = Math.Max(0, (contentControl.Width) / aspectRatio);
+
+            vm.Scale = contentControl.Width / vm.ImageSource.Width;
         }
 
         private void ResizeThumb_OnDragCompleted(object sender, DragCompletedEventArgs e)

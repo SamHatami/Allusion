@@ -20,7 +20,8 @@
         [Gesture Ctrl+V] = [PasteOnCanvas];
         [Gesture Ctrl+S] = [Save];
         [Gesture Ctrl+O] = [OpenRefBoardDialog];
-        [Gesture Ctrl+N] = [NewRefBoardDialog];">
+        [Gesture Ctrl+N] = [NewRefBoardDialog];
+        [Key Delete] = [Remove]">
 
     <Window.Resources>
         <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>

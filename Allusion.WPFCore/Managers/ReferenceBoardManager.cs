@@ -77,7 +77,7 @@ public class ReferenceBoardManager : IReferenceBoardManager
 
     public BoardPage AddPage(ReferenceBoard board, string pageName = "")
     {
-        var newPage = new BoardPage(board) { Name = string.IsNullOrEmpty(pageName) ? $"{board.Pages.Count + 1}" : pageName };
+        var newPage = new BoardPage(board) { Name = string.IsNullOrEmpty(pageName) ? $"Untitled - {board.Pages.Count + 1}" : pageName };
         board.Pages.Add(newPage);
         return newPage;
     }

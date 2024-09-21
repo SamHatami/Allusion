@@ -31,6 +31,7 @@ public class ImageBehavior : Behavior<UIElement>
         
     }
 
+
     protected override void OnDetaching()
     {
         base.OnDetaching();
@@ -59,8 +60,11 @@ public class ImageBehavior : Behavior<UIElement>
         //move the icon aswell
         if (AssociatedObject.IsMouseCaptured)
         {
-            Canvas.SetLeft(_contentPresenter, e.GetPosition(_mainCanvas).X + _relativePosition.X);
-            Canvas.SetTop(_contentPresenter, e.GetPosition(_mainCanvas).Y + _relativePosition.Y);
+            var newLeft = e.GetPosition(_mainCanvas).X + _relativePosition.X;
+            Canvas.SetLeft(_contentPresenter, newLeft < 0 ? 0:newLeft);
+
+            var newRight = e.GetPosition(_mainCanvas).Y + _relativePosition.Y;
+            Canvas.SetTop(_contentPresenter, newRight <0 ? 0:newRight);
         }
 
         e.Handled = true;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,5 +25,19 @@ namespace Allusion.Views
         {
             InitializeComponent();
         }
+
+        private void OnRenameLostFocus(object sender, RoutedEventArgs e)
+        {
+            ((TextBox)sender).Visibility = Visibility.Collapsed;
+        }
+
+        private void OnRenameKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((TextBox)sender).Visibility = Visibility.Collapsed;
+            }
+        }
+
     }
 }

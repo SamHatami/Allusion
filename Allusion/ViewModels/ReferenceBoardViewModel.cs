@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Forms.VisualStyles;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
@@ -7,21 +8,21 @@ using Caliburn.Micro;
 
 namespace Allusion.ViewModels;
 
-public class ReferenceBoardViewModel : PropertyChangedBase
+public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelectedEvent>
 {
     private ReferenceBoard _board;
     private readonly IEventAggregator _events;
     private readonly IReferenceBoardManager _boardManager;
-    private readonly IPageManager _pageManager;
+    private readonly IPageManager _pageManager; 
     public BindableCollection<PageViewModel> Pages { get; private set; }
 
     public string BoardName { get; set; }
 
     public bool BoardIsSaved { get; set; }
 
-    private PageViewModel _activePageViewModel;
+    private IPageViewModel _activePageViewModel;
 
-    public PageViewModel ActivePageViewModel
+    public IPageViewModel ActivePageViewModel
     {
         get => _activePageViewModel;
         set
@@ -51,10 +52,15 @@ public class ReferenceBoardViewModel : PropertyChangedBase
         Pages.AddRange(_board.Pages.Select(p => new PageViewModel(_pageManager, _events, p)));
 
         ActivePageViewModel = Pages[0];
+        ActivePageViewModel.PageIsSelected = true;
     }
 
     public async Task Save()
     {
+        foreach (var page in Pages)
+        {
+            page.TransferImageItems();
+        }
         BoardIsSaved = await _boardManager.Save(_board);
         if(BoardIsSaved)
             _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(false));
@@ -69,5 +75,23 @@ public class ReferenceBoardViewModel : PropertyChangedBase
         Pages.Add(new PageViewModel(_pageManager,_events, newPage));
 
         ActivePageViewModel = Pages.Last();
+        ActivePageViewModel.SelectPage();
+    }
+
+    public Task HandleAsync(PageSelectedEvent message, CancellationToken cancellationToken)
+    {
+        ActivePageViewModel = message.Page;
+
+        return Task.CompletedTask;
+    }
+
+    public void RemoveSelectedImage()
+    {
+        ActivePageViewModel.DeleteSelectedImages();
+    }
+
+    public void RemoveActivePage()
+    {
+        
     }
 }

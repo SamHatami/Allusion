@@ -19,14 +19,16 @@ public class PageManager : IPageManager
     
     public void AddImage(ImageItem imageItem, BoardPage page)
     {
-        var nrFiles = Directory.GetFiles(page.PageFolder).Length;
+        var randomFileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
 
         if (page.ImageItems.Contains(imageItem)) return;
 
+        
+        var fullFileName = Path.Combine(page.PageFolder, randomFileName + ".png");
+        imageItem.ItemPath = fullFileName;
         imageItem.MemberOfPage = page.BoardId;
         page.ImageItems.Add(imageItem);
-        var fullFileName = Path.Combine(page.PageFolder, nrFiles + "_" + ".png");
-        imageItem.ItemPath = fullFileName;
+
     }
 
     public void AddNoteToImage(ImageItem item, BoardPage page, NoteItem note)
@@ -47,7 +49,21 @@ public class PageManager : IPageManager
 
     public void RenamePage(BoardPage page, string newName)
     {
+        if(string.Equals(page.Name,newName)) return;
+
         page.Name = newName;
+        var directory = Path.GetFileName(page.PageFolder);
+        var newDirectory = page.PageFolder.Replace(directory, newName);
+        
+        Directory.Move(page.PageFolder, newDirectory);
+
+        page.BackupFolder = page.BackupFolder.Replace(directory, newName);
+        page.PageFolder = newDirectory;
+
+        foreach (var item in page.ImageItems)
+        {
+            item.ItemPath.Replace(directory, newDirectory);
+        }
     }
 
 }

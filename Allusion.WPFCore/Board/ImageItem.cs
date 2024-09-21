@@ -39,9 +39,8 @@ public class ImageItem : IItem
     [JsonIgnore] private bool _loaded;
 
     [JsonConstructor]
-    public ImageItem(string itemPath, double posX, double posY, double scale)
+    public ImageItem(double posX, double posY, double scale)
     {
-        ItemPath = itemPath;
         PosX = posX;
         PosY = posY;
         Scale = scale;

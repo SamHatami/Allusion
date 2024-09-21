@@ -12,7 +12,6 @@
              d:DataContext="{d:DesignInstance Type=viewModels:PageViewModel}"
 
              cm:Message.Attach="
-             [Key Delete] = [Remove]; 
              [Gesture Ctrl+Z] = [UndoRemove];" 
               >
     <UserControl.Resources>
@@ -54,8 +53,8 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid Width="{Binding  ImageSource.Width}"
-                              Height="{Binding ImageSource.Height}">
+                        <Grid Width="{Binding  Width, Mode=OneTime}"
+                              Height="{Binding Height, Mode=OneTime}">
                             <ContentControl cm:View.Model="{Binding}" IsHitTestVisible="True" />
                             <Thumb x:Name="ResizeThumb" Width="10" Height="10"
                                    VerticalAlignment="Bottom" HorizontalAlignment="Right"

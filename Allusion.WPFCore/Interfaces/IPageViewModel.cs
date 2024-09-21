@@ -4,5 +4,12 @@ namespace Allusion.WPFCore.Interfaces;
 
 public interface IPageViewModel
 {
-    void SetActivePage(BoardPage page);
+    public bool PageIsSelected { get; set; }
+    public string DisplayName { get; }
+
+    public void TransferImageItems();
+
+    public void SelectPage();
+
+    void DeleteSelectedImages();
 }

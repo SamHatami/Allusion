@@ -25,7 +25,7 @@ public class CanvasBehavior : Behavior<UIElement>
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (e.OriginalSource is not ImageControl)
-            _events.PublishOnBackgroundThreadAsync(new ImageSelectionEvent(null, SelectionType.DeSelect));
+            _events.PublishOnUIThreadAsync(new ImageSelectionEvent(null, SelectionType.DeSelect));
     }
 
     protected override void OnDetaching()
@@ -43,7 +43,7 @@ public class CanvasBehavior : Behavior<UIElement>
         }
 
         var dropPoint = e.GetPosition(AssociatedObject);
-        await _events.PublishOnBackgroundThreadAsync(new DragDropEvent(e.Data, dropPoint));
+        await _events.PublishOnUIThreadAsync(new DragDropEvent(e.Data, dropPoint));
 
         e.Handled = true;
     }

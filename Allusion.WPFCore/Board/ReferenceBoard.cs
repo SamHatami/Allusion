@@ -19,8 +19,6 @@ public class ReferenceBoard
         Name = name;
         BaseFolder = baseFolder;
 
-
-
         Intialize();
     }
 
@@ -44,7 +42,6 @@ public class ReferenceBoard
         try
         {
             project = JsonSerializer.Deserialize<ReferenceBoard>(projectJson);
-
         }
         catch (Exception e)
         {
@@ -68,7 +65,7 @@ public class ReferenceBoard
             File.WriteAllText(RefBoardDataFile, JsonSerializer.Serialize(board));
             foreach (var page in board.Pages)
             {
-                RemoveDeletedImages(page);
+                BackupRemovedImages(page);
                 SaveImagesToDisc(page);
             }
 
@@ -83,22 +80,41 @@ public class ReferenceBoard
         return saveSuccess;
     }
 
-    private static void RemoveDeletedImages(BoardPage page)
+    private static void BackupRemovedImages(BoardPage page)
     {
         var imagePaths = GetImagePathsFromFolder(page);
+
+        if(imagePaths == null)
+        {
+            Trace.WriteLine("imagepath was null");
+            return;
+        }
         var items = page.ImageItems.Select(i => i.ItemPath).ToArray();
         foreach (var path in imagePaths)
         {
             if (items.Contains(path)) continue;
 
-            //TODO: Create separate fileName helper ?  for both creation and backup
-            var toFile = Path.Combine(
-                page.BackupFolder,
-                DateTime.Today.ToShortDateString() + "_" +
-                Path.GetFileName(path));
+            var toFile = GetBackupFilename(page.BackupFolder, path);
 
-            File.Move(path, toFile);
+            try
+            {
+                File.Move(path, toFile);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
+    }
+
+    private static string GetBackupFilename(string backUpFolder, string originalFilePath)
+    {
+        var id = Guid.NewGuid().ToString();
+        var timestamp = DateTime.Now.ToShortDateString();
+        var fileName = $"{timestamp}_{id}_{Path.GetFileName(originalFilePath)}";
+        return Path.Combine(backUpFolder, fileName);
     }
 
     private static void CreateOldFolder(ReferenceBoard board)

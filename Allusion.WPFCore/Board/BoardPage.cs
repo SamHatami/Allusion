@@ -8,7 +8,17 @@ namespace Allusion.WPFCore.Board
     public class BoardPage
     {
         public string Name { get; set; }
-        public string PageFolder { get; set; }
+        private string _pageFolder;
+
+        public string PageFolder
+        {
+            get => _pageFolder;
+            set
+            {
+                _pageFolder = value;
+                BackupFolder = Path.Combine(_pageFolder, "old");
+            }
+        }
         public string BackupFolder { get; set; }
         public string Description { get; set; }
         public List<ImageItem> ImageItems { get; set; } = [];
@@ -37,7 +47,7 @@ namespace Allusion.WPFCore.Board
         private void SetFolders()
         {
             if (string.IsNullOrEmpty(Name))
-                Name = "UnamedPage-" + ParentBoard.Pages.Count;
+                Name = "UnnamedPage-" + ParentBoard.Pages.Count;
             if (!string.IsNullOrEmpty(BackupFolder) && !string.IsNullOrEmpty(PageFolder)) return;
            
             PageFolder = Path.Combine(ParentBoard.BaseFolder, Name);

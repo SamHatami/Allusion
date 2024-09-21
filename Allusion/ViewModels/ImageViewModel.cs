@@ -3,6 +3,7 @@ using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Allusion.WPFCore.Interfaces;
 
 namespace Allusion.ViewModels;
@@ -12,13 +13,16 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
     private ImageItem _item;
     private readonly IEventAggregator _events;
 
+    public double Width { get; private set; } //This is for initalizing height or width of pageview - grid control
+    public double Height { get; private set; } //This is for initalizing height or width of pageview - grid control
+
+
     public ImageItem Item
     {
         get => TransferToItem();
         set => _item = value;
     }
 
-    private bool _selected;
     private ImageSource _imageSource;
 
     public ImageSource ImageSource
@@ -31,7 +35,7 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
         }
     }
 
-    public double Scale;
+    public double Scale; // Is set code behind of thumb, probably not the best idea, not sure how to not do this.
     public double AspectRatio { get; set; }
     private double _descriptorHeight = 30.0;
 
@@ -59,14 +63,15 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
             NotifyOfPropertyChange(nameof(Description));
         }
     }
+    private bool _isSelected;
 
-    public bool Selected
+    public bool IsSelected
     {
-        get => _selected;
+        get => _isSelected;
         set
         {
-            _selected = value;
-            NotifyOfPropertyChange(nameof(Selected));
+            _isSelected = value;
+            NotifyOfPropertyChange(nameof(IsSelected));
         }
     }
 
@@ -102,7 +107,7 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
 
     private int _pageMember;
 
-    public int PageMember
+    public int PageMember //TODO: Probably use a MoveToPageEvent. This comes from a user input
     {
         get => _pageMember;
         set
@@ -124,18 +129,25 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
 
     private void Initialize()
     {
+        
         ImageSource = _item.SourceImage;
         _posX = _item.PosX;
         _posY = _item.PosY;
+        Scale = _item.Scale > 0 ? _item.Scale : 1.0;
         Description = _item.Description;
+        Height = _imageSource.Height * Scale;
+        Width = _imageSource.Width * Scale;
         AspectRatio = _imageSource.Width / _imageSource.Height;
     }
+
+
 
     private ImageItem TransferToItem()
     {
         _item.Description = Description;
         _item.PosX = PosX;
         _item.PosY = PosY;
+        _item.Scale = Scale;
 
         return _item;
     }
@@ -143,9 +155,9 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
     public void ImageClick(ModifierKeys modifier)
     {
         //this comes from code-behind since I couldn't get the Modifier argument sent to the viewmodel from actions
-        Selected = true;
+        IsSelected = true;
         var multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
-        _events.PublishOnCurrentThreadAsync(new ImageSelectionEvent(this, SelectionType.Multi));
+        _events.PublishOnUIThreadAsync(new ImageSelectionEvent(this, SelectionType.Multi));
     }
 }
 
