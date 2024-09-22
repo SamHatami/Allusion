@@ -43,7 +43,8 @@ public class CanvasBehavior : Behavior<UIElement>
         }
 
         var dropPoint = e.GetPosition(AssociatedObject);
-        await _events.PublishOnUIThreadAsync(new DragDropEvent(e.Data, dropPoint));
+        var currentWindowSize = Window.GetWindow(AssociatedObject).RenderSize;
+        await _events.PublishOnUIThreadAsync(new DragDropEvent(e.Data, dropPoint, currentWindowSize));
 
         e.Handled = true;
     }

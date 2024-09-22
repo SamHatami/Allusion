@@ -48,7 +48,7 @@
                                 </Style>
                             </Button.Style>
                             <Grid>
-                                <Label Content="{Binding DisplayName}">
+                                <Label x:Name="PageLabel" Content="{Binding DisplayName}">
                                     <b:Interaction.Behaviors>
                                         <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" />
                                     </b:Interaction.Behaviors>
@@ -58,6 +58,7 @@
                                          Visibility="Collapsed"
                                          Width="Auto"
                                          VerticalContentAlignment="Center"
+                                         GotFocus="UIElement_OnGotFocus"
                                          LostFocus="OnRenameLostFocus"
                                          KeyDown="OnRenameKeyDown" />
                             </Grid>

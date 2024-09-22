@@ -21,10 +21,12 @@ namespace Allusion.Views
     /// </summary>
     public partial class ReferenceBoardView : UserControl
     {
+        private string oldRenameText = String.Empty;  
         public ReferenceBoardView()
         {
             InitializeComponent();
         }
+
 
         private void OnRenameLostFocus(object sender, RoutedEventArgs e)
         {
@@ -37,7 +39,21 @@ namespace Allusion.Views
             {
                 ((TextBox)sender).Visibility = Visibility.Collapsed;
             }
+
+            if (e.Key == Key.Escape) //Can't figure out how to do this using the RenameBehavior
+            {
+                ((TextBox)sender).Text = oldRenameText;
+                ((TextBox)sender).Visibility = Visibility.Collapsed;
+
+            }
         }
 
+        private void UIElement_OnGotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox { Name: "RenameTextBox" } textbox)
+            {
+                oldRenameText = textbox.Text;
+            }
+        }
     }
 }

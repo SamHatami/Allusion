@@ -67,7 +67,7 @@ public class PageManager : IPageManager
 
     public void RenamePage(BoardPage page, string newName)
     {
-        if(string.Equals(page.Name,newName)) return;
+        if(string.IsNullOrEmpty(newName) ||string.Equals(page.Name,newName)) return;
 
         page.Name = newName;
         var directory = Path.GetFileName(page.PageFolder);

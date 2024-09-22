@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace Allusion.Behaviors;
 
@@ -22,6 +23,16 @@ public class RenameBehavior : Behavior<Label>
 
         AssociatedObject.MouseLeftButtonDown += OnMouseClick;
         AssociatedObject.PreviewMouseLeftButtonDown += OnePreviewClick;
+        AssociatedObject.PreviewKeyDown += OnKeyDown;
+    }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            TextBox.Visibility = Visibility.Collapsed;
+            Keyboard.ClearFocus();
+        }
     }
 
     protected override void OnDetaching()

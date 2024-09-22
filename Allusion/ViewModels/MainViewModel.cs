@@ -5,6 +5,7 @@ using Allusion.WPFCore.Interfaces;
 using Allusion.WPFCore.Managers;
 using Caliburn.Micro;
 using System.Diagnostics;
+using System.Windows;
 using Allusion.Views;
 using Allusion.WPFCore;
 
@@ -37,6 +38,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private readonly IReferenceBoardManager _boardManager;
     private readonly IWindowManager _windowManager;
     private readonly AllusionConfiguration _configuration;
+    private Size _windowSize;
 
     public MainViewModel(IWindowManager windowManager, IEventAggregator events,
         IReferenceBoardManager refBoardManager, AllusionConfiguration configuration)
@@ -122,7 +124,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public async Task PasteOnCanvas()
     {
-        await _events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent());
+        
+        await _events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent(_windowSize));
     }
 
     public void Remove() //Key: Remove
@@ -174,5 +177,24 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         BoardIsModified = false;
         Debug.Assert(_boardManager is not null, "Holup");
         RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard);
+    }
+
+    protected override void OnViewLoaded(object view)
+    {
+        base.OnViewLoaded(view);
+
+        var currentWindow = view as Window;
+
+        if (currentWindow != null)
+        {
+            _windowSize = currentWindow.RenderSize;
+
+            currentWindow.SizeChanged += OnCurrentWindowSizeChange;
+        }
+    }
+
+    private void OnCurrentWindowSizeChange(object sender, SizeChangedEventArgs e)
+    {
+        _windowSize = e.NewSize;
     }
 }
