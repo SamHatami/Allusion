@@ -22,6 +22,8 @@ namespace Allusion.Views
     /// </summary>
     public partial class PageView : UserControl
     {
+        private string oldDescription;
+
         public PageView()
         {
             InitializeComponent();
@@ -62,5 +64,34 @@ namespace Allusion.Views
         {
             Mouse.SetCursor(Cursors.SizeAll);
         }
+
+        private void OnRenameLostFocus(object sender, RoutedEventArgs e)
+        {
+            ((TextBox)sender).Visibility = Visibility.Collapsed;
+        }
+
+        private void OnRenameKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((TextBox)sender).Visibility = Visibility.Collapsed;
+            }
+
+            if (e.Key == Key.Escape) //Can't figure out how to do this using the RenameBehavior
+            {
+                ((TextBox)sender).Text = oldDescription;
+                ((TextBox)sender).Visibility = Visibility.Collapsed;
+
+            }
+        }
+
+        private void UIElement_OnGotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox { Name: "RenameTextBox" } textbox)
+            {
+                oldDescription = textbox.Text;
+            }
+        }
+
     }
 }

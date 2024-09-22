@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Allusion.Behaviors;
 
-public class RenameBehavior : Behavior<Label>
+public class RenameBehavior : Behavior<UIElement>
 {
     public static readonly DependencyProperty TextBoxProperty =
         DependencyProperty.Register(nameof(TextBox), typeof(TextBox), typeof(RenameBehavior));
