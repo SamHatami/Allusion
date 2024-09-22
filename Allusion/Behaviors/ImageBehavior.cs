@@ -4,6 +4,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Allusion.Adorners;
+using Caliburn.Micro;
 using Microsoft.Xaml.Behaviors;
 
 namespace Allusion.Behaviors;
@@ -13,6 +14,7 @@ public class ImageBehavior : Behavior<UIElement>
     private Canvas _mainCanvas;
     private Point _relativePosition;
     private ContentPresenter _contentPresenter;
+    private IEventAggregator _events;
 
     protected override void OnAttached()
     {
@@ -27,8 +29,9 @@ public class ImageBehavior : Behavior<UIElement>
         AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
         
         _mainCanvas = GetMainCanvas(AssociatedObject);
+        _events = IoC.Get<IEventAggregator>();
 
-        
+
     }
 
 
@@ -42,6 +45,10 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        if (e.ClickCount == 2)
+        {
+            //_events.PublishOnBackgroundThreadAsync(new FocusImageEvent())
+        }
         //Disable cursor icon
         //enable move icon
         AssociatedObject.Focus();

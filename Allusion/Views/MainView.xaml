@@ -15,7 +15,6 @@
         Height="1024"
         Width="1024"
         Topmost="True"
-
         cm:Message.Attach="
         [Gesture Ctrl+V] = [PasteOnCanvas];
         [Gesture Ctrl+S] = [Save];

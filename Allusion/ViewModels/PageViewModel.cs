@@ -1,9 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Dynamic;
+using System.Runtime.Serialization;
 using System.Windows;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Screen = Caliburn.Micro.Screen;
 
 namespace Allusion.ViewModels;
@@ -44,6 +47,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     private BoardPage _page { get; set; }
 
     private bool _isSelected;
+    private readonly IWindowManager _windowManger;
 
     public bool PageIsSelected
     {
@@ -65,6 +69,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         _events.SubscribeOnBackgroundThread(this);
         _events.SubscribeOnUIThread(this);
         Images = new BindableCollection<ImageViewModel>();
+        _windowManger = IoC.Get<IWindowManager>();
 
         InitializePage();
     }
@@ -82,6 +87,15 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
                 PosX = imageItem.PosX,
                 PosY = imageItem.PosY
             });
+    }
+
+    public void FocusImage(ImageViewModel image)
+    {
+        dynamic settings = new ExpandoObject();
+        settings.SizeToContent = System.Windows.SizeToContent.WidthAndHeight;
+        _windowManger.ShowWindowAsync(image,null ,settings);
+        
+
     }
 
     private void AddItems(ImageItem[] items)

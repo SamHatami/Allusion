@@ -159,6 +159,7 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
         var multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
         _events.PublishOnUIThreadAsync(new ImageSelectionEvent(this, SelectionType.Multi));
     }
+
 }
 
 public class ImageSelectionEvent
@@ -171,7 +172,10 @@ public class ImageSelectionEvent
         ImageViewModel = imageViewModel;
         Type = type;
     }
+
 }
+
+
 
 public enum SelectionType
 {
