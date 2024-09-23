@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Input;
 using Allusion.Controls;
 using Allusion.ViewModels;
+using Microsoft.VisualBasic.Logging;
+using Window = System.Windows.Window;
 
 namespace Allusion.Views
 {
@@ -27,25 +29,25 @@ namespace Allusion.Views
             _viewModel = DataContext as ImageViewModel;
             _aspectRatio = _viewModel.ImageSource.Width/_viewModel.ImageSource.Height;
             _window = Window.GetWindow(this);
-            _window.SizeChanged += WindowSizeChanged;
 
+            if (_window is MainView) return;
+
+            _window.Dispatcher.Invoke(() =>
+            {
+                _window.WindowState = WindowState.Normal;  // Ensure the window isn't maximized
+                _window.Height = 300;  // Set a default height
+                _window.Width = _window.Height * _aspectRatio;  // Adjust width to respect aspect ratio
+            });
+            _window.SourceInitialized += OnHostingWindowInit;
 
         }
-
-        private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnHostingWindowInit(object? sender, EventArgs e)
         {
-            if (_window is null or MainView) return;
+            WindowAspectRatio.Register((Window)sender);
 
-            if (e.WidthChanged)
-            {
-                _window.Height = _window.Width / _aspectRatio;
-            }
-            else if (e.HeightChanged)
-            {
-                _window.Width = _window.Height * _aspectRatio;
-            }
+
+
         }
-
 
         private void BoundImage_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

@@ -66,7 +66,6 @@
                                        Background="Gray"
                                        Style="{StaticResource TriangleThumbStyle}" />
                             </Grid>
-                            <Button Grid.Row="0" Content="+" Height="30" Width="30" VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
                             <Border Grid.Row="1">
                                 <Grid Background="Gray" x:Name="DescriptionGrid">

@@ -6,8 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:Allusion.Controls"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
-    xmlns:cm="http://caliburnmicro.com"
-    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     d:DataContext="{d:DesignInstance Type=viewModels:ImageViewModel}"
     IsSelected="{Binding IsSelected, NotifyOnSourceUpdated=True}"
     mc:Ignorable="d">

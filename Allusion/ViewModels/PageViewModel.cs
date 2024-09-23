@@ -92,9 +92,9 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     public void FocusImage(ImageViewModel image)
     {
         dynamic settings = new ExpandoObject();
-        settings.SizeToContent = System.Windows.SizeToContent.WidthAndHeight;
-        _windowManger.ShowWindowAsync(image,null ,settings);
-        
+        settings.WindowState = WindowState.Normal;
+        _windowManger.ShowWindowAsync(new FocusViewModel(image.Item), null, settings);
+
 
     }
 
