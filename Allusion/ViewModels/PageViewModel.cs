@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Runtime.Serialization;
 using System.Windows;
