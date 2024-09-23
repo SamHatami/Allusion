@@ -9,22 +9,26 @@
              xmlns:viewModels="clr-namespace:Allusion.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance Type=viewModels:ReferenceBoardViewModel}">
+             d:DataContext="{d:DesignInstance Type=viewModels:ReferenceBoardViewModel}"
+             Style="{StaticResource MainControl}">
 
     <UserControl.Resources>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="{Binding BoardName }" />
+            <Border Background="{DynamicResource TitleBackground}">
+                <Label Grid.Column="0" Content="{Binding BoardName }" Style="{DynamicResource ReferenceBoardTitle}"/>
+
+            </Border>
 
             <ItemsControl Grid.Column="1" ItemsSource="{Binding Pages}" HorizontalAlignment="Left">
                 <ItemsControl.ItemsPanel>
@@ -38,20 +42,33 @@
                         <Button x:Name="SelectPage" cm:Message.Attach="[Event Click] = [SelectPage()]"
                                 HorizontalAlignment="Stretch" Focusable="True">
                             <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Background" Value="LightGray" />
+                                <Style TargetType="Button"  BasedOn="{StaticResource TabButton}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding PageIsSelected}" Value="True">
-                                            <Setter Property="Background" Value="DarkGray" />
+                                            <Setter Property="Background" Value="{StaticResource Tab.Button.Background}" />
+                                            <Setter Property="BorderThickness" Value="0,2,0,0"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource Tab.Button.Selected.Border}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
+
                             <Grid>
                                 <Label x:Name="PageLabel" Content="{Binding DisplayName}">
                                     <b:Interaction.Behaviors>
                                         <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" />
                                     </b:Interaction.Behaviors>
+                                    <Label.Style>
+                                        <Style TargetType="Label" BasedOn="{StaticResource TabLabel}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding PageIsSelected}" Value="False">
+                                                    <Setter Property="Foreground" Value="DimGray" />
+
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                            
+                                        </Style>
+                                    </Label.Style>
                                 </Label>
                                 <TextBox x:Name="RenameTextBox"
                                          Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
@@ -69,6 +86,6 @@
             <Button Grid.Column="2" x:Name="AddPage" Content="+" Width="30" />
         </Grid>
 
-        <ContentControl Grid.Row="1" cm:View.Model="{Binding ActivePageViewModel }" />
+        <ContentControl Grid.Row="1" cm:View.Model="{Binding ActivePageViewModel }"/>
     </Grid>
 </UserControl>

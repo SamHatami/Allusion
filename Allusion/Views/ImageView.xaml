@@ -11,8 +11,7 @@
     mc:Ignorable="d">
 
     <Border
-        Background="Transparent"
-        BorderThickness="2">
+        Background="Transparent">
         <Border.Style>
             <Style TargetType="Border">
                 <Style.Triggers>
@@ -20,7 +19,7 @@
                         <Setter Property="BorderBrush" Value="Green" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnSourceUpdated=True ,RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="False">
-                        <Setter Property="BorderBrush" Value="#262626" />
+                        <Setter Property="BorderBrush" Value="{StaticResource DefaultBorder}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>

@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="Open or Choose Art Board" Height="300" Width="600"
         WindowStyle="None" WindowStartupLocation="CenterOwner"
-        cm:Message.Attach="[Key Escape] = [Cancel]">
+        cm:Message.Attach="[Key Escape] = [Cancel]" >
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

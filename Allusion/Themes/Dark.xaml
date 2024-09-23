@@ -1,6 +1,26 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="BackGroundColor" Color="#4a4a4a"/>
+
+    <Color x:Key="Primary.Select" R="" G="" B=""/>
+    <Color x:Key="Primary.Gray" R="128" G="128" B="128"/>
+
+    <!-- GENERAL DARK MODE COLORS -->
+    <SolidColorBrush x:Key="BackGround" Color="#2e2e2e"/>
+    <SolidColorBrush x:Key="Board.Background" Color="#353535"/>
+    <SolidColorBrush x:Key="Window.Background" Color="{StaticResource Primary.Gray}"/>
+    <SolidColorBrush x:Key="Dialog.BackGround" Color="#4a4a4a"/>
+    <SolidColorBrush x:Key="Label.Title.Background" Color="#4a4a4a"/>
+    <SolidColorBrush x:Key="Foreground" Color="WhiteSmoke"/>
+    <SolidColorBrush x:Key="DefaultBorder" Color="#262626"/>
+
+    <!-- Tab Button -->
+    <SolidColorBrush x:Key ="Tab.Button.Background" Color="#2a2a2a"/>
+    <SolidColorBrush x:Key ="Tab.Button.Border" Color="#2a2a2a"/>
+    <SolidColorBrush x:Key ="Tab.Button.Selected" Color="{StaticResource Primary.Gray}"/>
+    <SolidColorBrush x:Key ="Tab.Button.Selected.Border" Color="DarkOrange"/>
+    <!-- Primary Button Colors-->
+    <SolidColorBrush x:Key="Button.Primary.Background" Color="#4a4a4a"/>
+    <SolidColorBrush x:Key="Button.Primary.Selected" Color="DarkOrange"/>
     
 </ResourceDictionary>
