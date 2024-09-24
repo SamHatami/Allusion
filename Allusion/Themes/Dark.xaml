@@ -1,36 +1,134 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Color
+        x:Key="Transparent"
+        A="0"
+        B="0"
+        G="0"
+        R="0" />
+    <Color
+        x:Key="Primary.Gray"
+        A="255"
+        B="128"
+        G="128"
+        R="128" />
+    <Color
+        x:Key="Primary.Red"
+        A="255"
+        B="70"
+        G="70"
+        R="95" />
+    <Color
+        x:Key="Primary.Green"
+        A="255"
+        B="90"
+        G="95"
+        R="90" />
+    <Color
+        x:Key="Primary.Selected"
+        A="255"
+        B="61"
+        G="61"
+        R="61" />
+    <Color
+        x:Key="Primary.Background"
+        A="255"
+        B="40"
+        G="40"
+        R="40" />
+    <Color
+        x:Key="Secondary.Background"
+        A="255"
+        B="50"
+        G="50"
+        R="50" />
 
-    <Color x:Key="Primary.Gray" A="255" R="128" G="128" B="128"/>
-    <Color x:Key="Primary.Red" A="255" R="115" G="32" B="32"/>
-    <Color x:Key="Transparent" A="0" R="0" G="0" B="0"/>
+    <Color
+        x:Key="Primary.Button"
+        A="255"
+        B="60"
+        G="65"
+        R="60" />
 
-    <!-- WINDOW TITLE BAR -->
-    <SolidColorBrush x:Key="Transparent.Brush" Color="Transparent"/>
-    <SolidColorBrush x:Key="Window.TitleBar.Color" Color="#2e2e2e"/>
-    <SolidColorBrush x:Key="WindowTextColor" Color="Black"/>
-    <SolidColorBrush x:Key="BorderColor" Color="Black"/>
-    <SolidColorBrush x:Key="Window.Titlebar.Button" Color="LightGray"/>
-    <SolidColorBrush x:Key="Window.Titlebar.Button.Close" Color="{StaticResource Primary.Red}"/>
-    <SolidColorBrush x:Key="MouseClickColor" Color="Gray"/>
+    <Color
+        x:Key="Secondary.Button"
+        A="255"
+        B="60"
+        G="60"
+        R="60" />
+    <Color
+        x:Key="Primary.TextBox.Background"
+        A="255"
+        B="40"
+        G="40"
+        R="40" />
+    <Color
+        x:Key="Primary.Foreground"
+        A="255"
+        B="245"
+        G="245"
+        R="245" />
+    <Color
+        x:Key="Secondary.Foreground"
+        A="255"
+        B="195"
+        G="200"
+        R="195" />
+    <Color
+        x:Key="Primary.Border"
+        A="255"
+        B="65"
+        G="65"
+        R="65" />
+    <Color
+        x:Key="Secondary.Border"
+        A="255"
+        B="65"
+        G="70"
+        R="65" />
+    <Color
+        x:Key="Primary.Border.UnSelected"
+        A="255"
+        B="50"
+        G="50"
+        R="50" />
 
-    <!-- GENERAL DARK MODE COLORS -->
-    <SolidColorBrush x:Key="BackGround" Color="#2e2e2e"/>
-    <SolidColorBrush x:Key="Board.Background" Color="#353535"/>
-    <SolidColorBrush x:Key="Window.Background" Color="{StaticResource Primary.Gray}"/>
-    <SolidColorBrush x:Key="Dialog.BackGround" Color="#FF9C6B14"/>
-    <SolidColorBrush x:Key="Label.Title.Background" Color="#4a4a4a"/>
-    <SolidColorBrush x:Key="Foreground" Color="WhiteSmoke"/>
-    <SolidColorBrush x:Key="DefaultBorder" Color="#262626"/>
+    <!--  WINDOW TITLE BAR  -->
+    <SolidColorBrush x:Key="Transparent.Brush" Color="Transparent" />
+    <SolidColorBrush x:Key="Window.TitleBar.Color" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Window.TitleBar.ForeGround" Color="{DynamicResource Primary.Foreground}" />
+    <SolidColorBrush x:Key="Window.Titlebar.Button.MouseOver" Color="LightGray" />
+    <SolidColorBrush x:Key="Window.Titlebar.Button.Close" Color="{DynamicResource Primary.Red}" />
+    <SolidColorBrush x:Key="Mouse.OnClick" Color="Gray" />
 
-    <!-- Tab Button -->
-    <SolidColorBrush x:Key ="Tab.Button.Background" Color="#2a2a2a"/>
-    <SolidColorBrush x:Key ="Tab.Button.Border" Color="#2a2a2a"/>
-    <SolidColorBrush x:Key ="Tab.Button.Selected" Color="{StaticResource Primary.Gray}"/>
-    <SolidColorBrush x:Key ="Tab.Button.Selected.Border" Color="DarkOrange"/>
-    <!-- Primary Button Colors-->
-    <SolidColorBrush x:Key="Button.Primary.Background" Color="#4a4a4a"/>
-    <SolidColorBrush x:Key="Button.Primary.Selected" Color="DarkOrange"/>
-    
+    <!--  GENERAL DARK MODE COLORS  -->
+    <SolidColorBrush x:Key="BackGround" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Mouse.IsOver" Color="{DynamicResource Primary.Green}" />
+    <SolidColorBrush x:Key="Board.Background" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Dialog.BackGround" Color="{DynamicResource Secondary.Background}" />
+    <SolidColorBrush x:Key="Dialog.Border" Color="{DynamicResource Secondary.Border}" />
+    <SolidColorBrush x:Key="Dialog.TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
+    <SolidColorBrush x:Key="Label.Title.Background" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Foreground" Color="{DynamicResource Primary.Foreground}" />
+    <SolidColorBrush x:Key="Foreground.Front" Color="{DynamicResource Secondary.Foreground}" />
+    <SolidColorBrush x:Key="Border" Color="{DynamicResource Primary.Border}" />
+    <SolidColorBrush x:Key="Window.Close" Color="{DynamicResource Primary.Red}" />
+
+    <SolidColorBrush x:Key="ListBox.Background" Color="{DynamicResource Secondary.Background}"/>
+    <SolidColorBrush x:Key="ListBox.Item.Foreground" Color="{DynamicResource sec}"/>
+    <SolidColorBrush x:Key="ListBox.Item.Selected" Color="{DynamicResource Primary.Green}"/>
+    <SolidColorBrush x:Key="ListBox.Item.UnSelected" Color="#2f2f2f"/>
+
+    <!--  Tab Button  -->
+    <SolidColorBrush x:Key="Tab.Button.Border.Selected" Color="{DynamicResource Primary.Border}" />
+    <SolidColorBrush x:Key="Tab.Button.Selected" Color="{DynamicResource Primary.Selected}" />
+    <SolidColorBrush x:Key="Tab.Button.UnSelected" Color="#2f2f2f" />
+    <SolidColorBrush x:Key="Tab.Button.Border.UnSelected" Color="{DynamicResource Primary.Border.UnSelected}" />
+    <!--  Primary Button Colors  -->
+    <SolidColorBrush x:Key="Button.Primary.Background" Color="{DynamicResource Primary.Button}" />
+    <SolidColorBrush x:Key="Button.Primary.Selected" Color="DarkOrange" />
+    <!--  Primary Button Colors  -->
+    <SolidColorBrush x:Key="Button.Secondary.Background" Color="{DynamicResource Secondary.Button}" />
+    <SolidColorBrush x:Key="Button.Secondary.Selected" Color="DarkOrange" />
+
 </ResourceDictionary>

@@ -1,0 +1,33 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  Labels and TextBoxes  -->
+    <Style x:Key="TabLabel" TargetType="{x:Type Label}">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="Foreground" Value="DimGray" />
+
+    </Style>
+
+    <Style x:Key="ReferenceBoardTitle" TargetType="{x:Type Label}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontStretch" Value="UltraExpanded" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+    </Style>
+
+    <Style x:Key="DialogTextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="Height" Value="{StaticResource TextBox.Height}" />
+        <Setter Property="Background" Value="{DynamicResource Dialog.TextBox.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Dialog.Border}" />
+    </Style>
+
+    <Style x:Key="DialogLabel" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="{DynamicResource Foreground.Front}" />
+    </Style>
+
+</ResourceDictionary>

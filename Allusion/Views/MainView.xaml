@@ -1,37 +1,37 @@
-﻿<Window x:Class="Allusion.Views.MainView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:cm="http://caliburnmicro.com"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:Allusion.ViewModels"
-        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-        d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
-        mc:Ignorable="d"
-        StateChanged="WindowStateChangedHandler" Initialized="OnWindowInitialized"
-        Title="MainView"
-        Height="1024"
-        Width="1024"
-        Topmost="True"
-        cm:Message.Attach="
-        [Gesture Ctrl+V] = [PasteOnCanvas];
-        [Gesture Ctrl+S] = [Save];
-        [Gesture Ctrl+O] = [OpenRefBoardDialog];
-        [Gesture Ctrl+N] = [NewRefBoardDialog];
-        [Key Delete] = [Remove]">
+﻿<Window
+    x:Class="Allusion.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="http://caliburnmicro.com"
+    xmlns:converters="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:Allusion.ViewModels"
+    Title="MainView"
+    Width="1024"
+    Height="1024"
+    cm:Message.Attach="         [Gesture Ctrl+V] = [PasteOnCanvas];         [Gesture Ctrl+S] = [Save];         [Gesture Ctrl+O] = [OpenRefBoardDialog];         [Gesture Ctrl+N] = [NewRefBoardDialog];         [Key Delete] = [Remove]"
+    d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
+    Initialized="OnWindowInitialized"
+    StateChanged="WindowStateChangedHandler"
+    Topmost="True"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <converters:InvertableBoolToVisiblity x:Key="InvertableBoolToVisiblity" />
+    </Window.Resources>
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32"
-                      ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
     </WindowChrome.WindowChrome>
 
-    <Grid Background="DimGray">
+    <Grid Background="{DynamicResource Board.Background}">
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
-            <!--TITLE BAR ROW-->
+            <!--  TITLE BAR ROW  -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Style="{StaticResource WindowMainPanelStyle}">
+        <Border Style="{DynamicResource WindowTitleBar}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -41,26 +41,131 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="1" Margin="4 0 0 0" VerticalAlignment="Center" FontSize="14"
-                           HorizontalAlignment="Center"
-                           Content="{Binding RefBoardViewModel.BoardName}" Style="{DynamicResource ReferenceBoardTitle}"/>
-                <Button Grid.Column="2" Click="OnMinimizeButtonClick" RenderOptions.EdgeMode="Aliased"
-                        Style="{DynamicResource TitleBarButtonStyle}">
-                    <fa:IconImage Icon="WindowMinimize" Width="12"></fa:IconImage>
+                <Label
+                    Grid.Column="1"
+                    Grid.ColumnSpan="4"
+                    Margin="4,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="{Binding RefBoardViewModel.BoardName}"
+                    FontSize="14"
+                    Style="{DynamicResource ReferenceBoardTitle}" />
+                <Button
+                    Grid.Column="2"
+                    Click="OnMinimizeButtonClick"
+                    RenderOptions.EdgeMode="Aliased"
+                    Style="{DynamicResource TitleBarButtonStyle}">
+                    <fa:IconImage Width="12" Icon="WindowMinimize" />
                 </Button>
-                <Button Name="RestoreButton" Grid.Column="3" Click="OnMaximizeRestoreButtonClick"
-                        Style="{DynamicResource TitleBarButtonStyle}">
-                    <fa:IconImage Icon="compress" Height="12"/>
+                <Button
+                    Name="RestoreButton"
+                    Grid.Column="3"
+                    Click="OnMaximizeRestoreButtonClick"
+                    Style="{DynamicResource TitleBarButtonStyle}">
+                    <fa:IconImage Height="12" Icon="compress" />
                 </Button>
-                <Button Name="MaximizeButton" Grid.Column="3" Click="OnMaximizeRestoreButtonClick"
-                        Style="{DynamicResource TitleBarButtonStyle}">
-                    <fa:IconImage Icon="expand" Height="12"/>
+                <Button
+                    Name="MaximizeButton"
+                    Grid.Column="3"
+                    Click="OnMaximizeRestoreButtonClick"
+                    Style="{DynamicResource TitleBarButtonStyle}">
+                    <fa:IconImage Height="12" Icon="expand" />
                 </Button>
-                <Button Grid.Column="4" Click="OnCloseButtonClick" Style="{DynamicResource TitleBarButtonClose}">
-                    <fa:IconImage Icon="close" Height="12"/>
+                <Button
+                    Grid.Column="4"
+                    Click="OnCloseButtonClick"
+                    Style="{DynamicResource TitleBarButtonClose}">
+                    <fa:IconImage Height="12" Icon="close" />
                 </Button>
             </Grid>
         </Border>
         <ContentControl Grid.Row="1" cm:View.Model="{Binding RefBoardViewModel}" />
+
+        <Grid
+            Grid.Row="1"
+            VerticalAlignment="Center"
+            IsHitTestVisible="False"
+            Visibility="{Binding RefBoardViewModel, Converter={StaticResource InvertableBoolToVisiblity}, ConverterParameter=Normal}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel
+                Grid.Row="0"
+                Margin="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    DockPanel.Dock="Top"
+                    FontFamily="Arial Black"
+                    FontWeight="Bold"
+                    Foreground="#FF191919">
+                    <Run FontSize="48" Text="A" /><Run FontSize="36" Text="LLUSIO" /><Run FontSize="36" Text="N" />
+
+                    <TextBlock.Effect>
+                        <DropShadowEffect
+                            BlurRadius="1"
+                            Opacity="1"
+                            ShadowDepth="0"
+                            Color="#FFAAAFAA" />
+                    </TextBlock.Effect>
+                </TextBlock>
+
+
+            </DockPanel>
+
+            <Border
+                Grid.Row="1"
+                Width="300"
+                Background="{DynamicResource Dialog.BackGround}"
+                BorderBrush="{DynamicResource Dialog.Border}"
+                BorderThickness="2"
+                CornerRadius="4">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Style="{DynamicResource DialogLabel}">
+                        Create new board
+                    </Label>
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        HorizontalAlignment="Left"
+                        Style="{DynamicResource DialogLabel}">
+                        Ctrl + N
+                    </Label>
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Style="{DynamicResource DialogLabel}">
+                        Open board
+                    </Label>
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource DialogLabel}">
+                        Ctrl + O
+                    </Label>
+
+
+                </Grid>
+            </Border>
+
+        </Grid>
+
+
     </Grid>
 </Window>

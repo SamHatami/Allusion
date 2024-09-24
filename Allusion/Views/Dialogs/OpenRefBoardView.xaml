@@ -1,32 +1,41 @@
-﻿<Window x:Class="Allusion.Views.Dialogs.OpenRefBoardView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:cm="http://caliburnmicro.com"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogs="clr-namespace:Allusion.ViewModels.Dialogs"
-        xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
-        d:DataContext="{d:DesignInstance Type=dialogs:OpenRefBoardViewModel}"
-        mc:Ignorable="d"
-        ResizeMode="NoResize"
-        
-        Title="Open or Choose Art Board" Height="300" Width="600"
-        WindowStartupLocation="CenterOwner"
-        cm:Message.Attach="[Key Escape] = [Cancel]" >
+﻿<Window
+    x:Class="Allusion.Views.Dialogs.OpenRefBoardView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="http://caliburnmicro.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dialogs="clr-namespace:Allusion.ViewModels.Dialogs"
+    xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Open or Choose Art Board"
+    Width="600"
+    Height="300"
+    cm:Message.Attach="[Key Escape] = [Cancel]"
+    d:DataContext="{d:DesignInstance Type=dialogs:OpenRefBoardViewModel}"
+    ResizeMode="NoResize"
+    Style="{DynamicResource DialogWindow}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32"
-                      ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
     </WindowChrome.WindowChrome>
-    <Grid >
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="22"/> <!-- Title bar --> 
+            <RowDefinition Height="22" />
+            <!--  Title bar  -->
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid>
-            <Button Grid.Column="0" x:Name="Close" cm:Message.Attach="[Cancel]" Style="{DynamicResource TitleBarButtonClose}" VerticalAlignment="Stretch" HorizontalAlignment="Right">
-                <fa:IconImage Icon="close" Height="12"/>
+            <Button
+                x:Name="Close"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                cm:Message.Attach="[Cancel]"
+                Style="{DynamicResource TitleBarButtonClose}">
+                <fa:IconImage Height="12" Icon="close" />
             </Button>
         </Grid>
 
@@ -35,14 +44,28 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="Global Art Board Folder" />
+            <Label
+                Grid.Row="0"
+                Content="Global Art Board Folder"
+                Style="{DynamicResource DialogLabel}" />
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Text="{Binding GlobalFolder}" />
-                <Button Grid.Column="1" x:Name="BrowseGlobalFolder" Content="..." Width="20" />
+                <TextBox
+                    Grid.Column="0"
+                    Margin="0,0,5,0"
+                    Style="{DynamicResource DialogTextBox}"
+                    Text="{Binding GlobalFolder}" />
+                <Button
+                    x:Name="BrowseGlobalFolder"
+                    Grid.Column="1"
+                    BorderBrush="{DynamicResource Border}"
+                    Background="{DynamicResource Button.Secondary.Background}"
+                    Width="{DynamicResource TextBox.Height}">
+                    <fa:IconImage Icon="FolderOpen" Height="12" Foreground="{DynamicResource Foreground.Front}"/>
+                </Button>
             </Grid>
         </Grid>
 
@@ -51,27 +74,52 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Label Content="Art Boards" />
-            <ListBox Grid.Row="1" x:Name="RefBoards" VerticalAlignment="Stretch" ItemsSource="{Binding RefBoardPaths}"
-                     SelectedItem="{Binding SelectedRefBoard}" SelectionMode="Single" SelectedIndex="0">
+            <Label Content="Art Boards" Style="{DynamicResource DialogLabel}"/>
+            <ListBox
+                x:Name="RefBoards"
+                Grid.Row="1"
+                VerticalAlignment="Stretch"
+                ItemsSource="{Binding RefBoardPaths}"
+                SelectedIndex="0"
+                SelectedItem="{Binding SelectedRefBoard}"
+                SelectionMode="Single"
+                Style="{DynamicResource ListBox}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Label Content="{Binding Name}" />
+                        <Grid>
+                            <Label Content="{Binding Name}" Style="{DynamicResource DialogLabel}"/>
+
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
 
-        <Grid Row="3" Margin="10,0,10,10">
+        <Grid Margin="10,0,10,10" Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" x:Name="New" Content="New" Margin="5,10,5,5" />
-            <Button Grid.Column="2" x:Name="Open" Content="Open" Margin="5,10,5,5" />
-            <Button Grid.Column="3" x:Name="Cancel" Content="Cancel" Margin="5,10,5,5" />
+            <Button
+                x:Name="New"
+                Grid.Column="0"
+                Margin="5,10,5,5"
+                Content="New"
+                Style="{StaticResource SecondaryButton}" />
+            <Button
+                x:Name="Open"
+                Grid.Column="2"
+                Margin="5,10,5,5"
+                Content="Open"
+                Style="{StaticResource PrimaryButton}" />
+            <Button
+                x:Name="Cancel"
+                Grid.Column="3"
+                Margin="5,10,5,5"
+                Content="Cancel"
+                Style="{StaticResource SecondaryButton}" />
         </Grid>
     </Grid>
 </Window>

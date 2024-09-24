@@ -19,7 +19,7 @@
                         <Setter Property="BorderBrush" Value="Green" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnSourceUpdated=True ,RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="False">
-                        <Setter Property="BorderBrush" Value="{StaticResource DefaultBorder}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>

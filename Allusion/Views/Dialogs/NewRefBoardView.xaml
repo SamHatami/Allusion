@@ -23,8 +23,8 @@
                 <RowDefinition Height="40" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="Create New Board" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
-            <Label Grid.Row="1" Content="Name" HorizontalAlignment="Stretch"/>
-            <TextBox Grid.Row="2" Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Grid.Row="1" Content="Name" HorizontalAlignment="Stretch" Style="{DynamicResource DialogLabel}"/>
+            <TextBox Grid.Row="2" Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DialogTextBox}"/>
 
             <Grid Row="3">
                 <Grid.ColumnDefinitions>
