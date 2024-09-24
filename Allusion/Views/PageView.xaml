@@ -25,14 +25,14 @@
                     <ControlTemplate TargetType="Thumb">
                         <Grid>
                             <Polygon Fill="#353535" StrokeThickness="0"
-                                     Points="10,-5 -5,10 10,10" />
+                                     Points="15,-5 -5,15 15,15" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Border>
+    <Border BorderThickness="0,2,0,0" BorderBrush="OliveDrab">
         <Canvas x:Name="ImageCanvas" Background="Transparent" AllowDrop="True">
             <Canvas.ContextMenu>
                 <ContextMenu>
@@ -52,31 +52,31 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" x:Name="ImageContent" Width="{Binding  Width, Mode=OneTime}"
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" x:Name="ImageContent" Width="{Binding  Width, Mode=OneTime}"
                                   Height="{Binding Height, Mode=OneTime}">
-                                <ContentControl cm:View.Model="{Binding}" IsHitTestVisible="True" cm:Message.Attach="[Event MouseDoubleClick] = [FocusImage($dataContext)]"/>
-                                <Thumb x:Name="ResizeThumb" Width="10" Height="10"
+                                    <ContentControl cm:View.Model="{Binding}" IsHitTestVisible="True" cm:Message.Attach="[Event MouseDoubleClick] = [FocusImage($dataContext)]"/>
+                                    <Thumb x:Name="ResizeThumb" Width="15" Height="15"
                                        VerticalAlignment="Bottom" HorizontalAlignment="Right"
                                        DragDelta="OnResizeThumbDragDelta"
                                        Background="Gray"
                                        Style="{StaticResource TriangleThumbStyle}" />
-                            </Grid>
+                                </Grid>
 
-                            <Border Grid.Row="1">
-                                <Grid Background="Gray" x:Name="DescriptionGrid">
-                                    <TextBlock x:Name="PageLabel" Text="{Binding Description}" TextWrapping="Wrap"
+                                <Border Grid.Row="1"  BorderBrush="{StaticResource DefaultBorder}">
+                                    <Grid Background="Gray" x:Name="DescriptionGrid">
+                                        <TextBlock x:Name="PageLabel" Text="{Binding Description}" TextWrapping="Wrap"
                                                MinHeight="30" Width="{Binding ActualWidth, ElementName=ImageContent}"
                                                Padding="4">
                                         <b:Interaction.Behaviors>
                                             <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" />
                                         </b:Interaction.Behaviors>
-                                    </TextBlock>
-                                    <TextBox x:Name="RenameTextBox"
+                                        </TextBlock>
+                                        <TextBox x:Name="RenameTextBox"
                                              Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                              Width="{Binding ActualWidth, ElementName=ImageContent}"
                                              Visibility="Collapsed"
@@ -85,13 +85,14 @@
                                              GotFocus="UIElement_OnGotFocus"
                                              LostFocus="OnRenameLostFocus"
                                              KeyDown="OnRenameKeyDown" />
-                                </Grid>
-                            </Border>
+                                    </Grid>
+                                </Border>
 
-                            <b:Interaction.Behaviors>
-                                <behaviors:ImageBehavior />
-                            </b:Interaction.Behaviors>
-                        </Grid>
+                                <b:Interaction.Behaviors>
+                                    <behaviors:ImageBehavior />
+                                </b:Interaction.Behaviors>
+                            </Grid>
+
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemContainerStyle>

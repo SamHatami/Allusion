@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="Height" Value="{StaticResource PrimaryButtonHeight}"/>
+        <Setter Property="Background" Value="{StaticResource Button.Primary.Background}"/>
+    </Style>
+
+
+    <Style x:Key="TabButton" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="{StaticResource PrimaryButtonHeight}"/>
+        <Setter Property="Background" Value="{StaticResource Tab.Button.Background}"/>
+        <Setter Property="BorderThickness" Value="0,2,0,0"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Tab.Button.Border}"/>
+        <Setter Property="Margin" Value="2,0"/>
+        <!--<Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="2,2,0,0">
+                        --><!-- Top-left and top-right rounded --><!--
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>-->
+        <Style.Triggers>
+            
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="DarkGray"/>
+                <Setter Property="Foreground" Value="White"/>
+
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <!-- Labels and TextBoxes -->
+    <Style x:Key="TabLabel" TargetType="{x:Type Label}">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+
+
+    </Style>
+
+    <Style x:Key="ReferenceBoardTitle" TargetType="{x:Type Label}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="5,0"/>
+        <Setter Property="FontStretch" Value="SemiExpanded"/>
+        <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+
+
+    </Style>
+
+</ResourceDictionary>

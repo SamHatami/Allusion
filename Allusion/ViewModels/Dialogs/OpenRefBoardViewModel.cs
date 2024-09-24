@@ -64,7 +64,7 @@ namespace Allusion.ViewModels.Dialogs
 
         public Task Open()
         {
-            if (string.IsNullOrEmpty(SelectedRefBoard.FilePath)) return Task.CompletedTask;
+            if (SelectedRefBoard is null || string.IsNullOrEmpty(SelectedRefBoard.FilePath) ) return Task.CompletedTask;
 
             var openedRefBoard = _refBoardManager.Open(SelectedRefBoard.FilePath);
 
