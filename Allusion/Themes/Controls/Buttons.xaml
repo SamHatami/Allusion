@@ -51,10 +51,10 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="5,0"/>
-        <Setter Property="FontStretch" Value="SemiExpanded"/>
+        <Setter Property="FontSize" Value="14"></Setter>
+        <Setter Property="FontStretch" Value="UltraExpanded"/>
+        <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
-
-
     </Style>
 
 </ResourceDictionary>

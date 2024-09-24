@@ -5,20 +5,23 @@
         xmlns:viewModels="clr-namespace:Allusion.ViewModels"
         Title="DialogView" SizeToContent="WidthAndHeight"
         WindowStyle="None"
-        WindowStartupLocation="CenterOwner">
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource Dialog.BackGround}">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></BooleanToVisibilityConverter>
     </Window.Resources>
-    <Grid Margin="10">
+    <Grid Margin="10,2,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <Label Content="{Binding Title}" />
+        <Label Content="{Binding Title}" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
         <TextBox Grid.Row="1"
                  Width="400"
+                 Foreground="{DynamicResource Foreground}"
+                 Background="Transparent"
                  BorderBrush="Transparent"
                  BorderThickness="0"
                  TextWrapping="Wrap"

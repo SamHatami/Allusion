@@ -5,19 +5,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dialogs="clr-namespace:Allusion.ViewModels.Dialogs"
+        xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
         d:DataContext="{d:DesignInstance Type=dialogs:OpenRefBoardViewModel}"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
+        
         Title="Open or Choose Art Board" Height="300" Width="600"
-        WindowStyle="None" WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterOwner"
         cm:Message.Attach="[Key Escape] = [Cancel]" >
-    <Grid Margin="10">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
+    <Grid >
         <Grid.RowDefinitions>
+            <RowDefinition Height="22"/> <!-- Title bar --> 
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
+        <Grid>
+            <Button Grid.Column="0" x:Name="Close" cm:Message.Attach="[Cancel]" Style="{DynamicResource TitleBarButtonClose}" VerticalAlignment="Stretch" HorizontalAlignment="Right">
+                <fa:IconImage Icon="close" Height="12"/>
+            </Button>
+        </Grid>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="1" Margin="10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -33,7 +46,7 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2" Margin="10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -49,7 +62,7 @@
             </ListBox>
         </Grid>
 
-        <Grid Row="2">
+        <Grid Row="3" Margin="10,0,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />

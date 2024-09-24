@@ -2,14 +2,24 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 
-    <Color x:Key="Primary.Select" R="" G="" B=""/>
-    <Color x:Key="Primary.Gray" R="128" G="128" B="128"/>
+    <Color x:Key="Primary.Gray" A="255" R="128" G="128" B="128"/>
+    <Color x:Key="Primary.Red" A="255" R="115" G="32" B="32"/>
+    <Color x:Key="Transparent" A="0" R="0" G="0" B="0"/>
+
+    <!-- WINDOW TITLE BAR -->
+    <SolidColorBrush x:Key="Transparent.Brush" Color="Transparent"/>
+    <SolidColorBrush x:Key="Window.TitleBar.Color" Color="#2e2e2e"/>
+    <SolidColorBrush x:Key="WindowTextColor" Color="Black"/>
+    <SolidColorBrush x:Key="BorderColor" Color="Black"/>
+    <SolidColorBrush x:Key="Window.Titlebar.Button" Color="LightGray"/>
+    <SolidColorBrush x:Key="Window.Titlebar.Button.Close" Color="{StaticResource Primary.Red}"/>
+    <SolidColorBrush x:Key="MouseClickColor" Color="Gray"/>
 
     <!-- GENERAL DARK MODE COLORS -->
     <SolidColorBrush x:Key="BackGround" Color="#2e2e2e"/>
     <SolidColorBrush x:Key="Board.Background" Color="#353535"/>
     <SolidColorBrush x:Key="Window.Background" Color="{StaticResource Primary.Gray}"/>
-    <SolidColorBrush x:Key="Dialog.BackGround" Color="#4a4a4a"/>
+    <SolidColorBrush x:Key="Dialog.BackGround" Color="#FF9C6B14"/>
     <SolidColorBrush x:Key="Label.Title.Background" Color="#4a4a4a"/>
     <SolidColorBrush x:Key="Foreground" Color="WhiteSmoke"/>
     <SolidColorBrush x:Key="DefaultBorder" Color="#262626"/>
