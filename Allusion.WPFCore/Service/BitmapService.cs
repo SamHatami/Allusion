@@ -52,11 +52,21 @@ public class BitmapService : IBitmapService
         using var client = new HttpClient();
 
         BitmapSource bitmapSource = null;
-
+        byte[] imageBytes = null;
         try
         {
-            var bytes = await client.GetByteArrayAsync(url);
-            bitmapSource = BitmapUtils.CreateFromBytes(bytes);
+            if (url.StartsWith("data:image"))
+            {
+                var base64Data = url.Substring(url.IndexOf(",") + 1);
+                imageBytes = Convert.FromBase64String(base64Data);
+            }
+            else
+            {
+                imageBytes = await client.GetByteArrayAsync(url);
+
+            }
+
+            bitmapSource = BitmapUtils.CreateFromBytes(imageBytes);
         }
         catch (Exception e)
         {

@@ -8,12 +8,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
+    xmlns:converter="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
     cm:Message.Attach="              [Gesture Ctrl+Z] = [UndoRemove];"
     d:DataContext="{d:DesignInstance Type=viewModels:PageViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <converter:InvertBoolToVis x:Key="InvertBoolVis" />
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
             <Setter Property="Width" Value="15" />
             <Setter Property="Height" Value="15" />
@@ -125,10 +127,10 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-            <Grid
+            <!--<Grid
                 VerticalAlignment="Center"
                 IsHitTestVisible="False"
-                Visibility="{Binding RefBoardViewModel, Converter={StaticResource InvertableBoolToVisiblity}, ConverterParameter=Normal}">
+                Visibility="{Binding RefBoardViewModel, Converter={StaticResource InvertBoolVis}, ConverterParameter=Normal}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -182,7 +184,7 @@
                     </Grid>
                 </Border>
 
-            </Grid>
+            </Grid>-->
         </Canvas>
 
     </Border>

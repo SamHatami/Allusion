@@ -18,7 +18,7 @@
     Topmost="True"
     mc:Ignorable="d">
     <Window.Resources>
-        <converters:InvertableBoolToVisiblity x:Key="InvertableBoolToVisiblity" />
+        <converters:InvertBoolToVis x:Key="InvertBoolVis" />
     </Window.Resources>
 
     <WindowChrome.WindowChrome>
@@ -85,7 +85,7 @@
             Grid.Row="1"
             VerticalAlignment="Center"
             IsHitTestVisible="False"
-            Visibility="{Binding RefBoardViewModel, Converter={StaticResource InvertableBoolToVisiblity}, ConverterParameter=Normal}">
+            Visibility="{Binding RefBoardViewModel, Converter={StaticResource InvertBoolVis}, ConverterParameter=Normal}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />

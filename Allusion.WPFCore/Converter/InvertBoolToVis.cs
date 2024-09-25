@@ -13,7 +13,7 @@ namespace Allusion.WPFCore.Converter
     //https://stackoverflow.com/questions/534575/how-do-i-invert-booleantovisibilityconverter
 
     [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class InvertableBoolToVisiblity : IValueConverter
+    public class InvertBoolToVis : IValueConverter
     {
         enum Parameters
         {
