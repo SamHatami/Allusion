@@ -9,14 +9,13 @@
                 <ControlTemplate TargetType="Button">
                     <Border
                         Background="{TemplateBinding Background}"
-                        BorderBrush="{DynamicResource Border}"
+                        BorderBrush="{DynamicResource Button.Primary.Border}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="2">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
-
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
@@ -28,8 +27,23 @@
 
 
 
-    <Style x:Key="SecondaryButton" BasedOn="{StaticResource PrimaryButton}" TargetType="{x:Type Button}">
+    <Style x:Key="SecondaryButton" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="{StaticResource PrimaryButtonHeight}" />
         <Setter Property="Background" Value="{StaticResource Button.Secondary.Background}" />
+        <Setter Property="Foreground" Value="{StaticResource Foreground.Front}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{DynamicResource Button.Secondary.Border}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="2">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />

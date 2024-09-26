@@ -11,5 +11,6 @@ namespace Allusion.Views.Dialogs
         {
             InitializeComponent();
         }
+
     }
 }

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows;
 using Allusion.Views;
 using Allusion.WPFCore;
+using System.Dynamic;
 
 namespace Allusion.ViewModels;
 
@@ -44,6 +45,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _configuration = configuration;
         _events = events;
         _events.SubscribeOnBackgroundThread(this);
+        _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
 
 
@@ -56,12 +58,13 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     }
 
 
-    private DialogResultType ShowBoardModifiedSaveDialog()
+    private async Task<DialogResultType> AskSaveDialog()
     {
         var dialog = new DialogViewModel("Save file ?",
             "The board has been modified since last save. Do you want to save before continuing?",
             DialogType.Choice);
-        var option = _windowManager.ShowDialogAsync(dialog);
+
+        await _windowManager.ShowDialogAsync(dialog);
 
         return dialog.DialogResult;
     }
@@ -70,7 +73,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     {
         if (BoardIsModified)
         {
-            var dialogResult = ShowBoardModifiedSaveDialog();
+            var dialogResult = await AskSaveDialog().ConfigureAwait(true);
 
             switch (dialogResult)
             {
@@ -100,7 +103,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         //replace with something else.
         if (BoardIsModified)
         {
-            var dialogResult = ShowBoardModifiedSaveDialog();
+            var dialogResult = await AskSaveDialog().ConfigureAwait(true);
 
             switch (dialogResult)
             {

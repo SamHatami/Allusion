@@ -76,6 +76,8 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
 
         ActivePageViewModel = Pages.Last();
         ActivePageViewModel.SelectPage();
+
+        _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
     }
 
     public Task HandleAsync(PageSelectedEvent message, CancellationToken cancellationToken)

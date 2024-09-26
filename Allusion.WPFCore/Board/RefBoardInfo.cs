@@ -9,7 +9,7 @@ public class RefBoardInfo
     {
         Name = name;
         ImageFolder = imageFolder;
-        FilePath =Path.Combine(baseFolder,name+".json");
+        FilePath =Path.Combine(baseFolder,name+".allusion");
     }
 
     public string Name { get; set; }

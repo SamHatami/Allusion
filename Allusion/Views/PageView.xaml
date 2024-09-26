@@ -15,7 +15,10 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+
+
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converter:InvertBoolToVis x:Key="InvertBoolVis" />
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
             <Setter Property="Width" Value="15" />
@@ -136,7 +139,8 @@
         <Border
             Width="300"
             Height="200"
-            Style="{DynamicResource InfoBox}">
+            Style="{DynamicResource InfoBox}"
+            Visibility="{Binding ShowHelpBox, Converter={StaticResource BoolToVis}}">
             <Border.BorderBrush>
                 <DrawingBrush
                     TileMode="Tile"

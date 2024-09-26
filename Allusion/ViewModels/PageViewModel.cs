@@ -1,4 +1,6 @@
+using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Drawing;
 using System.Dynamic;
 using System.Runtime.Serialization;
 using System.Windows;
@@ -18,6 +20,21 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     private readonly IEventAggregator _events;
 
     public BindableCollection<ImageViewModel> Images { get; set; }
+
+
+    private bool _showHelpBox;
+
+    public bool ShowHelpBox
+    {
+        get => _showHelpBox;
+        set
+        {
+            if (_showHelpBox == value) return;
+
+            _showHelpBox = value;
+            NotifyOfPropertyChange(nameof(ShowHelpBox));
+        }
+    }
 
     private ImageViewModel _selectedImage;
 
@@ -60,6 +77,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         }
     }
 
+
+
     public PageViewModel(IPageManager pageManager, IEventAggregator events, BoardPage page)
     {
         _pageManager = pageManager;
@@ -70,6 +89,9 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         _events.SubscribeOnUIThread(this);
         Images = new BindableCollection<ImageViewModel>();
         _windowManger = IoC.Get<IWindowManager>();
+        Images.CollectionChanged += (sender, args) => UpdateInfoBool();
+
+
 
         InitializePage();
     }
@@ -87,6 +109,14 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
                 PosX = imageItem.PosX,
                 PosY = imageItem.PosY
             });
+
+        UpdateInfoBool();
+
+    }
+
+    private void UpdateInfoBool()
+    {
+        ShowHelpBox = Images.Count == 0;
     }
 
     public void FocusImage(ImageViewModel image)
