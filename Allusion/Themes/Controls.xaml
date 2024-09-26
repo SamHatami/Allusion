@@ -6,6 +6,7 @@
         <ResourceDictionary Source="Controls/ContextMenu.xaml" />
         <ResourceDictionary Source="Controls/LabelsTextBox.xaml" />
         <ResourceDictionary Source="Controls/ListBox.xaml" />
+        <ResourceDictionary Source="Controls/Borders.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

@@ -11,7 +11,7 @@
     Title="MainView"
     Width="1024"
     Height="1024"
-    cm:Message.Attach="         [Gesture Ctrl+V] = [PasteOnCanvas];         [Gesture Ctrl+S] = [Save];         [Gesture Ctrl+O] = [OpenRefBoardDialog];         [Gesture Ctrl+N] = [NewRefBoardDialog];         [Key Delete] = [Remove]"
+    cm:Message.Attach="     [Gesture Ctrl+V] = [PasteOnCanvas];     [Gesture Ctrl+S] = [Save];     [Gesture Ctrl+O] = [OpenRefBoardDialog];     [Gesture Ctrl+N] = [NewRefBoardDialog];     [Key Delete] = [Remove]"
     d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
     Initialized="OnWindowInitialized"
     StateChanged="WindowStateChangedHandler"
@@ -118,10 +118,27 @@
             <Border
                 Grid.Row="1"
                 Width="300"
-                Background="{DynamicResource Dialog.BackGround}"
-                BorderBrush="{DynamicResource Dialog.Border}"
-                BorderThickness="2"
-                CornerRadius="4">
+                Style="{DynamicResource InfoBox}">
+                <Border.BorderBrush>
+                    <DrawingBrush
+                        TileMode="Tile"
+                        Viewport="0,0,8,8"
+                        ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{DynamicResource Dialog.Border}">
+                                    <GeometryDrawing.Geometry>
+                                        <GeometryGroup>
+                                            <RectangleGeometry Rect="0,0,50,50" />
+                                            <RectangleGeometry Rect="50,50,50,50" />
+                                        </GeometryGroup>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Border.BorderBrush>
+
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />

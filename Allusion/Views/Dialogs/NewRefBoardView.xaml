@@ -8,21 +8,24 @@
         Title="Create new ReferenceBoard"  Width="300" WindowStartupLocation="CenterOwner"
         SizeToContent="Height" WindowStyle="None"
         AllowsTransparency="True"
-        Background="{DynamicResource Dialog.BackGround}"
+        Background="Transparent"
         ResizeMode="NoResize"
         xmlns:dialogs="clr-namespace:Allusion.ViewModels.Dialogs"
         d:DataContext="{d:DesignInstance Type=dialogs:NewRefBoardViewModel}"
         cm:Message.Attach=
         "[Key Escape] = [Cancel];
         [Key Enter] = [Ok]">
-        <Grid Margin="10,5,10,10">
+
+
+    <Border BorderBrush="{DynamicResource Dialog.Border}" BorderThickness="1" CornerRadius="10" Background="{DynamicResource Dialog.BackGround}">
+        <Grid Margin="10,0,10,5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="20" />
-                <RowDefinition Height="40" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="Create New Board" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
+            <Label Grid.Row="0" Content="Create New Board" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Style="{DynamicResource DialogTitleLabel}"/>
             <Label Grid.Row="1" Content="Name" HorizontalAlignment="Stretch" Style="{DynamicResource DialogLabel}"/>
             <TextBox Grid.Row="2" Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DialogTextBox}"/>
 
@@ -33,9 +36,11 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="2" x:Name="Ok" Content="Ok" Margin="5,10,5,5" />
-                <Button Grid.Column="3" x:Name="Cancel" Content="Cancel" Margin="5,10,5,5" />
+                <Button Grid.Column="2" x:Name="Ok" Content="Ok" Margin="5,10,5,5" Style="{DynamicResource PrimaryButton}"/>
+                <Button Grid.Column="3" x:Name="Cancel" Content="Cancel" Margin="5,10,5,5" Style="{DynamicResource SecondaryButton}"/>
             </Grid>
         </Grid>
+    </Border>
+
 
 </Window>
