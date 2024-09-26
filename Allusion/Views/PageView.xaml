@@ -5,10 +5,11 @@
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:Allusion.Behaviors"
     xmlns:cm="http://caliburnmicro.com"
+    xmlns:converter="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
-    xmlns:converter="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
     cm:Message.Attach="              [Gesture Ctrl+Z] = [UndoRemove];"
     d:DataContext="{d:DesignInstance Type=viewModels:PageViewModel}"
     d:DesignHeight="450"
@@ -36,7 +37,9 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,1,0,0">
+    <Grid>
+
+        <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,1,0,0" />
         <Canvas
             x:Name="ImageCanvas"
             AllowDrop="True"
@@ -127,65 +130,59 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-            <!--<Grid
-                VerticalAlignment="Center"
-                IsHitTestVisible="False"
-                Visibility="{Binding RefBoardViewModel, Converter={StaticResource InvertBoolVis}, ConverterParameter=Normal}">
+        </Canvas>
+
+
+        <Border
+            Width="300"
+            Height="200"
+            Style="{DynamicResource InfoBox}">
+            <Border.BorderBrush>
+                <DrawingBrush
+                    TileMode="Tile"
+                    Viewport="0,0,8,8"
+                    ViewportUnits="Absolute">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing Brush="{DynamicResource Border}">
+                                <GeometryDrawing.Geometry>
+                                    <GeometryGroup>
+                                        <RectangleGeometry Rect="0,0,50,50" />
+                                        <RectangleGeometry Rect="50,50,50,50" />
+                                    </GeometryGroup>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Border.BorderBrush>
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions />
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <Border
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Foreground="GhostWhite">
+                    Add images to this page by
+                    Drag and drop files form your browser or windows explorer
+                    or
+                    Copy paste from your browser or windows explorer.
+                </TextBlock>
+
+                <fa:IconImage
                     Grid.Row="1"
-                    Width="300"
-                    Background="{DynamicResource Dialog.BackGround}"
-                    BorderBrush="{DynamicResource Dialog.Border}"
-                    BorderThickness="2"
-                    CornerRadius="4">
-                    <Grid Margin="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Label
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Style="{DynamicResource DialogLabel}">
-                            Create new board
-                        </Label>
-                        <Label
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            HorizontalAlignment="Left"
-                            Style="{DynamicResource DialogLabel}">
-                            Ctrl + N
-                        </Label>
+                    Height="30"
+                    Foreground="DimGray"
+                    Icon="FileArrowDown" />
 
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Style="{DynamicResource DialogLabel}">
-                            Open board
-                        </Label>
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource DialogLabel}">
-                            Ctrl + O
-                        </Label>
+            </Grid>
+        </Border>
 
+    </Grid>
 
-                    </Grid>
-                </Border>
-
-            </Grid>-->
-        </Canvas>
-
-    </Border>
 </UserControl>
