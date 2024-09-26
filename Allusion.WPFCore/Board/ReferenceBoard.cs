@@ -58,7 +58,7 @@ public class ReferenceBoard
         if (!Directory.Exists(board.BaseFolder))
             Directory.CreateDirectory(board.BaseFolder);
 
-        var RefBoardDataFile = Path.Combine(board.BaseFolder, board.Name + ".json");
+        var RefBoardDataFile = Path.Combine(board.BaseFolder, board.Name + ".allusion");
 
         try
         {

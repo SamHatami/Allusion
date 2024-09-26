@@ -39,7 +39,7 @@ public class Bootstrapper : BootstrapperBase
         _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
         _container.Singleton<IPageManager, PageManager>();
         _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
-        _container.PerRequest<MainViewModel>();
+        _container.Singleton<MainViewModel>();
         _container.PerRequest<OpenRefBoardViewModel>();
         _container.PerRequest<NewRefBoardViewModel>();
         _container.PerRequest<DialogViewModel>();
@@ -68,7 +68,20 @@ public class Bootstrapper : BootstrapperBase
 
     protected override void OnStartup(object sender, StartupEventArgs e)
     {
-        DisplayRootViewForAsync<MainViewModel>();
+        //if opened by an associated file.
+        if (e.Args.Length > 0)
+        {
+            string openedFromFile = e.Args[0];
+
+            var mainViewModel = _container.GetInstance<MainViewModel>();
+            DisplayRootViewForAsync<MainViewModel>();
+            mainViewModel.StartUpByFile(openedFromFile);
+        }
+        else
+        {
+            DisplayRootViewForAsync<MainViewModel>();
+        }
+
     }
 
     private void CreateKeyMagic()

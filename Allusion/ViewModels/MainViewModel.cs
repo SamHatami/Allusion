@@ -16,9 +16,6 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 {
     //TODO: Booleans on states -> enums
 
-    public bool Saving;
-    public bool Loading;
-
     private bool BoardIsModified; //TODO: Byt till BoardState
 
     private ReferenceBoard _currentRefBoard { get; set; }
@@ -48,6 +45,14 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events = events;
         _events.SubscribeOnBackgroundThread(this);
         _boardManager = refBoardManager;
+
+
+    }
+
+    public void StartUpByFile(string filePath)
+    {
+        var openedRefBoard = _boardManager.Open(filePath);
+        _events.PublishOnBackgroundThreadAsync(new BoardOpenedEvent(openedRefBoard));
     }
 
 
