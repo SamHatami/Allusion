@@ -49,7 +49,7 @@
                     VerticalAlignment="Center"
                     Content="{Binding RefBoardViewModel.BoardName}"
                     FontSize="14"
-                    Style="{DynamicResource ReferenceBoardTitle}" />
+                    Style="{DynamicResource TitleBarLabel}" />
                 <Button
                     Grid.Column="2"
                     Click="OnMinimizeButtonClick"

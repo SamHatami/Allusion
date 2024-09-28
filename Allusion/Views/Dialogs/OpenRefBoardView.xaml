@@ -7,6 +7,7 @@
     xmlns:dialogs="clr-namespace:Allusion.ViewModels.Dialogs"
     xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
     Title="Open or Choose Art Board"
     Width="600"
     Height="300"
@@ -16,6 +17,9 @@
     Style="{DynamicResource DialogWindow}"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
+    <Window.Resources>
+        <converters:CountToBoolConverter x:Key="CountToBool"/>
+    </Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
     </WindowChrome.WindowChrome>
@@ -113,6 +117,7 @@
                 Grid.Column="2"
                 Margin="5,10,5,5"
                 Content="Open"
+                IsEnabled="{Binding RefBoardPaths, Converter={StaticResource CountToBool}}"
                 Style="{StaticResource PrimaryButton}" />
             <Button
                 x:Name="Cancel"

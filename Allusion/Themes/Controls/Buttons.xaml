@@ -22,6 +22,10 @@
                 <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
                 <Setter Property="Foreground" Value="{StaticResource Foreground}" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Background" Value="Gray"/>
+                <Setter Property="Foreground" Value="DimGray" />
+            </Trigger>
         </Style.Triggers>
     </Style>
 

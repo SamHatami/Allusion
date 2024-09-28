@@ -54,7 +54,7 @@
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding PageIsSelected}" Value="True">
                                             <Setter Property="Background" Value="{StaticResource Tab.Button.Selected}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Border.Selected}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Selected}" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding PageIsSelected}" Value="False">
                                             <Setter Property="Background" Value="{StaticResource Tab.Button.Border.UnSelected}" />

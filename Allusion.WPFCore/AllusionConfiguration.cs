@@ -16,6 +16,8 @@ public class AllusionConfiguration
         get
         {
             var result = string.IsNullOrEmpty(_globalFolder) ? DefaultFolder : _globalFolder;
+            if(!Directory.Exists(result))
+                Directory.CreateDirectory(result);
             Trace.WriteLine($"GlobalFolder get: {result}");
             return result;
         }
