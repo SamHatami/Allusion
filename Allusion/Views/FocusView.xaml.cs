@@ -32,8 +32,8 @@ namespace Allusion.Views
             if (_window is not FocusView) return;
             _window.MouseDown += OnWindowMouseDown;
             _window.SourceInitialized += OnHostingWindowInit;
-            
-            _window.Width = _window.Height * _aspectRatio-(int)SystemParameters.WindowCaptionHeight;
+
+            _window.Width = Math.Abs(_window.Height * _aspectRatio - (int)SystemParameters.WindowCaptionHeight);
         }
 
         private void OnWindowMouseDown(object sender, MouseButtonEventArgs e)

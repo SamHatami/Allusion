@@ -12,6 +12,16 @@
 
     <Border
         Background="Transparent">
+        <!--<Border.ContextMenu>
+            <MenuItem Header="Add note"/>
+            <MenuItem Header="Remove Note"/>
+            <MenuItem Header="Set size">
+                <MenuItem Header="25%"/>
+                <MenuItem Header="50%"/>
+                <MenuItem Header="75%"/>
+                <MenuItem Header="100%"/>
+            </MenuItem>
+        </Border.ContextMenu>-->
         <Border.Style>
             <Style TargetType="Border">
                 <Style.Triggers>

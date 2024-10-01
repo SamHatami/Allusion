@@ -15,7 +15,8 @@ public class FocusViewModel: Screen
     {
         
         ImageSource = item.SourceImage;
-        AspectRatio = item.SourceImage.PixelWidth / item.SourceImage.PixelHeight;
+        AspectRatio = item.SourceImage.Width / item.SourceImage.Height;
+
     }
 
     public Task Close()
