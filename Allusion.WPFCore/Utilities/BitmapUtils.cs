@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace Allusion.WPFCore.Utilities;
 
-internal static class BitmapUtils
+public static class BitmapUtils
 {
     public static void SaveToFile(BitmapImage bitmap, string fullFileNameWithoutExtension)
     {
@@ -20,11 +20,21 @@ internal static class BitmapUtils
     public static BitmapImage LoadImageFromUri(string imageUri)
     {
         var bitmapImage = new BitmapImage();
-        bitmapImage.BeginInit();
-        bitmapImage.UriSource = new Uri(imageUri);
-        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-        bitmapImage.EndInit();
-        bitmapImage.Freeze(); // Optionally freeze for performance and cross-thread access
+
+        try
+        {
+            bitmapImage.BeginInit();
+            bitmapImage.UriSource = new Uri(imageUri);
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze(); // Optionally freeze for performance and cross-thread access
+        }
+        catch (UriFormatException e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
         return bitmapImage;
     }
 
@@ -32,14 +42,31 @@ internal static class BitmapUtils
     //Note: This is not fully done, the scale will be wrong.
     public static BitmapSource? CreateFromBytes(byte[] imageBytes)
     {
-        var bitmapSource = (BitmapSource)new ImageSourceConverter().ConvertFrom(imageBytes);
+        BitmapSource? bitmapSource = null;
+        try
+        {
+            bitmapSource = (BitmapSource)new ImageSourceConverter().ConvertFrom(imageBytes);
+
+        }
+        catch (NotSupportedException e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        catch (NullReferenceException e)
+        {
+
+        }
 
         return bitmapSource;
     }
 
-    public static string GetUrl(BitmapImage bitmapSource)
+    public static string GetUrl(BitmapImage? bitmapSource)
     {
+
         var url = string.Empty;
+        if (bitmapSource is null) return url;
+
         try
         {
             if (bitmapSource.UriSource is not null) url = bitmapSource.UriSource.AbsolutePath;
@@ -56,8 +83,5 @@ internal static class BitmapUtils
         return url;
     }
 
-    public static BitmapImage DefaultImage()
-    {
-        return new BitmapImage(new Uri("pack://application:,,,/Resources/DefaultNoImage.png"));
-    }
+
 }
