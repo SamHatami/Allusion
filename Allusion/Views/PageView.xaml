@@ -153,46 +153,27 @@
             Height="200"
             Style="{DynamicResource InfoBox}"
             Visibility="{Binding ShowHelpBox, Converter={StaticResource BoolToVis}}">
-            <Border.BorderBrush>
-                <DrawingBrush
-                    TileMode="Tile"
-                    Viewport="0,0,8,8"
-                    ViewportUnits="Absolute">
-                    <DrawingBrush.Drawing>
-                        <DrawingGroup>
-                            <GeometryDrawing Brush="{DynamicResource Border}">
-                                <GeometryDrawing.Geometry>
-                                    <GeometryGroup>
-                                        <RectangleGeometry Rect="0,0,50,50" />
-                                        <RectangleGeometry Rect="50,50,50,50" />
-                                    </GeometryGroup>
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
-                        </DrawingGroup>
-                    </DrawingBrush.Drawing>
-                </DrawingBrush>
-            </Border.BorderBrush>
+            <!--  Dotted outline  -->
+
 
             <Grid Margin="10">
                 <Grid.ColumnDefinitions />
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="0"
-                    Foreground="GhostWhite">
-                    Add images to this page by
-                    Drag and drop files form your browser or windows explorer
-                    or
-                    Copy paste from your browser or windows explorer.
-                </TextBlock>
+                    Foreground="{DynamicResource Foreground.Front}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"><Run Language="sv-se" Text="Drop images anywhere on the canvas" /><LineBreak /><Run Language="sv-se" Text="Or simply paste with Ctrl-V" /></TextBlock>
 
                 <fa:IconImage
                     Grid.Row="1"
                     Height="30"
+                    VerticalAlignment="Center"
                     Foreground="DimGray"
                     Icon="FileArrowDown" />
 
