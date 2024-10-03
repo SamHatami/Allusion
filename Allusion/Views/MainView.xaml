@@ -9,8 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
     Title="MainView"
-    Width="1024"
-    Height="1024"
+    Width="500"
+    Height="500"
     cm:Message.Attach="     [Gesture Ctrl+V] = [PasteOnCanvas];     [Gesture Ctrl+S] = [Save];     [Gesture Ctrl+O] = [OpenRefBoardDialog];     [Gesture Ctrl+N] = [NewRefBoardDialog];     [Key Delete] = [Remove]"
     d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
     Initialized="OnWindowInitialized"
@@ -111,8 +111,6 @@
                             Color="#FFAAAFAA" />
                     </TextBlock.Effect>
                 </TextBlock>
-
-
             </DockPanel>
 
             <Border

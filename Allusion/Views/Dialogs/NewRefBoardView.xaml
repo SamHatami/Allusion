@@ -10,14 +10,15 @@
     Width="300"
     cm:Message.Attach="[Key Escape] = [Cancel];         [Key Enter] = [Ok]"
     d:DataContext="{d:DesignInstance Type=dialogs:NewRefBoardViewModel}"
-    AllowsTransparency="True"
     Background="Transparent"
     ResizeMode="NoResize"
     SizeToContent="Height"
     WindowStartupLocation="CenterOwner"
-    WindowStyle="None"
     mc:Ignorable="d">
 
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
 
     <Border
         Background="{DynamicResource Dialog.BackGround}"

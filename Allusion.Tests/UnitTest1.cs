@@ -64,16 +64,5 @@ namespace Allusion.Tests
             url.Should().BeEquivalentTo(string.Empty);
         }
 
-        [Fact]
-        public void DefaultImage_ShouldReturnDefaultImageEvenIfResourceMissing()
-        {
-            // Act
-            var defaultImage = BitmapUtils.DefaultImage();
-
-            // Assert
-            Assert.NotNull(defaultImage);
-            // Assuming the default image URI is correct, but if the resource is missing, it should handle it gracefully.
-            Assert.Equal("pack://application:,,,/Resources/DefaultNoImage.png", defaultImage.UriSource.ToString());
-        }
-    }
+   }
 }

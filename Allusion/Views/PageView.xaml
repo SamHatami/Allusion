@@ -19,6 +19,7 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converter:CountToVisConverter x:Key="CountToVis" />
         <converter:InvertBoolToVis x:Key="InvertBoolVis" />
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
             <Setter Property="Width" Value="15" />
@@ -54,7 +55,6 @@
                         Header="Paste"
                         IsEnabled="True" />
                     <MenuItem cm:Message.Attach="[Save]" Header="Save" />
-                    <MenuItem Header="Option 3" />
                 </ContextMenu>
             </Canvas.ContextMenu>
             <b:Interaction.Behaviors>
@@ -66,6 +66,18 @@
                         <Canvas />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                <ItemsControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Add note"/>
+                        <MenuItem Header="Remove Note"/>
+                        <MenuItem Header="Set size">
+                            <MenuItem Header="25%"/>
+                            <MenuItem Header="50%"/>
+                            <MenuItem Header="75%"/>
+                            <MenuItem Header="100%"/>
+                        </MenuItem>
+                    </ContextMenu>
+                </ItemsControl.ContextMenu>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -93,7 +105,7 @@
                                     Style="{StaticResource TriangleThumbStyle}" />
                             </Grid>
 
-                            <Border Grid.Row="1" BorderBrush="{DynamicResource Border}">
+                            <Border Grid.Row="1" BorderBrush="{DynamicResource Border}" Visibility="{Binding Description, Converter={StaticResource CountToVis}}">
                                 <Grid x:Name="DescriptionGrid" Background="Gray">
                                     <TextBlock
                                         x:Name="PageLabel"

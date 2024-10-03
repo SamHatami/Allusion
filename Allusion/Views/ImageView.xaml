@@ -11,17 +11,7 @@
     mc:Ignorable="d">
 
     <Border
-        Background="Transparent">
-        <!--<Border.ContextMenu>
-            <MenuItem Header="Add note"/>
-            <MenuItem Header="Remove Note"/>
-            <MenuItem Header="Set size">
-                <MenuItem Header="25%"/>
-                <MenuItem Header="50%"/>
-                <MenuItem Header="75%"/>
-                <MenuItem Header="100%"/>
-            </MenuItem>
-        </Border.ContextMenu>-->
+        Background="{DynamicResource BackGround}">
         <Border.Style>
             <Style TargetType="Border">
                 <Style.Triggers>
@@ -40,6 +30,8 @@
             d:DesignWidth="100"
             Source="{Binding ImageSource}"
             Stretch="Uniform" 
-            MouseLeftButtonDown="BoundImage_OnMouseLeftButtonDown"/>
+            MouseLeftButtonDown="BoundImage_OnMouseLeftButtonDown">
+
+        </Image>
     </Border>
 </controls:ImageControl>

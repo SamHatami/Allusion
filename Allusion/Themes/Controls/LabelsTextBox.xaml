@@ -33,6 +33,7 @@
         <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBox.Foreground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Border}" />
+        <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
