@@ -123,6 +123,11 @@
     <SolidColorBrush x:Key="Dialog.Border" Color="{DynamicResource Secondary.Border}" />
     <SolidColorBrush x:Key="Dialog.TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
 
+    <SolidColorBrush
+        x:Key="Info.BackGround"
+        Opacity="0.1"
+        Color="{DynamicResource Secondary.Background}" />
+
     <SolidColorBrush x:Key="ListBox.Background" Color="{DynamicResource Secondary.Background}" />
     <SolidColorBrush x:Key="ListBox.Item.Foreground" Color="{DynamicResource Secondary.Foreground}" />
     <SolidColorBrush x:Key="ListBox.Item.Selected" Color="{DynamicResource Secondary.Green}" />
