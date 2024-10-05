@@ -59,6 +59,11 @@
         </Setter>
     </Style>
 
+    <Style x:Key="DescriptionTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Foreground}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
     <Style x:Key="DialogLabel" TargetType="{x:Type Label}">
         <Setter Property="Foreground" Value="{DynamicResource Foreground.Front}" />
     </Style>

@@ -49,8 +49,8 @@ namespace Allusion.Views
 
             var scaleFactor = Math.Min(horizontalScaleFactor, verticalScaleFactor);
 
-            contentControl.Width = Math.Max(0, (contentControl.Width) * scaleFactor);
-            contentControl.Height = Math.Max(0, (contentControl.Width) / aspectRatio);
+            contentControl.Width = Math.Max(100, (contentControl.Width) * scaleFactor);
+            contentControl.Height = Math.Max(100, (contentControl.Width) / aspectRatio);
 
             vm.Scale = contentControl.Width / vm.ImageSource.Width;
         }
