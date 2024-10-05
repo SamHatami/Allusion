@@ -19,6 +19,7 @@
     StateChanged="WindowStateChangedHandler"
     Topmost="True"
     mc:Ignorable="d">
+
     <Window.Resources>
         <converters:InvertBoolToVis x:Key="InvertBoolVis" />
     </Window.Resources>
