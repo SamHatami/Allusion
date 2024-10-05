@@ -28,9 +28,9 @@
     <Color
         x:Key="Secondary.Green"
         A="255"
-        B="95"
-        G="100"
-        R="95" />
+        B="105"
+        G="110"
+        R="105" />
     <Color
         x:Key="Primary.Selected"
         A="255"
@@ -61,8 +61,8 @@
         x:Key="Primary.Button"
         A="255"
         B="135"
-        G="150"
-        R="130" />
+        G="145"
+        R="135" />
 
     <Color
         x:Key="Secondary.Button"

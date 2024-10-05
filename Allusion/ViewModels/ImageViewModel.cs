@@ -1,4 +1,5 @@
-﻿using Allusion.WPFCore.Board;
+﻿using System.Globalization;
+using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 using System.Windows.Input;
@@ -168,6 +169,11 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
     public void RemoveNote()
     {
         Description = String.Empty;
+    }
+
+    public void SetSize(string size)
+    {
+        Scale = Convert.ToDouble(size, CultureInfo.InvariantCulture);
     }
 
 }

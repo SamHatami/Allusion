@@ -11,6 +11,7 @@ namespace Allusion.ViewModels;
 public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelectedEvent>
 {
     private ReferenceBoard _board;
+    private readonly MainViewModel _parent;
     private readonly IEventAggregator _events;
     private readonly IReferenceBoardManager _boardManager;
     private readonly IPageManager _pageManager; 
@@ -32,9 +33,10 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         }
     }
 
-    public ReferenceBoardViewModel(IEventAggregator events, IReferenceBoardManager boardManager, ReferenceBoard board)
+    public ReferenceBoardViewModel(IEventAggregator events, IReferenceBoardManager boardManager, ReferenceBoard board, MainViewModel parent)
     {
         _board = board;
+        _parent = parent;
         _events = events;
         _events.SubscribeOnBackgroundThread(this);
         _boardManager = boardManager;
@@ -49,7 +51,7 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         BoardName = _board.Name;
         Pages = [];
         if(_board.Pages is null) return;
-        Pages.AddRange(_board.Pages.Select(p => new PageViewModel(_pageManager, _events, p)));
+        Pages.AddRange(_board.Pages.Select(p => new PageViewModel(_pageManager, _events, p, this)));
 
         ActivePageViewModel = Pages[0];
         ActivePageViewModel.PageIsSelected = true;
@@ -72,7 +74,7 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         
         var newPage = _boardManager.AddPage(_board, pageName);
 
-        Pages.Add(new PageViewModel(_pageManager,_events, newPage));
+        Pages.Add(new PageViewModel(_pageManager,_events, newPage, this));
 
         ActivePageViewModel = Pages.Last();
         ActivePageViewModel.SelectPage();
@@ -85,6 +87,11 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         ActivePageViewModel = message.Page;
 
         return Task.CompletedTask;
+    }
+
+    public async Task PasteOnCanvas()
+    {
+        await _parent.PasteOnCanvas();
     }
 
     public void RemoveSelectedImage()

@@ -109,7 +109,7 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
-            </Trigger>            
+            </Trigger>
         </Style.Triggers>
     </Style>
 

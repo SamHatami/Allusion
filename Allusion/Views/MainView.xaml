@@ -9,8 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
     Title="MainView"
-    Width="500"
-    Height="500"
+    Width="1024"
+    Height="1024"
     cm:Message.Attach="     [Gesture Ctrl+V] = [PasteOnCanvas];     [Gesture Ctrl+S] = [Save];     [Gesture Ctrl+O] = [OpenRefBoardDialog];     [Gesture Ctrl+N] = [NewRefBoardDialog];     [Key Delete] = [Remove]"
     d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
     DragEnter="MainView_OnDragEnter"
@@ -41,6 +41,9 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Label
@@ -52,8 +55,30 @@
                     Content="{Binding RefBoardViewModel.BoardName}"
                     FontSize="14"
                     Style="{DynamicResource TitleBarLabel}" />
+
                 <Button
+                    x:Name="TopMostButton"
                     Grid.Column="2"
+                    Click="Settings_Click"
+                    RenderOptions.EdgeMode="Aliased"
+                    Style="{DynamicResource TitleBarButtonStyle}"
+                    ToolTip="Turn on/off always on top">
+                    <fa:IconImage
+                        x:Name="DisplayIcon"
+                        Width="16"
+                        Icon="Display" />
+                </Button>
+
+                <Button
+                    Grid.Column="3"
+                    Click="ThemeSwitch_Click"
+                    RenderOptions.EdgeMode="Aliased"
+                    Style="{DynamicResource TitleBarButtonStyle}"
+                    ToolTip="Switch theme">
+                    <fa:IconImage Width="16" Icon="CircleHalfStroke" />
+                </Button>
+                <Button
+                    Grid.Column="4"
                     Click="OnMinimizeButtonClick"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}">
@@ -61,20 +86,20 @@
                 </Button>
                 <Button
                     Name="RestoreButton"
-                    Grid.Column="3"
+                    Grid.Column="5"
                     Click="OnMaximizeRestoreButtonClick"
                     Style="{DynamicResource TitleBarButtonStyle}">
                     <fa:IconImage Height="12" Icon="compress" />
                 </Button>
                 <Button
                     Name="MaximizeButton"
-                    Grid.Column="3"
+                    Grid.Column="6"
                     Click="OnMaximizeRestoreButtonClick"
                     Style="{DynamicResource TitleBarButtonStyle}">
                     <fa:IconImage Height="12" Icon="expand" />
                 </Button>
                 <Button
-                    Grid.Column="4"
+                    Grid.Column="7"
                     Click="OnCloseButtonClick"
                     Style="{DynamicResource TitleBarButtonClose}">
                     <fa:IconImage Height="12" Icon="close" />

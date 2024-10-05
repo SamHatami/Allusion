@@ -184,7 +184,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     {
         BoardIsModified = false;
         Debug.Assert(_boardManager is not null, "Holup");
-        RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard);
+        RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard,this);
     }
 
     protected override void OnViewLoaded(object view)

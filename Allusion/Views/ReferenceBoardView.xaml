@@ -63,7 +63,6 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
                                             <Setter Property="BorderBrush" Value="{DynamicResource Mouse.IsOver}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -76,7 +75,6 @@
                                     </b:Interaction.Behaviors>
                                     <Label.Style>
                                         <Style BasedOn="{StaticResource TabLabel}" TargetType="Label">
-                                            <Setter Property="Margin" Value="-2" />
                                             <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                             <Style.Triggers>
@@ -87,7 +85,8 @@
 
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
-                                                    <Setter Property="Foreground" Value="WhiteSmoke" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+
                                                 </Trigger>
                                             </Style.Triggers>
 

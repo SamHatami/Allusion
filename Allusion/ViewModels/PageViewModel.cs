@@ -11,6 +11,7 @@ using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Screen = Caliburn.Micro.Screen;
+using Size = System.Windows.Size;
 
 namespace Allusion.ViewModels;
 
@@ -19,6 +20,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 {
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
+    private readonly ReferenceBoardViewModel _parent;
 
     public BindableCollection<ImageViewModel> Images { get; set; }
 
@@ -66,6 +68,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     private bool _isSelected;
     private readonly IWindowManager _windowManger;
+    private Size _windowSize;
 
     public bool PageIsSelected
     {
@@ -80,10 +83,11 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
 
 
-    public PageViewModel(IPageManager pageManager, IEventAggregator events, BoardPage page)
+    public PageViewModel(IPageManager pageManager, IEventAggregator events, BoardPage page, ReferenceBoardViewModel parent)
     {
         _pageManager = pageManager;
         _events = events;
+        _parent = parent;
         _page = page;
         DisplayName = _page.Name;
         _events.SubscribeOnBackgroundThread(this);
@@ -129,11 +133,6 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     }
 
-    public void AddNote(ImageViewModel image)
-    {
-        image.AddNote();
-    }
-
     private void AddItems(ImageItem[] items)
     {
 
@@ -152,12 +151,15 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
             _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
     }
 
-    public void Remove()
+    public async Task PasteOnCanvas()
     {
+
+        await _parent.PasteOnCanvas();
     }
 
-    public void UndoRemove()
+    public async Task Save()
     {
+        await _parent.Save();
     }
 
     public void FitToView()
@@ -252,4 +254,5 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
         return Task.CompletedTask;
     }
+
 }

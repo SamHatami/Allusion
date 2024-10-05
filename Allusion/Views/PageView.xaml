@@ -18,7 +18,7 @@
 
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
         <converter:StringToVisibilityConverter x:Key="StringToVis" />
         <converter:InvertBoolToVis x:Key="InvertBoolVis" />
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
@@ -39,7 +39,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TriangleThumb" Property="Fill" Value="Red" />
+                                <Setter TargetName="TriangleThumb" Property="Fill" Value="DarkSeaGreen" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -47,6 +47,8 @@
             </Setter>
         </Style>
     </UserControl.Resources>
+
+
     <Grid>
         <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,1,0,0" />
         <Canvas
@@ -80,10 +82,10 @@
                             </Grid.RowDefinitions>
 
                             <Grid
-                                x:Name="ImageContent"
+                                Name="ImageContent"
                                 Grid.Row="0"
-                                Width="{Binding Width, Mode=OneTime}"
-                                Height="{Binding Height, Mode=OneTime}">
+                                Width="{Binding Width, Mode=OneWay}"
+                                Height="{Binding Height, Mode=OneWay}">
                                 <ContentControl
                                     cm:Message.Attach="[Event MouseDoubleClick] = [FocusImage($dataContext)]"
                                     cm:View.Model="{Binding}"
@@ -92,12 +94,12 @@
                                         <ContextMenu>
                                             <MenuItem cm:Message.Attach="AddNote" Header="Add note" />
                                             <MenuItem cm:Message.Attach="RemoveNote" Header="Remove Note" />
-                                            <MenuItem Header="Set size">
-                                                <MenuItem Header="25%" />
-                                                <MenuItem Header="50%" />
-                                                <MenuItem Header="75%" />
-                                                <MenuItem Header="100%" />
-                                            </MenuItem>
+                                            <!--<MenuItem Header="Size">
+                                                <MenuItem cm:Message.Attach="SetSize('0.25')" Header="25%" />
+                                                <MenuItem cm:Message.Attach="SetSize('0.50')" Header="50%" />
+                                                <MenuItem cm:Message.Attach="SetSize('0.75')" Header="75%" />
+                                                <MenuItem cm:Message.Attach="SetSize('1')" Header="100%" />
+                                            </MenuItem>-->
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -107,8 +109,18 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
                                     Background="Gray"
+                                    DragCompleted="ResizeThumb_OnDragCompleted"
                                     DragDelta="OnResizeThumbDragDelta"
+                                    DragStarted="ResizeThumb_OnDragStarted"
                                     Style="{DynamicResource TriangleThumbStyle}" />
+                                <fa:IconImage
+                                    x:Name="DragIcon"
+                                    Height="22"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Foreground="WhiteSmoke"
+                                    Icon="BorderTopLeft"
+                                    Visibility="Hidden" />
                             </Grid>
 
                             <Border
@@ -130,10 +142,10 @@
                                     <TextBox
                                         x:Name="RenameTextBox"
                                         Width="{Binding ActualWidth, ElementName=ImageContent}"
-                                        VerticalContentAlignment="Center"
                                         GotFocus="UIElement_OnGotFocus"
                                         KeyDown="OnRenameKeyDown"
                                         LostFocus="OnRenameLostFocus"
+                                        Style="{DynamicResource DescriptionTextBox}"
                                         Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         TextWrapping="Wrap"
                                         Visibility="Collapsed" />
