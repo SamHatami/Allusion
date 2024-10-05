@@ -6,6 +6,5 @@
     <system:Double x:Key="CornerRadius">4</system:Double>
     <system:Double x:Key="PrimaryButtonHeight">30</system:Double>
     <system:Double x:Key="TextBox.Height">25</system:Double>
-    
 
 </ResourceDictionary>

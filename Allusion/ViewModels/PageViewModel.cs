@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Dynamic;
 using System.Runtime.Serialization;
 using System.Windows;
+using Allusion.Views;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
@@ -126,6 +127,11 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         _windowManger.ShowWindowAsync(new FocusViewModel(image.Item), null, settings);
 
 
+    }
+
+    public void AddNote(ImageViewModel image)
+    {
+        image.AddNote();
     }
 
     private void AddItems(ImageItem[] items)

@@ -58,4 +58,14 @@ public partial class MainView : Window
     {
         RefreshMaximizeRestoreButton();
     }
+
+    private void MainView_OnDragEnter(object sender, DragEventArgs e)
+    {
+        this.Topmost = true;
+    }
+
+    private void MainView_OnDragLeave(object sender, DragEventArgs e)
+    {
+        this.Topmost = false;
+    }
 }

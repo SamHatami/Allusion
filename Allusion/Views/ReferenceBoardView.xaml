@@ -12,7 +12,7 @@
     d:DataContext="{d:DesignInstance Type=viewModels:ReferenceBoardViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Style="{StaticResource MainControl}"
+    Style="{DynamicResource MainControl}"
     mc:Ignorable="d">
 
     <UserControl.Resources />
@@ -53,16 +53,17 @@
                                 <Style BasedOn="{StaticResource TabButton}" TargetType="Button">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding PageIsSelected}" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource Tab.Button.Selected}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Selected}" />
+                                            <Setter Property="Background" Value="{DynamicResource Tab.Button.Selected}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Border.Selected}" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding PageIsSelected}" Value="False">
-                                            <Setter Property="Background" Value="{StaticResource Tab.Button.Border.UnSelected}" />
+                                            <Setter Property="Background" Value="{DynamicResource Tab.Button.UnSelected}" />
                                             <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Border.UnSelected}" />
                                         </DataTrigger>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
-                                            <Setter Property="Foreground" Value="WhiteSmoke" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource Mouse.IsOver}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>

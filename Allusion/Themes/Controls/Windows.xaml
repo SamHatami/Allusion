@@ -2,8 +2,8 @@
 
 
     <Style x:Key="DialogWindow" TargetType="{x:Type Window}">
-        <Setter Property="Background" Value="{StaticResource Dialog.BackGround}" />
-        <Setter Property="BorderBrush" Value="{StaticResource Border}" />
+        <Setter Property="Background" Value="{DynamicResource Dialog.BackGround}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
         <Setter Property="BorderThickness" Value="2" />
     </Style>
 

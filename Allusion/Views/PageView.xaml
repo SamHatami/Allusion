@@ -19,7 +19,7 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <converter:CountToVisConverter x:Key="CountToVis" />
+        <converter:StringToVisibilityConverter x:Key="StringToVis" />
         <converter:InvertBoolToVis x:Key="InvertBoolVis" />
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
             <Setter Property="Width" Value="15" />
@@ -32,17 +32,22 @@
                     <ControlTemplate TargetType="Thumb">
                         <Grid>
                             <Polygon
+                                x:Name="TriangleThumb"
                                 Fill="{DynamicResource Tab.Button.Selected}"
                                 Points="15,-5 -5,15 15,15"
                                 StrokeThickness="0" />
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TriangleThumb" Property="Fill" Value="Red" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </UserControl.Resources>
     <Grid>
-
         <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,1,0,0" />
         <Canvas
             x:Name="ImageCanvas"
@@ -66,18 +71,6 @@
                         <Canvas />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Add note"/>
-                        <MenuItem Header="Remove Note"/>
-                        <MenuItem Header="Set size">
-                            <MenuItem Header="25%"/>
-                            <MenuItem Header="50%"/>
-                            <MenuItem Header="75%"/>
-                            <MenuItem Header="100%"/>
-                        </MenuItem>
-                    </ContextMenu>
-                </ItemsControl.ContextMenu>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -85,6 +78,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+
                             <Grid
                                 x:Name="ImageContent"
                                 Grid.Row="0"
@@ -93,25 +87,40 @@
                                 <ContentControl
                                     cm:Message.Attach="[Event MouseDoubleClick] = [FocusImage($dataContext)]"
                                     cm:View.Model="{Binding}"
-                                    IsHitTestVisible="True" />
+                                    IsHitTestVisible="True">
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem cm:Message.Attach="AddNote" Header="Add note" />
+                                            <MenuItem cm:Message.Attach="RemoveNote" Header="Remove Note" />
+                                            <MenuItem Header="Set size">
+                                                <MenuItem Header="25%" />
+                                                <MenuItem Header="50%" />
+                                                <MenuItem Header="75%" />
+                                                <MenuItem Header="100%" />
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
+
+                                </ContentControl>
                                 <Thumb
                                     x:Name="ResizeThumb"
-                                    Width="15"
-                                    Height="15"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
                                     Background="Gray"
                                     DragDelta="OnResizeThumbDragDelta"
-                                    Style="{StaticResource TriangleThumbStyle}" />
+                                    Style="{DynamicResource TriangleThumbStyle}" />
                             </Grid>
 
-                            <Border Grid.Row="1" BorderBrush="{DynamicResource Border}" Visibility="{Binding Description, Converter={StaticResource CountToVis}}">
+                            <Border
+                                Grid.Row="1"
+                                BorderBrush="{DynamicResource Border}"
+                                Visibility="{Binding Description, Converter={StaticResource StringToVis}}">
                                 <Grid x:Name="DescriptionGrid" Background="Gray">
                                     <TextBlock
                                         x:Name="PageLabel"
                                         Width="{Binding ActualWidth, ElementName=ImageContent}"
-                                        MinHeight="30"
                                         Padding="4"
+                                        Style="{DynamicResource DescriptionTextBlock}"
                                         Text="{Binding Description}"
                                         TextWrapping="Wrap">
                                         <b:Interaction.Behaviors>
@@ -148,14 +157,12 @@
         </Canvas>
 
 
+        <!--  INFO NOTE  -->
         <Border
             Width="300"
             Height="200"
             Style="{DynamicResource InfoBox}"
             Visibility="{Binding ShowHelpBox, Converter={StaticResource BoolToVis}}">
-            <!--  Dotted outline  -->
-
-
             <Grid Margin="10">
                 <Grid.ColumnDefinitions />
                 <Grid.RowDefinitions>

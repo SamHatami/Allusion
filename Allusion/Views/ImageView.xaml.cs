@@ -27,7 +27,7 @@ namespace Allusion.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _viewModel = DataContext as ImageViewModel;
-            _aspectRatio = _viewModel.ImageSource.Width/_viewModel.ImageSource.Height;
+            _aspectRatio = _viewModel.ImageSource.Width / _viewModel.ImageSource.Height;
             _window = Window.GetWindow(this);
 
             if (_window is MainView) return;

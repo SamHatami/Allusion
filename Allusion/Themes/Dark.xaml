@@ -100,57 +100,18 @@
         G="50"
         R="50" />
 
-    <!--  WINDOW TITLE BAR  -->
-    <SolidColorBrush x:Key="Transparent.Brush" Color="Transparent" />
-    <SolidColorBrush x:Key="Window.TitleBar.Color" Color="{DynamicResource Primary.Background}" />
-    <SolidColorBrush x:Key="Window.TitleBar.ForeGround" Color="{DynamicResource Primary.Foreground}" />
-    <SolidColorBrush x:Key="Window.Titlebar.Button.MouseOver" Color="LightGray" />
-    <SolidColorBrush x:Key="Window.Titlebar.Button.Close" Color="{DynamicResource Primary.Red}" />
-    <SolidColorBrush x:Key="Mouse.OnClick" Color="Gray" />
+    <Color
+        x:Key="Logo"
+        A="255"
+        B="25"
+        G="25"
+        R="25" />
 
-    <!--  GENERAL DARK MODE COLORS  -->
-    <SolidColorBrush x:Key="BackGround" Color="{DynamicResource Primary.Background}" />
-    <SolidColorBrush x:Key="Mouse.IsOver" Color="{DynamicResource Primary.Green}" />
-    <SolidColorBrush x:Key="Board.Background" Color="{DynamicResource Primary.Background}" />
-
-    <SolidColorBrush x:Key="Label.Title.Background" Color="{DynamicResource Primary.Background}" />
-    <SolidColorBrush x:Key="Foreground" Color="{DynamicResource Primary.Foreground}" />
-    <SolidColorBrush x:Key="Foreground.Front" Color="{DynamicResource Secondary.Foreground}" />
-    <SolidColorBrush x:Key="Border" Color="{DynamicResource Primary.Border}" />
-    <SolidColorBrush x:Key="Window.Close" Color="{DynamicResource Primary.Red}" />
-
-    <SolidColorBrush x:Key="Dialog.BackGround" Color="{DynamicResource Secondary.Background}" />
-    <SolidColorBrush x:Key="Dialog.Border" Color="{DynamicResource Secondary.Border}" />
-    <SolidColorBrush x:Key="Dialog.TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
-
-    <SolidColorBrush
-        x:Key="Info.BackGround"
-        Opacity="0.1"
-        Color="{DynamicResource Secondary.Background}" />
-
-    <SolidColorBrush x:Key="ListBox.Background" Color="{DynamicResource Secondary.Background}" />
-    <SolidColorBrush x:Key="ListBox.Item.Foreground" Color="{DynamicResource Secondary.Foreground}" />
-    <SolidColorBrush x:Key="ListBox.Item.Selected" Color="{DynamicResource Secondary.Green}" />
-    <SolidColorBrush x:Key="ListBox.Item.UnSelected" Color="#2f2f2f" />
-
-    <SolidColorBrush x:Key="TextBox.Border.Focus" Color="{DynamicResource Secondary.Green}" />
-    <SolidColorBrush x:Key="TextBox.Foreground" Color="{DynamicResource Secondary.Foreground}" />
-    <SolidColorBrush x:Key="TextBox.Border" Color="{DynamicResource Secondary.Border}" />
-    <SolidColorBrush x:Key="TextBox.Background.Focus" Color="{DynamicResource Secondary.Background}" />
-    <SolidColorBrush x:Key="TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
-
-    <!--  Tab Button  -->
-    <SolidColorBrush x:Key="Tab.Button.Border.Selected" Color="{DynamicResource Primary.Border}" />
-    <SolidColorBrush x:Key="Tab.Button.Selected" Color="{DynamicResource Primary.Selected}" />
-    <SolidColorBrush x:Key="Tab.Button.UnSelected" Color="#2f2f2f" />
-    <SolidColorBrush x:Key="Tab.Button.Border.UnSelected" Color="{DynamicResource Primary.Border.UnSelected}" />
-    <!--  Primary Button Colors  -->
-    <SolidColorBrush x:Key="Button.Primary.Background" Color="{DynamicResource Primary.Button}" />
-    <SolidColorBrush x:Key="Button.Primary.Border" Color="{DynamicResource Secondary.Green}" />
-    <SolidColorBrush x:Key="Button.Primary.MouseOver" Color="{DynamicResource Primary.Green}" />
-    <!--  Primary Button Colors  -->
-    <SolidColorBrush x:Key="Button.Secondary.Background" Color="{DynamicResource Secondary.Button}" />
-    <SolidColorBrush x:Key="Button.Secondary.Border" Color="{DynamicResource Secondary.Border}" />
-    <SolidColorBrush x:Key="Button.Secondary.Selected" Color="{DynamicResource Secondary.Green}" />
+    <Color
+        x:Key="Logo.Border"
+        A="255"
+        B="170"
+        G="175"
+        R="170" />
 
 </ResourceDictionary>

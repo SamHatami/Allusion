@@ -13,6 +13,8 @@
     Height="500"
     cm:Message.Attach="     [Gesture Ctrl+V] = [PasteOnCanvas];     [Gesture Ctrl+S] = [Save];     [Gesture Ctrl+O] = [OpenRefBoardDialog];     [Gesture Ctrl+N] = [NewRefBoardDialog];     [Key Delete] = [Remove]"
     d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
+    DragEnter="MainView_OnDragEnter"
+    DragLeave="MainView_OnDragLeave"
     Initialized="OnWindowInitialized"
     StateChanged="WindowStateChangedHandler"
     Topmost="True"
@@ -100,15 +102,15 @@
                     DockPanel.Dock="Top"
                     FontFamily="Arial Black"
                     FontWeight="Bold"
-                    Foreground="#FF191919">
+                    Foreground="{DynamicResource Allusion.Logo}">
                     <Run FontSize="48" Text="A" /><Run FontSize="36" Text="LLUSIO" /><Run FontSize="36" Text="N" />
 
                     <TextBlock.Effect>
                         <DropShadowEffect
-                            BlurRadius="1"
+                            BlurRadius="2"
                             Opacity="1"
                             ShadowDepth="0"
-                            Color="#FFAAAFAA" />
+                            Color="{DynamicResource Logo.Border}" />
                     </TextBlock.Effect>
                 </TextBlock>
             </DockPanel>

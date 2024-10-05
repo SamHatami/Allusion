@@ -32,9 +32,6 @@
     <Compile Update="Views\FocusView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\ImageView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\MainView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

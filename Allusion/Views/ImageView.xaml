@@ -1,24 +1,26 @@
 ﻿<controls:ImageControl
     x:Class="Allusion.Views.ImageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:Allusion.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewModels:ImageViewModel}"
     IsSelected="{Binding IsSelected, NotifyOnSourceUpdated=True}"
     mc:Ignorable="d">
 
-    <Border
-        Background="{DynamicResource BackGround}">
+    <Border Background="{DynamicResource BackGround}">
+
         <Border.Style>
             <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{DynamicResource BackGround}" />
+                <Setter Property="BorderThickness" Value="2" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsSelected, NotifyOnTargetUpdated=True ,RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="True">
-                        <Setter Property="BorderBrush" Value="Green" />
+                    <DataTrigger Binding="{Binding IsSelected, NotifyOnTargetUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="True">
+                        <Setter Property="BorderBrush" Value="DarkOliveGreen" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding IsSelected, NotifyOnSourceUpdated=True ,RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="False">
+                    <DataTrigger Binding="{Binding IsSelected, NotifyOnSourceUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="False">
                         <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
                     </DataTrigger>
                 </Style.Triggers>
@@ -28,10 +30,8 @@
             x:Name="BoundImage"
             d:DesignHeight="100"
             d:DesignWidth="100"
+            MouseLeftButtonDown="BoundImage_OnMouseLeftButtonDown"
             Source="{Binding ImageSource}"
-            Stretch="Uniform" 
-            MouseLeftButtonDown="BoundImage_OnMouseLeftButtonDown">
-
-        </Image>
+            Stretch="Uniform" />
     </Border>
 </controls:ImageControl>

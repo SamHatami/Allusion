@@ -1,0 +1,56 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <!--  WINDOW TITLE BAR  -->
+    <SolidColorBrush x:Key="Transparent.Brush" Color="Transparent" />
+    <SolidColorBrush x:Key="Window.TitleBar.Color" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Window.TitleBar.ForeGround" Color="{DynamicResource Primary.Foreground}" />
+    <SolidColorBrush x:Key="Window.Titlebar.Button.MouseOver" Color="LightGray" />
+    <SolidColorBrush x:Key="Window.Titlebar.Button.Close" Color="{DynamicResource Primary.Red}" />
+    <SolidColorBrush x:Key="Mouse.OnClick" Color="Gray" />
+    <SolidColorBrush x:Key="Allusion.Logo" Color="{DynamicResource Logo}" />
+    <SolidColorBrush x:Key="Allusion.Logo.Border" Color="{DynamicResource Logo.Border}" />
+
+    <!--  GENERAL DARK MODE COLORS  -->
+    <SolidColorBrush x:Key="BackGround" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Mouse.IsOver" Color="{DynamicResource Primary.Green}" />
+    <SolidColorBrush x:Key="Board.Background" Color="{DynamicResource Primary.Background}" />
+
+    <SolidColorBrush x:Key="Label.Title.Background" Color="{DynamicResource Primary.Background}" />
+    <SolidColorBrush x:Key="Foreground" Color="{DynamicResource Primary.Foreground}" />
+    <SolidColorBrush x:Key="Foreground.Front" Color="{DynamicResource Secondary.Foreground}" />
+    <SolidColorBrush x:Key="Border" Color="{DynamicResource Primary.Border}" />
+    <SolidColorBrush x:Key="Window.Close" Color="{DynamicResource Primary.Red}" />
+
+    <SolidColorBrush x:Key="Dialog.BackGround" Color="{DynamicResource Secondary.Background}" />
+    <SolidColorBrush x:Key="Dialog.Border" Color="{DynamicResource Secondary.Border}" />
+    <SolidColorBrush x:Key="Dialog.TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
+
+    <SolidColorBrush x:Key="Info.BackGround" Color="{DynamicResource Secondary.Background}" />
+
+    <SolidColorBrush x:Key="ListBox.Background" Color="{DynamicResource Secondary.Background}" />
+    <SolidColorBrush x:Key="ListBox.Item.Foreground" Color="{DynamicResource Secondary.Foreground}" />
+    <SolidColorBrush x:Key="ListBox.Item.Selected" Color="{DynamicResource Secondary.Green}" />
+    <SolidColorBrush x:Key="ListBox.Item.UnSelected" Color="{DynamicResource Primary.Unselected}" />
+
+    <SolidColorBrush x:Key="TextBox.Border.Focus" Color="{DynamicResource Secondary.Green}" />
+    <SolidColorBrush x:Key="TextBox.Foreground" Color="{DynamicResource Secondary.Foreground}" />
+    <SolidColorBrush x:Key="TextBox.Border" Color="{DynamicResource Secondary.Border}" />
+    <SolidColorBrush x:Key="TextBox.Background.Focus" Color="{DynamicResource Secondary.Background}" />
+    <SolidColorBrush x:Key="TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
+
+    <!--  Tab Button  -->
+    <SolidColorBrush x:Key="Tab.Button.Border.Selected" Color="{DynamicResource Primary.Border}" />
+    <SolidColorBrush x:Key="Tab.Button.Selected" Color="{DynamicResource Primary.Selected}" />
+    <SolidColorBrush x:Key="Tab.Button.UnSelected" Color="{DynamicResource Primary.Unselected}" />
+    <SolidColorBrush x:Key="Tab.Button.Border.UnSelected" Color="{DynamicResource Primary.Border.UnSelected}" />
+    <!--  Primary Button Colors  -->
+    <SolidColorBrush x:Key="Button.Primary.Background" Color="{DynamicResource Primary.Button}" />
+    <SolidColorBrush x:Key="Button.Primary.Border" Color="{DynamicResource Secondary.Green}" />
+    <SolidColorBrush x:Key="Button.Primary.MouseOver" Color="{DynamicResource Primary.Green}" />
+    <!--  Primary Button Colors  -->
+    <SolidColorBrush x:Key="Button.Secondary.Background" Color="{DynamicResource Secondary.Button}" />
+    <SolidColorBrush x:Key="Button.Secondary.Border" Color="{DynamicResource Secondary.Border}" />
+    <SolidColorBrush x:Key="Button.Secondary.Selected" Color="{DynamicResource Secondary.Green}" />
+
+</ResourceDictionary>

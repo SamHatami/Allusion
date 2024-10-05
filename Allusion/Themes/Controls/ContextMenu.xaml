@@ -2,17 +2,20 @@
 
     <Style TargetType="ContextMenu">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{StaticResource BackGround}" />
+        <Setter Property="Background" Value="{DynamicResource Dialog.BackGround}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContextMenu">
                     <Border
+                        x:Name="Border"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        CornerRadius="5"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <StackPanel IsItemsHost="True" />
+                        <StackPanel
+                            VerticalAlignment="Stretch"
+                            IsItemsHost="True"
+                            KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -22,8 +25,9 @@
     <Style TargetType="MenuItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="White" />
-        <Setter Property="Width" Value="Auto"/>
-        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Width" Value="100" />
+        <Setter Property="Height" Value="20" />
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
