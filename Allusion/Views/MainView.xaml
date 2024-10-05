@@ -9,14 +9,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
     Title="MainView"
-    Width="500"
-    Height="500"
-    cm:Message.Attach="     [Gesture Ctrl+V] = [PasteOnCanvas];     [Gesture Ctrl+S] = [Save];     [Gesture Ctrl+O] = [OpenRefBoardDialog];     [Gesture Ctrl+N] = [NewRefBoardDialog];     [Key Delete] = [Remove]"
+    Width="1024"
+    Height="1024"
     d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
+    DragEnter="MainView_OnDragEnter"
+    DragLeave="MainView_OnDragLeave"
     Initialized="OnWindowInitialized"
     StateChanged="WindowStateChangedHandler"
     Topmost="True"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    cm:Message.Attach="[Gesture Ctrl+V] = [PasteOnCanvas;">
+
     <Window.Resources>
         <converters:InvertBoolToVis x:Key="InvertBoolVis" />
     </Window.Resources>
@@ -100,7 +103,7 @@
                     DockPanel.Dock="Top"
                     FontFamily="Arial Black"
                     FontWeight="Bold"
-                    Foreground="#FF191919">
+                    Foreground="{DynamicResource Allusion.Logo}">
                     <Run FontSize="48" Text="A" /><Run FontSize="36" Text="LLUSIO" /><Run FontSize="36" Text="N" />
 
                     <TextBlock.Effect>
