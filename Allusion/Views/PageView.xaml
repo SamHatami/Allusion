@@ -39,7 +39,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TriangleThumb" Property="Fill" Value="DarkSeaGreen" />
+                                <Setter TargetName="TriangleThumb" Property="Fill" Value="WhiteSmoke" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

@@ -16,6 +16,8 @@ public partial class MainView : Window
     public MainView()
     {
         InitializeComponent();
+
+        DisplayIcon.Foreground = this.Topmost ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Black);
     }
 
     private void OnWindowInitialized(object sender, EventArgs e)
