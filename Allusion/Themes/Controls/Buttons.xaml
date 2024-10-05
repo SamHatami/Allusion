@@ -117,7 +117,7 @@
         <Setter Property="Height" Value="20" />
         <Setter Property="Background" Value="DimGray" />
         <Setter Property="Foreground" Value="Black" />
-        <Setter Property="Margin" Value="5" />
+        <Setter Property="Padding" Value="5" />
         <Setter Property="Placement" Value="Mouse" />
         <Setter Property="Template">
             <Setter.Value>
