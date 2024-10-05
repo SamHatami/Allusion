@@ -160,6 +160,16 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
         _events.PublishOnUIThreadAsync(new ImageSelectionEvent(this, SelectionType.Multi));
     }
 
+    public void AddNote()
+    {
+        Description = " ";
+    }
+
+    public void RemoveNote()
+    {
+        Description = String.Empty;
+    }
+
 }
 
 public class ImageSelectionEvent
@@ -174,6 +184,8 @@ public class ImageSelectionEvent
     }
 
 }
+
+
 
 
 
