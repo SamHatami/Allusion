@@ -7,8 +7,6 @@ using Allusion.Views;
 using Allusion.WPFCore;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
-using Autofac;
-using Autofac.Core;
 using Allusion.ViewModels.Dialogs;
 using Allusion.WPFCore.Managers;
 using Allusion.WPFCore.Service;
