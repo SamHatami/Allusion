@@ -36,11 +36,15 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 
     private void CreateAndPublishItems(BitmapImage?[] bitmaps, Size scaleToSize, Point dropPoint = default)
     {
-        List<ImageItem> items = [];
 
-        var imageItems = bitmaps.Select(bitmap => CreateImageItemFromBitmapImages(bitmap,scaleToSize, dropPoint)).ToArray();
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var items = bitmaps.Select(bitmap => CreateImageItemFromBitmapImages(bitmap, scaleToSize, dropPoint)).ToArray();
+            _events.PublishOnUIThreadAsync(new NewImageItemsEvent(items));
+        });
 
-        _events.PublishOnUIThreadAsync(new NewImageItemsEvent(imageItems));
+
+     
     }
 
     public ImageItem CreateImageItemFromBitmapImages(BitmapImage bitmap,Size scaleToSize, Point dropPoint = default)
@@ -64,10 +68,9 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 
         //Switch back to UI thread for bitmap.PixelHeight
 
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            scale = GetScale(scaleToSize.Height, bitmap.PixelHeight);
-        });
+
+        scale = GetScale(scaleToSize.Height, bitmap.PixelHeight);
+
 
         var item = new ImageItem(insertPosX, insertPosY, scale);
         item.SetSourceImage(bitmap);
@@ -94,6 +97,6 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
         var setHeight = 0.4 * windowHeight;
         var heightRatio = setHeight / pixHeight;
 
-        return (sizeRatio) > 1 ? 1 - (1 - heightRatio) : 1;
+        return (sizeRatio) > 0.4 ? 1 - (1 - heightRatio) : 1;
     }
 }
