@@ -60,7 +60,15 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 
         //var path = BitmapUtils.GetUrl(bitmap);
 
-        var scale = GetScale(scaleToSize.Height, bitmap.PixelHeight);
+        double scale  = default;
+
+        //Switch back to UI thread for bitmap.PixelHeight
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            scale = GetScale(scaleToSize.Height, bitmap.PixelHeight);
+        });
+
         var item = new ImageItem(insertPosX, insertPosY, scale);
         item.SetSourceImage(bitmap);
         return item;
