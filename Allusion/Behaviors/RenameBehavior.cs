@@ -24,6 +24,12 @@ public class RenameBehavior : Behavior<UIElement>
         AssociatedObject.MouseLeftButtonDown += OnMouseClick;
         AssociatedObject.PreviewMouseLeftButtonDown += OnePreviewClick;
         AssociatedObject.PreviewKeyDown += OnKeyDown;
+        AssociatedObject.LostFocus += OnLostFocus;
+    }
+
+    private void OnLostFocus(object sender, RoutedEventArgs e)
+    {
+        TextBox.Visibility = Visibility.Collapsed;
     }
 
     private void OnKeyDown(object sender, KeyEventArgs e)
@@ -51,10 +57,8 @@ public class RenameBehavior : Behavior<UIElement>
     private void OnMouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
     
-
-        if (e.ClickCount == 2 && TextBox is not null)
+        if (e.ClickCount == 1 && TextBox is not null)
         {
-            Trace.WriteLine("doubleclicked");
             TextBox.Visibility = Visibility.Visible;
             TextBox.Focus();
             e.Handled = true;

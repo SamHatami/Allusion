@@ -19,10 +19,10 @@ public class ReferenceBoard
         Name = name;
         BaseFolder = baseFolder;
 
-        Intialize();
+        Initialize();
     }
 
-    private void Intialize()
+    private void Initialize()
     {
         BackupFolder = Path.Combine(BaseFolder, "Old");
         Directory.CreateDirectory(BaseFolder);

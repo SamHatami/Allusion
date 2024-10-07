@@ -9,7 +9,8 @@
     Height="140"
     ResizeMode="NoResize"
     Style="{DynamicResource DialogWindow}"
-    WindowStartupLocation="CenterOwner">
+    WindowStartupLocation="CenterOwner"
+    PreviewKeyDown="DialogView_OnPreviewKeyDown">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />

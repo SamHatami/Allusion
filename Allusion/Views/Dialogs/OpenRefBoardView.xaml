@@ -11,7 +11,7 @@
     Title="Open or Choose Art Board"
     Width="600"
     Height="300"
-    cm:Message.Attach="[Key Escape] = [Cancel]"
+    cm:Message.Attach="[Key Escape] = [Cancel]; [Key Enter] = [Open]"
     d:DataContext="{d:DesignInstance Type=dialogs:OpenRefBoardViewModel}"
     ResizeMode="NoResize"
     Style="{DynamicResource DialogWindow}"
@@ -90,11 +90,15 @@
                 SelectedIndex="0"
                 SelectedItem="{Binding SelectedRefBoard}"
                 SelectionMode="Single"
-                Style="{DynamicResource ListBox}">
+                Style="{DynamicResource ListBox}"
+                Loaded="OnViewLoaded">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <Label Content="{Binding Name}" Style="{DynamicResource DialogLabel}" />
+                            <Label
+                                cm:Message.Attach="[Event MouseDoubleClick] = [Open]"
+                                Content="{Binding Name}"
+                                Style="{DynamicResource DialogLabel}" />
 
                         </Grid>
                     </DataTemplate>

@@ -54,7 +54,8 @@
         <Canvas
             x:Name="ImageCanvas"
             AllowDrop="True"
-            Background="Transparent">
+            Background="Transparent"
+            Focusable="True">
             <Canvas.ContextMenu>
                 <ContextMenu>
                     <MenuItem
@@ -168,7 +169,7 @@
             </ItemsControl>
 
             <Border
-                Width="{Binding ActualWidth, ElementName=ImageCanvas}" 
+                Width="{Binding ActualWidth, ElementName=ImageCanvas}"
                 Height="{Binding ActualHeight, ElementName=ImageCanvas}"
                 Visibility="{Binding ShowHelpBox, Converter={StaticResource BoolToVis}}">
                 <Grid Margin="10">
@@ -179,11 +180,11 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <StackPanel></StackPanel>
+                    <StackPanel />
                     <TextBlock
-                        VerticalAlignment="Bottom"
                         Grid.Row="0"
                         Grid.Column="0"
+                        VerticalAlignment="Bottom"
                         Foreground="{DynamicResource Foreground.Front}"
                         TextAlignment="Center"
                         TextWrapping="Wrap"><Run Language="sv-se" Text="Drop images anywhere on the canvas" /><LineBreak /><Run Language="sv-se" Text="Or simply paste with Ctrl-V" /></TextBlock>
