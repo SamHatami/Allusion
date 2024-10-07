@@ -71,7 +71,7 @@
                             <Grid>
                                 <Label x:Name="PageLabel" Content="{Binding DisplayName}">
                                     <b:Interaction.Behaviors>
-                                        <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" />
+                                        <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" IsSingleClick="False"/>
                                     </b:Interaction.Behaviors>
                                     <Label.Style>
                                         <Style BasedOn="{StaticResource TabLabel}" TargetType="Label">

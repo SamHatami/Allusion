@@ -12,6 +12,15 @@ public class RenameBehavior : Behavior<UIElement>
     public static readonly DependencyProperty TextBoxProperty =
         DependencyProperty.Register(nameof(TextBox), typeof(TextBox), typeof(RenameBehavior));
 
+    public static readonly DependencyProperty NrClickToEditProperty = DependencyProperty.Register(
+        nameof(IsSingleClick), typeof(bool), typeof(RenameBehavior), new PropertyMetadata(default(bool)));
+
+    public bool IsSingleClick
+    {
+        get => (bool)GetValue(NrClickToEditProperty);
+        set => SetValue(NrClickToEditProperty, value);
+    }
+
     public TextBox TextBox
     {
         get => (TextBox)GetValue(TextBoxProperty);
@@ -24,6 +33,12 @@ public class RenameBehavior : Behavior<UIElement>
         AssociatedObject.MouseLeftButtonDown += OnMouseClick;
         AssociatedObject.PreviewMouseLeftButtonDown += OnePreviewClick;
         AssociatedObject.PreviewKeyDown += OnKeyDown;
+        AssociatedObject.LostFocus += OnLostFocus;
+    }
+
+    private void OnLostFocus(object sender, RoutedEventArgs e)
+    {
+        TextBox.Visibility = Visibility.Collapsed;
     }
 
     private void OnKeyDown(object sender, KeyEventArgs e)
@@ -50,11 +65,12 @@ public class RenameBehavior : Behavior<UIElement>
 
     private void OnMouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-    
+        int clickCount = 2;
+        if (IsSingleClick)
+            clickCount = 1;
 
-        if (e.ClickCount == 2 && TextBox is not null)
+        if (e.ClickCount == clickCount && TextBox is not null)
         {
-            Trace.WriteLine("doubleclicked");
             TextBox.Visibility = Visibility.Visible;
             TextBox.Focus();
             e.Handled = true;

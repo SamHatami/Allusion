@@ -36,7 +36,6 @@
         <Border Style="{DynamicResource WindowTitleBar}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -46,19 +45,40 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+
+                <DockPanel
+                    Grid.Column="0"
+                    Margin="10,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        DockPanel.Dock="Top"
+                        FontFamily="Arial Black"
+                        FontWeight="Bold"
+                        FontSize="14"
+                        Foreground="{DynamicResource Allusion.Logo}">
+                        ALLUSION
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+                                BlurRadius="2"
+                                Opacity="1"
+                                ShadowDepth="0"
+                                Color="{DynamicResource Logo.Border}" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </DockPanel>
+
                 <Label
-                    Grid.Column="1"
-                    Grid.ColumnSpan="4"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="7"
                     Margin="4,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
                     Content="{Binding RefBoardViewModel.BoardName}"
-                    FontSize="14"
                     Style="{DynamicResource TitleBarLabel}" />
 
                 <Button
                     x:Name="TopMostButton"
-                    Grid.Column="2"
+                    Grid.Column="1"
                     Click="Settings_Click"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}"
@@ -70,7 +90,7 @@
                 </Button>
 
                 <Button
-                    Grid.Column="3"
+                    Grid.Column="2"
                     Click="ThemeSwitch_Click"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}"
@@ -78,7 +98,7 @@
                     <fa:IconImage Width="16" Icon="CircleHalfStroke" />
                 </Button>
                 <Button
-                    Grid.Column="4"
+                    Grid.Column="3"
                     Click="OnMinimizeButtonClick"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}">
@@ -86,23 +106,23 @@
                 </Button>
                 <Button
                     Name="RestoreButton"
-                    Grid.Column="5"
+                    Grid.Column="4"
                     Click="OnMaximizeRestoreButtonClick"
                     Style="{DynamicResource TitleBarButtonStyle}">
                     <fa:IconImage Height="12" Icon="compress" />
                 </Button>
                 <Button
                     Name="MaximizeButton"
-                    Grid.Column="6"
+                    Grid.Column="5"
                     Click="OnMaximizeRestoreButtonClick"
                     Style="{DynamicResource TitleBarButtonStyle}">
                     <fa:IconImage Height="12" Icon="expand" />
                 </Button>
                 <Button
-                    Grid.Column="7"
+                    Grid.Column="6"
                     Click="OnCloseButtonClick"
                     Style="{DynamicResource TitleBarButtonClose}">
-                    <fa:IconImage Height="12" Icon="close" />
+                    <fa:IconImage Height="12" Icon="Close" />
                 </Button>
             </Grid>
         </Border>

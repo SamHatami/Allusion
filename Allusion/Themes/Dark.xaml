@@ -78,9 +78,9 @@
     <Color
         x:Key="Secondary.Foreground"
         A="255"
-        B="195"
-        G="200"
-        R="195" />
+        B="225"
+        G="230"
+        R="225" />
     <Color
         x:Key="Primary.Border"
         A="255"

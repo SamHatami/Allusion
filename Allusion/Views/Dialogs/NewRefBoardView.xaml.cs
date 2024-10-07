@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Allusion.Views.Dialogs
 {
@@ -12,5 +14,11 @@ namespace Allusion.Views.Dialogs
             InitializeComponent();
         }
 
+        private void OnViewLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox textbox) return;
+            textbox.Focus();
+            Keyboard.Focus(textbox);
+        }
     }
 }

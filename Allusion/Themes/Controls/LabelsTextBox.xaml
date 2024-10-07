@@ -95,6 +95,7 @@
     </Style>
 
     <Style x:Key="DescriptionTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="Background" Value="{DynamicResource Border}" />
         <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>

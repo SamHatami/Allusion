@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Allusion.Views.Dialogs
 {
@@ -10,6 +12,11 @@ namespace Allusion.Views.Dialogs
         public DialogView()
         {
             InitializeComponent();
+        }
+
+        private void DialogView_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

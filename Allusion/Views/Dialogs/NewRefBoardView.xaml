@@ -41,7 +41,7 @@
         <TextBox
             Grid.Row="2"
             Style="{DynamicResource DialogTextBox}"
-            Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Loaded="OnViewLoaded"/>
 
         <Grid Row="3">
             <Grid.ColumnDefinitions>
