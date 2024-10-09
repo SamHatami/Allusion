@@ -1,14 +1,11 @@
 ﻿using Allusion.ViewModels.Dialogs;
+using Allusion.WPFCore;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
-using Allusion.WPFCore.Managers;
 using Caliburn.Micro;
 using System.Diagnostics;
 using System.Windows;
-using Allusion.Views;
-using Allusion.WPFCore;
-using System.Dynamic;
 
 namespace Allusion.ViewModels;
 
@@ -22,6 +19,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private ReferenceBoard _currentRefBoard { get; set; }
 
     private ReferenceBoardViewModel? _refBoardViewModel;
+
     public ReferenceBoardViewModel? RefBoardViewModel
     {
         get => _refBoardViewModel;
@@ -47,8 +45,6 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnBackgroundThread(this);
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
-
-
     }
 
     public void StartUpByFile(string filePath)
@@ -56,7 +52,6 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         var openedRefBoard = _boardManager.Open(filePath);
         _events.PublishOnBackgroundThreadAsync(new BoardOpenedEvent(openedRefBoard));
     }
-
 
     private async Task<DialogResultType> AskSaveDialog()
     {
@@ -132,7 +127,6 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public async Task PasteOnCanvas()
     {
-        
         await _events.PublishOnBackgroundThreadAsync(new PasteOnCanvasEvent(_windowSize));
     }
 
@@ -144,19 +138,19 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public void RemovePage()
     {
-            RefBoardViewModel?.RemoveActivePage();
+        RefBoardViewModel?.RemoveActivePage();
     }
 
     public void UndoRemove() //Key Gesture: Ctrl-z
     {
-
     }
 
     public async Task Save()
     {
-        if(RefBoardViewModel is null) return;
+        if (RefBoardViewModel is null) return;
         await RefBoardViewModel.Save();
     }
+
     public Task HandleAsync(NewRefBoardEvent message, CancellationToken cancellationToken)
     {
         _currentRefBoard = _boardManager.CreateNew(message.Name);
@@ -184,25 +178,40 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     {
         BoardIsModified = false;
         Debug.Assert(_boardManager is not null, "Holup");
-        RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard,this);
+        RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard, this);
     }
 
     protected override void OnViewLoaded(object view)
     {
         base.OnViewLoaded(view);
 
-        var currentWindow = view as Window;
-
-        if (currentWindow != null)
+        if (view is Window currentWindow)
         {
             _windowSize = currentWindow.RenderSize;
-
             currentWindow.SizeChanged += OnCurrentWindowSizeChange;
+
+            currentWindow.Show();
+            
         }
+        
+        FirstTime();
+
     }
+
+
 
     private void OnCurrentWindowSizeChange(object sender, SizeChangedEventArgs e)
     {
         _windowSize = e.NewSize;
+    }
+
+    private void FirstTime()
+    {
+        if (_configuration.FirstStartUp)
+            _windowManager.ShowDialogAsync(new WelcomeViewModel());
+#if !DEBUG
+          _configuration.FirstStartUp = false;
+        AllusionConfiguration.Save(_configuration);
+#endif
     }
 }

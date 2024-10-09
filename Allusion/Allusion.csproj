@@ -10,10 +10,50 @@
 
   <ItemGroup>
     <None Remove="Resources\DefaultNoImage.png" />
+    <None Remove="Themes\Fonts\Lato-Black.ttf" />
+    <None Remove="Themes\Fonts\Lato-BlackItalic.ttf" />
+    <None Remove="Themes\Fonts\Lato-Bold.ttf" />
+    <None Remove="Themes\Fonts\Lato-BoldItalic.ttf" />
+    <None Remove="Themes\Fonts\Lato-Italic.ttf" />
+    <None Remove="Themes\Fonts\Lato-Light.ttf" />
+    <None Remove="Themes\Fonts\Lato-LightItalic.ttf" />
+    <None Remove="Themes\Fonts\Lato-Regular.ttf" />
+    <None Remove="Themes\Fonts\Lato-Thin.ttf" />
+    <None Remove="Themes\Fonts\Lato-ThinItalic.ttf" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\DefaultNoImage.png" />
+    <Resource Include="Themes\Fonts\Lato-Black.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-BlackItalic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-Bold.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-BoldItalic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-Light.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-LightItalic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-Regular.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-Thin.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Fonts\Lato-ThinItalic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

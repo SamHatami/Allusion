@@ -72,9 +72,9 @@
     <Color
         x:Key="Primary.Foreground"
         A="255"
-        B="245"
+        B="235"
         G="245"
-        R="245" />
+        R="235" />
     <Color
         x:Key="Secondary.Foreground"
         A="255"

@@ -1,14 +1,16 @@
 ﻿using System.Diagnostics;
 using Allusion.WPFCore.Interfaces;
 using System.IO;
+using System.Printing;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Allusion.WPFCore;
 
 [Serializable]
-public class AllusionConfiguration 
+public class AllusionConfiguration
 {
+    public bool FirstStartUp = true;
     private string _globalFolder = string.Empty;
 
     public string GlobalFolder

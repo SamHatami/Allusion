@@ -1,0 +1,58 @@
+﻿<Window
+    x:Class="Allusion.Views.WelcomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Allusion.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="WelcomeView"
+    Width="520"
+    Height="560"
+    Style="{DynamicResource DialogWindow}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Margin="10"
+            Padding="10"
+            FontSize="14"
+            Style="{DynamicResource DescriptionTextBlock}"
+            TextWrapping="Wrap">
+            <Run FontWeight="Bold">Welcome to Allusion!</Run>
+            <LineBreak />
+            <LineBreak />
+            Allusion is a mood and reference image organizer designed with simplicity in mind. It comes with a simple user interface and straight forward interactions, to keep you
+            focused on the essentials.<LineBreak />
+            <LineBreak />
+            With simplicity come certain limitations, and in the case of Allusion, it means there is no zoom or pan in the main view.
+            This approach is based on my belief, drawn from experience, that maintaining a clean workspace can help keep the mind at ease.
+            By limiting the number of images to what your monitor can comfortably display, you’re encouraged to organize your references thoughtfully,
+            reducing visual clutter. Of course, if you’re using a particularly small monitor, adjustments may be necessary in the future.<LineBreak />
+            <LineBreak />
+            Create pages to organize your mood board and, if needed, add notes to your images for better clarity.<LineBreak />
+            <LineBreak />
+            A mood board should be something simple - a quick source of inspiration or a reminder of
+            a specific concept or shape.<LineBreak />
+            <LineBreak />
+            Allusion is in its early stages, just like my journey in coding. I truly value feedback, so please feel free to share any suggestions.<LineBreak />
+            <LineBreak />
+            Take care!<LineBreak />
+            Sam</TextBlock>
+
+        <Button
+            x:Name="Ok"
+            Grid.Row="1"
+            Width="60"
+            Margin="10"
+            Content="Let's Go!"
+            Style="{DynamicResource PrimaryButton}" />
+    </Grid>
+</Window>

@@ -5,6 +5,7 @@
     xmlns:local="clr-namespace:Allusion">
     <Application.Resources>
         <ResourceDictionary>
+            <FontFamily x:Key="LatoFont">pack://application:,,,/Themes/Fonts/#Lato</FontFamily>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <local:Bootstrapper x:Key="Bootstrapper" />
