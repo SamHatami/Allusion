@@ -75,7 +75,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="2">
+                        CornerRadius="0">
                         <ScrollViewer
                             x:Name="PART_ContentHost"
                             HorizontalScrollBarVisibility="Hidden"

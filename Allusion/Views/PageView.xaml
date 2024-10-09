@@ -137,7 +137,7 @@
                                         Text="{Binding Description}"
                                         TextWrapping="Wrap">
                                         <b:Interaction.Behaviors>
-                                            <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" />
+                                            <behaviors:RenameBehavior IsSingleClick="True" TextBox="{Binding ElementName=RenameTextBox}" />
                                         </b:Interaction.Behaviors>
                                     </TextBlock>
                                     <TextBox
@@ -149,7 +149,7 @@
                                         Style="{DynamicResource DescriptionTextBox}"
                                         Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         TextWrapping="Wrap"
-                                        Visibility="Collapsed" />
+                                        Visibility="Collapsed"/>
                                 </Grid>
                             </Border>
 
