@@ -11,7 +11,7 @@
     Title="MainView"
     Width="1024"
     Height="1024"
-    cm:Message.Attach="     [Gesture Ctrl+V] = [PasteOnCanvas];     [Gesture Ctrl+S] = [Save];     [Gesture Ctrl+O] = [OpenRefBoardDialog];     [Gesture Ctrl+N] = [NewRefBoardDialog];     [Key Delete] = [Remove]"
+    cm:Message.Attach="[Gesture Ctrl+V] = [PasteOnCanvas];[Gesture Ctrl+S] = [Save];[Gesture Ctrl+O] = [OpenRefBoardDialog];[Gesture Ctrl+N] = [NewRefBoardDialog];[Key Delete] = [Remove]; [Gesture F1] = [ShowHelp]"
     d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
     DragEnter="MainView_OnDragEnter"
     DragLeave="MainView_OnDragLeave"
@@ -55,8 +55,8 @@
                         HorizontalAlignment="Center"
                         DockPanel.Dock="Top"
                         FontFamily="Arial Black"
-                        FontWeight="Bold"
                         FontSize="14"
+                        FontWeight="Bold"
                         Foreground="{DynamicResource Allusion.Logo}">
                         ALLUSION
                         <TextBlock.Effect>

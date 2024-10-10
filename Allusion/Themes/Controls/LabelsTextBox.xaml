@@ -111,4 +111,14 @@
         <Setter Property="Foreground" Value="{DynamicResource Foreground.Front}" />
     </Style>
 
+
+    <!--  PARAGRAPH & RUN  -->
+    <Style x:Key="Header1" TargetType="{x:Type Run}">
+        <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
+        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    
+
+
 </ResourceDictionary>

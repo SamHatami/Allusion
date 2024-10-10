@@ -35,9 +35,10 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private readonly IWindowManager _windowManager;
     private readonly AllusionConfiguration _configuration;
     private Size _windowSize;
+    private readonly HelpViewModel _help;
 
     public MainViewModel(IWindowManager windowManager, IEventAggregator events,
-        IReferenceBoardManager refBoardManager, AllusionConfiguration configuration)
+        IReferenceBoardManager refBoardManager, AllusionConfiguration configuration, HelpViewModel help)
     {
         _windowManager = windowManager;
         _configuration = configuration;
@@ -45,6 +46,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnBackgroundThread(this);
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
+        _help = help;
     }
 
     public void StartUpByFile(string filePath)
@@ -143,6 +145,13 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public void UndoRemove() //Key Gesture: Ctrl-z
     {
+    }
+
+    public void ShowHelp()
+    {
+        if(_help.IsActive)
+            _help.Close();
+        _windowManager.ShowDialogAsync(_help);
     }
 
     public async Task Save()

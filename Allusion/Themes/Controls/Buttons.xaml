@@ -204,7 +204,7 @@
     </Style>
 
     <Style x:Key="TitleBarButtonClose" TargetType="Button">
-        <Setter Property="Width" Value="32" />
+        <Setter Property="Width" Value="30" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
         <Setter Property="Padding" Value="0" />
