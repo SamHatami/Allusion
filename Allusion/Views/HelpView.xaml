@@ -7,8 +7,9 @@
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:local="clr-namespace:Allusion.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
     Title="HelpView"
-    Width="650"
+    Width="800"
     Height="650"
     cm:Message.Attach="[Gesture F1] = [Close]"
     Style="{DynamicResource DialogWindow}"
@@ -37,21 +38,50 @@
                 Foreground="{DynamicResource Foreground.Front}"
                 PagePadding="10">
                 <Paragraph>
-                    <Run>General User Interface</Run>
+                    <Run FontWeight="DemiBold">General User Interface Hot-Keys</Run>
                 </Paragraph>
-                <Paragraph>
-                    As you've noticed, there is no traditional menu. For some this might be an odd transition, but learning hot-key will do you a favour. But fear not!
-                    you still need mouse-inputs for a few things.
-                    Open : Ctrl + O
-                    New  : Ctrl + N
-                    Save : Ctrl + S
-                    Change name of a page
-                    Double-click the page name or right click and choose "Rename"
-                    Remove a page
-                    Right-click on the page name and choose "Remove"
-                    Add a page
-                    Click the "+" icon
-                </Paragraph>
+                <Table>
+                    <Table.Columns>
+                        <TableColumn Width="100"/>
+                        <TableColumn Width="100"/>
+                    </Table.Columns>
+                    <TableRowGroup>
+                        <TableRow>
+                            <TableCell>
+                                <Paragraph>Open Board</Paragraph>
+                            </TableCell>
+                            <TableCell>
+                                <Paragraph>Ctrl + O</Paragraph>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>
+                                <Paragraph>New Board</Paragraph>
+                            </TableCell>
+                            <TableCell>
+                                <Paragraph>Ctrl + N</Paragraph>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>
+                                <Paragraph>Save Board</Paragraph>
+                            </TableCell>
+                            <TableCell>
+                                <Paragraph>Ctrl + S</Paragraph>
+                            </TableCell>
+                        </TableRow>                        
+                        
+                        <TableRow>
+                            <TableCell>
+                                <Paragraph>Paste Image</Paragraph>
+                            </TableCell>
+                            <TableCell>
+                                <Paragraph>Ctrl + V</Paragraph>
+                            </TableCell>
+                        </TableRow>                        
+                    </TableRowGroup>
+                </Table>
+
                 <Paragraph>
                     Allusion Files and Images
                 </Paragraph>
@@ -70,19 +100,24 @@
                 <Paragraph>
                     <Run FontWeight="Bold">The interface</Run>
 
-
                 </Paragraph>
 
                 <Paragraph>
-                    Adding images
-                    You can add images by drag and dropping from a browser or the file explorer. Sometimes browser will do different things when you try to drag an drop, in that
-                    just copy paste.
-                    You can also add images to your board by copy and pasting like normal, either by hotkeys (ctrl-c/ctrl-v) or right click on an empty place in page and choose paste
-                    Move images by click and drag
-                    Resize images by choosing the little hidden triangle in the bottom right.
-                    Add notes to images by right clicking on the image and choose "Add Not", do the same thing but choose "Remove Note" if that is your wish.
-                    Edit the note by single click on the note, accept the note by click outside the text box or by pressing enter. Esc will cancel the edit.
+                    <Run FontWeight="Bold">Image Items</Run>
                 </Paragraph>
+                <Paragraph>
+                    Add by drag 'n drop or copy/paste from either a browser or file explorer directly on the a page.
+                    <LineBreak></LineBreak>
+                    <LineBreak></LineBreak>
+                    <Image gif:AnimationBehavior.SourceUri="/Resources/TutorialGifs/DragAndDropWeb.gif" gif:AnimationBehavior.RepeatBehavior="Forever"/>
+
+                </Paragraph>
+                <Paragraph>
+                    Resize images by choosing the little hidden triangle in the bottom right.
+                        Add notes to images by right clicking on the image and choose "Add Not", do the same thing but choose "Remove Note" if that is your wish.
+                        Edit the note by single click on the note, accept the note by click outside the text box or by pressing enter. Esc will cancel the edit.
+                    </Paragraph>
+
             </FlowDocument>
 
         </FlowDocumentScrollViewer>

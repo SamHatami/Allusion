@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <None Remove="Resources\DefaultNoImage.png" />
+    <None Remove="Resources\TutorialGifs\DragAndDropWeb.gif" />
+    <None Remove="Resources\TutorialGifs\ResizeAddRemoveNote.gif" />
     <None Remove="Themes\Fonts\Lato-Black.ttf" />
     <None Remove="Themes\Fonts\Lato-BlackItalic.ttf" />
     <None Remove="Themes\Fonts\Lato-Bold.ttf" />
@@ -24,6 +26,8 @@
 
   <ItemGroup>
     <Resource Include="Resources\DefaultNoImage.png" />
+    <Resource Include="Resources\TutorialGifs\DragAndDropWeb.gif" />
+    <Resource Include="Resources\TutorialGifs\ResizeAddRemoveNote.gif" />
     <Resource Include="Themes\Fonts\Lato-Black.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -61,6 +65,7 @@
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>

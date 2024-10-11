@@ -89,7 +89,17 @@ public class ReferenceBoardManager : IReferenceBoardManager
 
     private string[] GetAllRefBoardFolders()
     {
-        return Directory.GetDirectories(CurrentConfiguration.GlobalFolder);
+        var allusionBoards = Directory.GetFiles(CurrentConfiguration.GlobalFolder, "*.allusion", SearchOption.AllDirectories);
+
+        List<string> folders = [];
+
+        foreach (var allusionBoard in allusionBoards)
+        {
+            var refBoard = ReferenceBoard.Read(allusionBoard);
+            folders.Add(refBoard.BaseFolder);
+        }
+
+        return folders.ToArray();
     }
 
     public RefBoardInfo[] GetAllRefBoardInfos()
@@ -104,7 +114,7 @@ public class ReferenceBoardManager : IReferenceBoardManager
             var creationTime = Directory.GetCreationTime(folder);
             var changeTime = Directory.GetLastWriteTime(folder);
             var lastOpenTime = Directory.GetLastAccessTime(folder);
-            var filePath = Path.Combine(CurrentConfiguration.GlobalFolder, name);
+            var filePath = folder;
 
             infos.Add(new RefBoardInfo(name, folder, filePath)
             {

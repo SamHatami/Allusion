@@ -21,7 +21,7 @@
                         <Setter Property="BorderBrush" Value="DarkOliveGreen" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnSourceUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="False">
-                        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ImageItem.Border}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>

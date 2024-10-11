@@ -140,7 +140,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public void RemovePage()
     {
-        RefBoardViewModel?.RemoveActivePage();
+        RefBoardViewModel?.RemovePage();
     }
 
     public void UndoRemove() //Key Gesture: Ctrl-z

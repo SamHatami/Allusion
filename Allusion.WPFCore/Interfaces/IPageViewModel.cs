@@ -9,7 +9,7 @@ public interface IPageViewModel
 
     public void TransferImageItems();
 
-    public void SelectPage();
+    public void PageSelected();
 
     void DeleteSelectedImages();
 }

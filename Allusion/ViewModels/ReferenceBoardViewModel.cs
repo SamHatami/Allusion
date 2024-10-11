@@ -77,7 +77,7 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         Pages.Add(new PageViewModel(_pageManager,_events, newPage, this));
 
         ActivePageViewModel = Pages.Last();
-        ActivePageViewModel.SelectPage();
+        ActivePageViewModel.PageSelected();
 
         _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
     }
@@ -99,8 +99,20 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         ActivePageViewModel.DeleteSelectedImages();
     }
 
-    public void RemoveActivePage()
+    public void RemovePage()
     {
-        
+        var currentPageIndex = Pages.IndexOf((PageViewModel)ActivePageViewModel);
+        Pages.Remove((PageViewModel)ActivePageViewModel);
+
+        if (Pages.Any())
+        {
+            ActivePageViewModel = Pages[currentPageIndex == 0 ? 0 : currentPageIndex - 1];
+            ActivePageViewModel.PageSelected();
+        }
+        else
+        {
+            AddPage("");
+        }
+
     }
 }

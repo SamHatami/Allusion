@@ -27,6 +27,8 @@
     <SolidColorBrush x:Key="Dialog.TextBox.Background" Color="{DynamicResource Primary.TextBox.Background}" />
 
     <SolidColorBrush x:Key="Info.BackGround" Color="{DynamicResource Secondary.Background}" />
+    <SolidColorBrush x:Key="ImageItem.Border" Color="{DynamicResource Image.Border}" />
+    <SolidColorBrush x:Key="ImageItem.TextBlock.Background" Color="{DynamicResource Image.Border}" />
 
     <SolidColorBrush x:Key="ListBox.Background" Color="{DynamicResource Secondary.Background}" />
     <SolidColorBrush x:Key="ListBox.Item.Foreground" Color="{DynamicResource Secondary.Foreground}" />

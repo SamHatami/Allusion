@@ -72,9 +72,9 @@
     <Color
         x:Key="Primary.Foreground"
         A="255"
-        B="235"
-        G="245"
-        R="235" />
+        B="215"
+        G="215"
+        R="215" />
     <Color
         x:Key="Secondary.Foreground"
         A="255"
@@ -93,6 +93,13 @@
         B="65"
         G="70"
         R="65" />
+
+    <Color
+        x:Key="Image.Border"
+        A="255"
+        B="35"
+        G="35"
+        R="35" />
     <Color
         x:Key="Primary.Border.UnSelected"
         A="255"

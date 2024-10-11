@@ -162,6 +162,10 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         await _parent.Save();
     }
 
+    public void RemovePage()
+    {
+        _parent.RemovePage();
+    }
     public void FitToView()
     {
         //Perhaps use https://github.com/ThomasMiz/RectpackSharp
@@ -238,7 +242,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         }
     }
 
-    public void SelectPage()
+    public void PageSelected()
     {
         PageIsSelected = true;
         _events.PublishOnBackgroundThreadAsync(new PageSelectedEvent(this));

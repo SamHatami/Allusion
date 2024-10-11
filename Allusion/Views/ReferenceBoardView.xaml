@@ -47,7 +47,7 @@
                         <Button
                             x:Name="SelectPage"
                             HorizontalAlignment="Stretch"
-                            cm:Message.Attach="[Event Click] = [SelectPage()]"
+                            cm:Message.Attach="[Event Click] = [PageSelected()]"
                             Focusable="True">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource TabButton}" TargetType="Button">
@@ -71,7 +71,7 @@
                             <Grid>
                                 <Label x:Name="PageLabel" Content="{Binding DisplayName}">
                                     <b:Interaction.Behaviors>
-                                        <behaviors:RenameBehavior TextBox="{Binding ElementName=RenameTextBox}" IsSingleClick="False"/>
+                                        <behaviors:RenameBehavior IsSingleClick="False" TextBox="{Binding ElementName=RenameTextBox}" />
                                     </b:Interaction.Behaviors>
                                     <Label.Style>
                                         <Style BasedOn="{StaticResource TabLabel}" TargetType="Label">
@@ -80,7 +80,10 @@
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding PageIsSelected}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
-
+                                                    <Setter Property="ContextMenu.IsEnabled" Value="True" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding PageIsSelected}" Value="False">
+                                                    <Setter Property="ContextMenu.IsEnabled" Value="False" />
                                                 </DataTrigger>
 
                                                 <Trigger Property="IsMouseOver" Value="True">
@@ -92,6 +95,15 @@
 
                                         </Style>
                                     </Label.Style>
+                                    <Label.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem x:Name="RenamePage" Header="Rename" />
+                                            <MenuItem
+                                                x:Name="RemovePage"
+                                                cm:Message.Attach="[RemovePage]"
+                                                Header="Remove" />
+                                        </ContextMenu>
+                                    </Label.ContextMenu>
                                 </Label>
                                 <TextBox
                                     x:Name="RenameTextBox"

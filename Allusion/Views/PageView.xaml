@@ -79,7 +79,7 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
                             <Grid
@@ -132,7 +132,6 @@
                                     <TextBlock
                                         x:Name="PageLabel"
                                         Width="{Binding ActualWidth, ElementName=ImageContent}"
-                                        Padding="4"
                                         Style="{DynamicResource DescriptionTextBlock}"
                                         Text="{Binding Description}"
                                         TextWrapping="Wrap">
