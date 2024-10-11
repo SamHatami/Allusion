@@ -9,8 +9,9 @@ using Allusion.WPFCore.Interfaces;
 
 namespace Allusion.ViewModels;
 
-public class ImageViewModel : PropertyChangedBase, IRemovableItem
-{
+public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewModel
+{    
+    
     private ImageItem _item;
     private readonly IEventAggregator _events;
 
@@ -119,6 +120,19 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem
             _pageMember = value;
             NotifyOfPropertyChange(nameof(PageMember));
         }
+    }
+
+    private bool _dropped;
+
+    public bool Dropped
+    {
+        get => _dropped;
+        set
+        {
+            _dropped = value;
+            NotifyOfPropertyChange(nameof(Dropped));
+        }
+
     }
 
     public ImageViewModel(ImageItem item, IEventAggregator events)

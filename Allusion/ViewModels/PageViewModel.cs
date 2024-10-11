@@ -2,6 +2,8 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Dynamic;
+using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.Serialization;
 using System.Windows;
 using Allusion.Views;
@@ -15,7 +17,7 @@ using Size = System.Windows.Size;
 
 namespace Allusion.ViewModels;
 
-public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner, IHandle<NewImageItemsEvent>,
+public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner, IHandle<NewImageItemsEvent>, IHandle<DropOnTabEvent>,
     IHandle<ImageSelectionEvent>, IHandle<PageSelectedEvent>
 {
     private readonly IPageManager _pageManager;
@@ -76,8 +78,22 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         set
         {
             _isSelected = value;
+            AllowDrop = !_isSelected;
             NotifyOfPropertyChange(nameof(PageIsSelected));
 
+        }
+    }
+
+
+    private bool _allowDrop;
+
+    public bool AllowDrop
+    {
+        get => _allowDrop;
+        set
+        {
+            _allowDrop = value;
+            NotifyOfPropertyChange(nameof(AllowDrop));
         }
     }
 
@@ -97,12 +113,12 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         Images.CollectionChanged += (sender, args) => UpdateInfoBool();
 
 
-
         InitializePage();
     }
 
     private void InitializePage()
     {
+        AllowDrop = !_isSelected;
          //Remove any imageitems without valid files.
         _pageManager.CleanPage(_page);
         //BoardIsModified = false;
@@ -259,4 +275,23 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         return Task.CompletedTask;
     }
 
+    public Task HandleAsync(DropOnTabEvent message, CancellationToken cancellationToken)
+    {
+        
+
+        if ((PageViewModel)message.TargetPage == this && message.ImageVM is ImageViewModel image)
+        {
+            image.PosX = new Random().NextDouble() * 50 + 10;
+            image.PosY = new Random().NextDouble() * 50 + 10;
+            image.Dropped = false;
+            Images.Add(image);
+            _pageManager.AddImage(image.Item, _page);
+        }
+        else if(Images.Contains(message.ImageVM as ImageViewModel))
+        {
+            Images.Remove(message.ImageVM as ImageViewModel);
+        }
+
+        return Task.CompletedTask;
+    }
 }

@@ -48,7 +48,11 @@
                             x:Name="SelectPage"
                             HorizontalAlignment="Stretch"
                             cm:Message.Attach="[Event Click] = [PageSelected()]"
+                            AllowDrop="{Binding AllowDrop}"
                             Focusable="True">
+                            <b:Interaction.Behaviors>
+                                <behaviors:TabButtonBehavior />
+                            </b:Interaction.Behaviors>
                             <Button.Style>
                                 <Style BasedOn="{StaticResource TabButton}" TargetType="Button">
                                     <Style.Triggers>
