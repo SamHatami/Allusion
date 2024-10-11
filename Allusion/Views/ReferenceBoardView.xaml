@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="Allusion.Views.ReferenceBoardView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -97,7 +97,6 @@
                                     </Label.Style>
                                     <Label.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem x:Name="RenamePage" Header="Rename" />
                                             <MenuItem
                                                 x:Name="RemovePage"
                                                 cm:Message.Attach="[RemovePage]"
