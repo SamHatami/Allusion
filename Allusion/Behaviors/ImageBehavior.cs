@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Allusion.Adorners;
+using Allusion.Events;
 using Allusion.ViewModels;
 using Allusion.Views;
 using Caliburn.Micro;
@@ -18,15 +19,20 @@ public class ImageBehavior : Behavior<UIElement>
 {
     private Canvas _mainCanvas;
     private Point _relativePosition;
+    private Point[] _relativePositions;
     private ContentPresenter _contentPresenter;
+    private List<ContentPresenter> _contentPresenters;
     private IEventAggregator _events;
     private Image _dragIcon;
     private ImageViewModel? _imageViewModel;
+    private ImageViewModel[] _selectedImages;
     private double _originalTop;
     private double _originalLeft;
     private DragDropEffects dropResult;
     private bool _dropped;
     private DragDropEffects dropEffect;
+    private Point[] _originalPositions;
+    private PageViewModel? _page;
 
     protected override void OnAttached()
     {
@@ -34,13 +40,13 @@ public class ImageBehavior : Behavior<UIElement>
 
         if (!(VisualTreeHelper.GetParent(AssociatedObject) is ContentPresenter contentPresenter)) return;
 
-        _contentPresenter =
-            contentPresenter; //The AssociatedObject cant be sized or get the canvas position since its inside a contentcontrol
+        _contentPresenter = contentPresenter; //The AssociatedObject cant be sized or get the canvas position since its inside a contentcontrol
 
         AssociatedObject.MouseLeftButtonDown += OnMouseLeftButtonDown;
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
         _mainCanvas = GetMainCanvas(AssociatedObject);
+        SetDataContextAndEvents();
         if (AssociatedObject is Grid gridContainer && gridContainer.Children[1] is Border border)
             _imageViewModel = border.DataContext as ImageViewModel;
 
@@ -69,64 +75,106 @@ public class ImageBehavior : Behavior<UIElement>
         {
             //_events.PublishOnBackgroundThreadAsync(new FocusImageEvent())
         }
-
+        
         //Disable cursor icon
         //enable move icon
         CreateDragIcon(e.GetPosition(_mainCanvas));
         AssociatedObject.Focus();
         Mouse.OverrideCursor = Cursors.None;
-        _relativePosition = new Point(
-            Canvas.GetLeft(_contentPresenter) - e.GetPosition(_mainCanvas).X,
-            Canvas.GetTop(_contentPresenter) - e.GetPosition(_mainCanvas).Y
-        );
+        var startPosition = e.GetPosition(_mainCanvas);
+        //_relativePosition = new Point(
+        //    Canvas.GetLeft(_contentPresenter) - startPosition.X,
+        //    Canvas.GetTop(_contentPresenter) - startPosition.Y
+        //);
 
-        _originalLeft = Canvas.GetLeft(_contentPresenter);
-        _originalTop = Canvas.GetTop(_contentPresenter);
+        _selectedImages = _page.SelectedImages.ToArray();
+
+        foreach (var image in _selectedImages)
+        {
+            var presenter = GetPresenter(image);
+            if(presenter == null) continue;
+            _contentPresenters.Add(presenter);
+        }
+        SetPositions(startPosition);
+
+        //_originalLeft = Canvas.GetLeft(_contentPresenter);
+        //_originalTop = Canvas.GetTop(_contentPresenter);
 
         AssociatedObject.CaptureMouse();
         e.Handled = true;
     }
 
+    private ContentPresenter? GetPresenter(ImageViewModel imageViewModel)
+    {
+        // Find the ContentPresenter associated with the ImageViewModel
+        foreach (ContentPresenter presenter in _mainCanvas.Children.OfType<ContentPresenter>())
+        {
+            if (presenter.Content == imageViewModel)
+            {
+                return presenter;
+            }
+        }
+
+        return null;
+    }
+    private void SetPositions(Point startPosition)
+    {
+
+        _relativePositions = new Point[_selectedImages.Length];
+        _originalPositions = new Point[_selectedImages.Length];
+        for (int i = 0; i < _selectedImages.Length; i++)
+        {
+            _relativePositions[i].X = _selectedImages[i].PosX- startPosition.X;
+            _relativePositions[i].Y = _selectedImages[i].PosY - startPosition.Y;
+
+            _originalPositions[i].X = _selectedImages[i].PosX;
+            _originalPositions[i].Y = _selectedImages[i].PosY;
+        }
+    }
+
     private void OnMouseMove(object sender, MouseEventArgs e)
     {
-        //move the icon aswell
-        if (AssociatedObject.IsMouseCaptured)
-        {
-            var newLeft = e.GetPosition(_mainCanvas).X + _relativePosition.X;
-            Canvas.SetLeft(_contentPresenter, newLeft < 0 ? 0 : newLeft);
+        if (!AssociatedObject.IsMouseCaptured) return;
 
-            var newTop = e.GetPosition(_mainCanvas).Y + _relativePosition.Y;
-            if (newTop < 0 && Mouse.LeftButton == MouseButtonState.Pressed)
+            for(int i = 0; i<_selectedImages.Length; i++) 
             {
-                // If the image goes beyond the top of the canvas, enable drop mode
-                EnterDropMode();
-                Canvas.SetTop(_contentPresenter, newTop);
-                var data = new DataObject();
-                data.SetData("ImageVM", _imageViewModel );
-                dropEffect = DragDrop.DoDragDrop(AssociatedObject, data, DragDropEffects.Move );
-
-                if (!_dropped && dropEffect == DragDropEffects.None) //Replace with bool 
-                {
-                    Canvas.SetLeft(_contentPresenter, _originalLeft);
-                    Canvas.SetTop(_contentPresenter, _originalTop);
-                    Mouse.OverrideCursor = null;
-                    ExitDropMode();
-
-                }
-            }
-            else
-            {
-                // If the image is within bounds, reset to normal behavior
-                ExitDropMode();
-                Canvas.SetTop(_contentPresenter, newTop);
+                MoveImage(_selectedImages[i], _contentPresenters[i],_originalPositions[i] ,_relativePositions[i],e.GetPosition(_mainCanvas));
             }
 
             MoveDragIcon(e.GetPosition(_mainCanvas));
 
-
-        }
-
         e.Handled = true;
+    }
+
+    private void MoveImage(ImageViewModel image, ContentPresenter contentPresenter, Point originalPos, Point relativePos, Point mousePos)
+    {
+        var newLeft = mousePos.X + relativePos.X;
+        Canvas.SetLeft(contentPresenter, newLeft < 0 ? 0 : newLeft);
+
+        var newTop = mousePos.Y + relativePos.Y;
+
+        if (newTop < 0 && Mouse.LeftButton == MouseButtonState.Pressed)
+        {
+            // If the image goes beyond the top of the canvas, enable drop mode
+            Canvas.SetTop(contentPresenter, newTop);
+            EnterDropMode();
+
+
+            if (!_dropped && dropEffect == DragDropEffects.None) //Replace with bool 
+            {
+                Canvas.SetLeft(contentPresenter, originalPos.X);
+                Canvas.SetTop(contentPresenter, originalPos.Y);
+                Mouse.OverrideCursor = null;
+                ExitDropMode();
+
+            }
+        }
+        else
+        {
+            // If the image is within bounds, reset to normal behavior
+            ExitDropMode();
+            Canvas.SetTop(contentPresenter, newTop);
+        }
     }
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -197,11 +245,23 @@ public class ImageBehavior : Behavior<UIElement>
     private void EnterDropMode()
     {
         _contentPresenter.Opacity = 0.5; // Make it semi-transparent to indicate it's being dragged outside
+
+        var data = new DataObject();
+        data.SetData("ImageVM", _imageViewModel);
+        dropEffect = DragDrop.DoDragDrop(AssociatedObject, data, DragDropEffects.Move);
     }
 
     private void ExitDropMode()
     {
         // Reset any visual effects or flags when the image is back within bounds
         _contentPresenter.Opacity = 1.0; // Reset opacity
+    }
+
+
+    private void SetDataContextAndEvents()
+    {
+        _page = _mainCanvas.DataContext as PageViewModel;
+        _selectedImages = _page.Images.Where(i => i.IsSelected).ToArray();
+
     }
 }
