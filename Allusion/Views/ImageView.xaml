@@ -7,15 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewModels:ImageViewModel}"
+    AllowDrop="False"
     IsSelected="{Binding IsSelected, NotifyOnSourceUpdated=True}"
-    mc:Ignorable="d"
-    AllowDrop="False">
+    mc:Ignorable="d">
 
-    <Border Background="{DynamicResource BackGround}">
+    <Border Background="{DynamicResource ImageItem.Border}">
 
         <Border.Style>
             <Style TargetType="Border">
-                <Setter Property="BorderBrush" Value="{DynamicResource BackGround}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ImageItem.Border}" />
                 <Setter Property="BorderThickness" Value="8" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnTargetUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="True">
@@ -31,7 +31,6 @@
             x:Name="BoundImage"
             d:DesignHeight="100"
             d:DesignWidth="100"
-            MouseLeftButtonDown="BoundImage_OnMouseLeftButtonDown"
             Source="{Binding ImageSource}"
             Stretch="Uniform" />
     </Border>

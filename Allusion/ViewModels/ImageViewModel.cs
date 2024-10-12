@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Allusion.Events;
 using Allusion.WPFCore.Interfaces;
 
 namespace Allusion.ViewModels;
@@ -172,7 +173,7 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
         //this comes from code-behind since I couldn't get the Modifier argument sent to the viewmodel from actions
         IsSelected = true;
         var multiSelect = (modifier & ModifierKeys.Control) == ModifierKeys.Control;
-        _events.PublishOnUIThreadAsync(new ImageSelectionEvent(this, SelectionType.Multi));
+        _events.PublishOnUIThreadAsync(new SelectionEvent([this], SelectionType.Multi));
     }
 
     public void AddNote()
@@ -192,26 +193,4 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
 
 }
 
-public class ImageSelectionEvent
-{
-    public ImageViewModel ImageViewModel { get; } //Don't want core to handle this....
-    public SelectionType Type { get; }
 
-    public ImageSelectionEvent(ImageViewModel imageViewModel, SelectionType type)
-    {
-        ImageViewModel = imageViewModel;
-        Type = type;
-    }
-
-}
-
-
-
-
-
-public enum SelectionType
-{
-    Single,
-    Multi,
-    DeSelect
-}

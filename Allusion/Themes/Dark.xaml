@@ -97,9 +97,9 @@
     <Color
         x:Key="Image.Border"
         A="255"
-        B="35"
-        G="35"
-        R="35" />
+        B="25"
+        G="25"
+        R="25" />
     <Color
         x:Key="Primary.Border.UnSelected"
         A="255"

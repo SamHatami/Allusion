@@ -67,6 +67,7 @@
             </Canvas.ContextMenu>
             <b:Interaction.Behaviors>
                 <behaviors:CanvasBehavior />
+                <behaviors:CanvasSelectionBoxBehavior />
             </b:Interaction.Behaviors>
             <ItemsControl ItemsSource="{Binding Images}">
                 <ItemsControl.ItemsPanel>
@@ -148,7 +149,7 @@
                                         Style="{DynamicResource DescriptionTextBox}"
                                         Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         TextWrapping="Wrap"
-                                        Visibility="Collapsed"/>
+                                        Visibility="Collapsed" />
                                 </Grid>
                             </Border>
 
@@ -197,6 +198,13 @@
 
                 </Grid>
             </Border>
+
+            <Rectangle
+                x:Name="SelectionRectangle"
+                Fill="DarkGray"
+                Opacity="0.25"
+                Stroke="DarkOliveGreen"
+                StrokeThickness="1" />
         </Canvas>
 
 

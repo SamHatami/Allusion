@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Allusion.Controls;
+using Allusion.Events;
 using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 
@@ -27,7 +28,7 @@ public class CanvasBehavior : Behavior<UIElement>
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (e.OriginalSource is not ImageControl)
-            _events.PublishOnUIThreadAsync(new ImageSelectionEvent(null, SelectionType.DeSelect));
+            _events.PublishOnUIThreadAsync(new SelectionEvent(null, SelectionType.DeSelect));
 
         if (e.OriginalSource is not Canvas canvas) return;
         

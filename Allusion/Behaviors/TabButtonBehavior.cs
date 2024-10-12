@@ -60,11 +60,18 @@ namespace Allusion.Behaviors
 
             if (e.Data.GetDataPresent("ImageVM") && AssociatedObject.AllowDrop)
             {
-                var image = e.Data.GetData("ImageVM") as ImageViewModel;
-                
-                image.Dropped = true;
+                var images = e.Data.GetData("ImageVM") as ImageViewModel[];
 
-                _events.PublishOnBackgroundThreadAsync(new DropOnTabEvent(image, _dataContext));
+                foreach (var image in images)
+                {
+
+                    image.Dropped = true;
+
+                }
+
+                _events.PublishOnBackgroundThreadAsync(new DropOnTabEvent(images, _dataContext));
+
+
             }
 
             Mouse.OverrideCursor = null;

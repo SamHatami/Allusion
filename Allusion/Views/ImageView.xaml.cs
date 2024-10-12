@@ -51,13 +51,13 @@ namespace Allusion.Views
 
         private void BoundImage_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var modifiers = Keyboard.Modifiers;
-            ImageClick(modifiers);
+            //var modifiers = Keyboard.Modifiers;
+            //ImageClick(modifiers);
         }
 
         private void ImageClick(ModifierKeys modifiers)
         {
-            _viewModel.ImageClick(modifiers);
+            //_viewModel.ImageClick(modifiers);
         }
     }
 }

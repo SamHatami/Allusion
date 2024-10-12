@@ -1,28 +1,35 @@
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Forms;
+using Allusion.Events;
 using Allusion.Views;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Application = System.Windows.Application;
 using Screen = Caliburn.Micro.Screen;
 using Size = System.Windows.Size;
 
 namespace Allusion.ViewModels;
 
 public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner, IHandle<NewImageItemsEvent>, IHandle<DropOnTabEvent>,
-    IHandle<ImageSelectionEvent>, IHandle<PageSelectedEvent>
+    IHandle<PageSelectedEvent>, IHandle<SelectionEvent>
 {
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
     private readonly ReferenceBoardViewModel _parent;
+
+
+    public List<ImageViewModel> SelectedImages { get;} = [];
 
     public BindableCollection<ImageViewModel> Images { get; set; }
 
@@ -41,17 +48,17 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         }
     }
 
-    private ImageViewModel _selectedImage;
+    //private ImageViewModel _selectedImage;
 
-    public ImageViewModel SelectedImage
-    {
-        get => _selectedImage;
-        set
-        {
-            _selectedImage = value;
-            NotifyOfPropertyChange(nameof(SelectedImage));
-        }
-    } //Bound to DependencyObject in View
+    //public ImageViewModel SelectedImage
+    //{
+    //    get => _selectedImage;
+    //    set
+    //    {
+    //        _selectedImage = value;
+    //        NotifyOfPropertyChange(nameof(SelectedImage));
+    //    }
+    //} //Bound to DependencyObject in View
 
     private string _displayName;
 
@@ -204,37 +211,24 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ImageSelectionEvent message, CancellationToken cancellationToken)
-    {
-        switch (message.Type)
-        {
-            case SelectionType.DeSelect:
-                foreach (var image in Images)
-                    image.IsSelected = false;
-                break;
+    //public Task HandleAsync(ImageSelectionEvent message, CancellationToken cancellationToken)
+    //{
 
-            case SelectionType.Multi:
-                //TODO:
-                break;
 
-            case SelectionType.Single:
-                _selectedImage = message.ImageViewModel;
-                break;
-        }
+    //    SelectedImage = message.ImageViewModel;
 
-        SelectedImage = message.ImageViewModel;
+    //    //Deselect from hear instead of aggregating yet another event to all of them.
+    //    foreach (var image in Images)
+    //        if (image != _selectedImage)
+    //            image.IsSelected = false;
 
-        //Deselect from hear instead of aggregating yet another event to all of them.
-        foreach (var image in Images)
-            if (image != _selectedImage)
-                image.IsSelected = false;
+    //    return Task.CompletedTask;
+    //}
 
-        return Task.CompletedTask;
-    }
-
-    private void DeSelectAllImages()
+    private void ClearSelection()
     {
         foreach (var image in Images) image.IsSelected = false;
+        SelectedImages.Clear();
     }
 
     public void ReAddItem(IRemovableItem item) // Used by the sessionmanager
@@ -269,7 +263,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         if (this != message.Page)
         {
             PageIsSelected = false;
-            DeSelectAllImages();
+            ClearSelection();
         }
 
         return Task.CompletedTask;
@@ -279,18 +273,75 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     {
         
 
-        if ((PageViewModel)message.TargetPage == this && message.ImageVM is ImageViewModel image)
+        if ((PageViewModel)message.TargetPage == this && message.ImageVM is ImageViewModel[] images)
         {
-            image.PosX = new Random().NextDouble() * 50 + 10;
-            image.PosY = new Random().NextDouble() * 50 + 10;
-            image.Dropped = false;
-            Images.Add(image);
-            _pageManager.AddImage(image.Item, _page);
+            foreach (var image in images)
+            {
+                image.PosX = new Random().NextDouble() * 50 + 10;
+                image.PosY = new Random().NextDouble() * 50 + 10;
+                image.Dropped = false;
+                image.IsSelected = false;
+                Images.Add(image);
+                _pageManager.AddImage(image.Item, _page);
+                ClearSelection();
+            }
+
         }
-        else if(Images.Contains(message.ImageVM as ImageViewModel))
+        else if(Images.Intersect(message.ImageVM as ImageViewModel[]).Any())
         {
-            Images.Remove(message.ImageVM as ImageViewModel);
+            Images.RemoveRange(message.ImageVM as ImageViewModel[]);
         }
+
+        return Task.CompletedTask;
+    }
+
+    public void SetSingleSelection(ImageViewModel image)
+    {
+        if (SelectedImages.Contains(image)) return;
+
+        ClearSelection();
+        image.IsSelected = true;
+        SelectedImages.Add(image);
+    }
+    public Task HandleAsync(SelectionEvent message, CancellationToken cancellationToken)
+    {
+        if(message.Images == null)
+        {
+            ClearSelection();
+        }
+        else
+        {
+            ClearSelection();
+
+            //Framtida ctrl-click val
+            switch (message.Type)
+            {
+                case SelectionType.DeSelect:
+                    foreach (var image in Images)
+                        image.IsSelected = false;
+                    break;
+
+                case SelectionType.Multi:
+                    //TODO:
+                    break;
+
+                case SelectionType.Single:
+                    if (SelectedImages.Intersect(message.Images).Any())
+                        return Task.CompletedTask;
+                    break;
+            }
+
+
+
+            foreach (var image in message.Images)
+                image.IsSelected = true;
+            SelectedImages.AddRange(message.Images);
+
+
+
+        }
+
+
 
         return Task.CompletedTask;
     }
