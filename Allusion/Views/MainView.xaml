@@ -43,8 +43,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
 
                 <DockPanel
                     Grid.Column="0"
@@ -76,9 +76,18 @@
                     Content="{Binding RefBoardViewModel.BoardName}"
                     Style="{DynamicResource TitleBarLabel}" />
 
+
+                <Button
+                    x:Name="ShowHelp"
+                    Grid.Column="1"
+                    RenderOptions.EdgeMode="Aliased"
+                    Style="{DynamicResource TitleBarButtonStyle}"
+                    ToolTip="Turn on/off always on top">
+                    <fa:IconImage Width="16" Icon="QuestionCircle" />
+                </Button>
                 <Button
                     x:Name="TopMostButton"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     Click="Settings_Click"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}"
@@ -90,7 +99,7 @@
                 </Button>
 
                 <Button
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Click="ThemeSwitch_Click"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}"
@@ -98,7 +107,7 @@
                     <fa:IconImage Width="16" Icon="CircleHalfStroke" />
                 </Button>
                 <Button
-                    Grid.Column="3"
+                    Grid.Column="4"
                     Click="OnMinimizeButtonClick"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}">
@@ -106,20 +115,20 @@
                 </Button>
                 <Button
                     Name="RestoreButton"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Click="OnMaximizeRestoreButtonClick"
                     Style="{DynamicResource TitleBarButtonStyle}">
                     <fa:IconImage Height="12" Icon="compress" />
                 </Button>
                 <Button
                     Name="MaximizeButton"
-                    Grid.Column="5"
+                    Grid.Column="6"
                     Click="OnMaximizeRestoreButtonClick"
                     Style="{DynamicResource TitleBarButtonStyle}">
                     <fa:IconImage Height="12" Icon="expand" />
                 </Button>
                 <Button
-                    Grid.Column="6"
+                    Grid.Column="7"
                     Click="OnCloseButtonClick"
                     Style="{DynamicResource TitleBarButtonClose}">
                     <fa:IconImage Height="12" Icon="Close" />

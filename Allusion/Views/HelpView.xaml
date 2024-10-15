@@ -5,19 +5,22 @@
     xmlns:cm="http://caliburnmicro.com"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-    xmlns:local="clr-namespace:Allusion.Views"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="HelpView"
     Width="800"
-    Height="650"
+    Height="800"
     cm:Message.Attach="[Gesture F1] = [Close]"
+    d:Height="1300"
+    d:Width="800"
     Style="{DynamicResource DialogWindow}"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="22" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
     </WindowChrome.WindowChrome>
+
+    <Window.Resources />
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="22" />
@@ -32,94 +35,265 @@
             Style="{DynamicResource TitleBarButtonClose}">
             <fa:IconImage Height="12" Icon="Close" />
         </Button>
-        <FlowDocumentScrollViewer Grid.Row="1" HorizontalContentAlignment="Stretch">
+        <FlowDocumentScrollViewer
+            Grid.Row="1"
+            MinWidth="500"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
             <FlowDocument
+                ColumnWidth="Auto"
                 FontFamily="{StaticResource LatoFont}"
                 Foreground="{DynamicResource Foreground.Front}"
+                IsOptimalParagraphEnabled="True"
                 PagePadding="10">
-                <Paragraph>
-                    <Run FontWeight="DemiBold">General User Interface Hot-Keys</Run>
-                </Paragraph>
-                <Table>
-                    <Table.Columns>
-                        <TableColumn Width="100"/>
-                        <TableColumn Width="100"/>
-                    </Table.Columns>
-                    <TableRowGroup>
-                        <TableRow>
-                            <TableCell>
-                                <Paragraph>Open Board</Paragraph>
-                            </TableCell>
-                            <TableCell>
-                                <Paragraph>Ctrl + O</Paragraph>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <Paragraph>New Board</Paragraph>
-                            </TableCell>
-                            <TableCell>
-                                <Paragraph>Ctrl + N</Paragraph>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <Paragraph>Save Board</Paragraph>
-                            </TableCell>
-                            <TableCell>
-                                <Paragraph>Ctrl + S</Paragraph>
-                            </TableCell>
-                        </TableRow>                        
-                        
-                        <TableRow>
-                            <TableCell>
-                                <Paragraph>Paste Image</Paragraph>
-                            </TableCell>
-                            <TableCell>
-                                <Paragraph>Ctrl + V</Paragraph>
-                            </TableCell>
-                        </TableRow>                        
-                    </TableRowGroup>
-                </Table>
-
-                <Paragraph>
-                    Allusion Files and Images
-                </Paragraph>
-
-                <Paragraph>
-                    <Run>The Focus View</Run>
-                    <LineBreak />
-                    Double click any of your image items on the canvas and always-on-top window
-                    pops op. Place this above your viewport on your favorite mesh mashing software and use it to improve your workflow and ease the
-                    strain of your design tonsils.</Paragraph>
-
-                <Paragraph>
-                    If you sit on a very wide screen and want to center focus the entire board for a quick glance, press win+F+V
-                </Paragraph>
-
-                <Paragraph>
-                    <Run FontWeight="Bold">The interface</Run>
-
-                </Paragraph>
-
-                <Paragraph>
-                    <Run FontWeight="Bold">Image Items</Run>
-                </Paragraph>
-                <Paragraph>
-                    Add by drag 'n drop or copy/paste from either a browser or file explorer directly on the a page.
-                    <LineBreak></LineBreak>
-                    <LineBreak></LineBreak>
-                    <Image gif:AnimationBehavior.SourceUri="/Resources/TutorialGifs/DragAndDropWeb.gif" gif:AnimationBehavior.RepeatBehavior="Forever"/>
-
-                </Paragraph>
-                <Paragraph>
-                    Resize images by choosing the little hidden triangle in the bottom right.
-                        Add notes to images by right clicking on the image and choose "Add Not", do the same thing but choose "Remove Note" if that is your wish.
-                        Edit the note by single click on the note, accept the note by click outside the text box or by pressing enter. Esc will cancel the edit.
+                <!--  Hot-Keys Section  -->
+                <Section>
+                    <Paragraph TextAlignment="Center">
+                        <Run FontSize="18" FontWeight="Bold">Hot-Keys</Run>
                     </Paragraph>
+                    <BlockUIContainer>
+                        <Border
+                            Background="{DynamicResource BackGround}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  Row 0  -->
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="2,5"
+                                    Text="Open Board" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="2,5"
+                                    Text="Ctrl + O" />
+
+                                <!--  Row 1  -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="2,5"
+                                    Text="New Board" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="2,5"
+                                    Text="Ctrl + N" />
+
+                                <!--  Row 2  -->
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Margin="2,5"
+                                    Text="Save Board" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="2,5"
+                                    Text="Ctrl + S" />
+
+                                <!--  Row 3  -->
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Margin="2,5"
+                                    Text="Paste Image" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Margin="2,5"
+                                    Text="Ctrl + V" />
+                            </Grid>
+                        </Border>
+                    </BlockUIContainer>
+                </Section>
+
+                <!--  Interface Demo Section  -->
+                <Section>
+                    <Paragraph TextAlignment="Center">
+                        <Run FontSize="18" FontWeight="Bold">The Interface</Run>
+                    </Paragraph>
+                    <BlockUIContainer>
+                        <Border
+                            Padding="10"
+                            Background="{DynamicResource BackGround}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <!--  Margin grid  -->
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <TextBlock
+                                        Margin="0,10"
+                                        HorizontalAlignment="Center"
+                                        FontWeight="DemiBold"
+                                        Text="Drag and Drop" />
+
+                                    <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                                        • Add by drag 'n drop from either a browser or file explorer directly on a page.<LineBreak />
+                                        • Add by copy/paste from either a browser or file explorer directly on a page.</TextBlock>
+                                    <Border
+                                        Margin="0,0,0,10"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="4">
+
+                                        <Image
+                                            MinHeight="200"
+                                            MaxHeight="300"
+                                            gif:AnimationBehavior.RepeatBehavior="Forever"
+                                            gif:AnimationBehavior.SourceUri="/Resources/TutorialGifs/DragAndDropWeb.gif" />
+                                    </Border>
+
+                                    <Border
+                                        Height="1"
+                                        BorderBrush="Gray"
+                                        BorderThickness="1" Margin="30,10"/>
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="5">
+                                    <TextBlock
+                                        Margin="0,10"
+                                        HorizontalAlignment="Center"
+                                        FontWeight="DemiBold"
+                                        Text="Image Notes" />
+                                    <TextBlock TextWrapping="Wrap">
+                                        • Add notes to images by right-clicking on the image and choosing Add Note.<LineBreak />
+                                        • Remove by right clicking and choosing Remove Note.<LineBreak />
+                                        • Edit the note by single-clicking on it, accept changes by clicking outside the text box or pressing Enter.<LineBreak />
+                                        • Esc will cancel the edit.</TextBlock>
+                                    <Border
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="4" Margin="0,10">
+                                        <Image
+                                            MinHeight="200"
+                                            MaxHeight="300"
+                                            gif:AnimationBehavior.RepeatBehavior="Forever"
+                                            gif:AnimationBehavior.SourceUri="/Resources/TutorialGifs/ResizeRemoveNote.gif" />
+                                    </Border>
+                                    <Border
+                                        Height="1"
+                                        BorderBrush="Gray"
+                                        BorderThickness="1" Margin="30,10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2">
+                                    <TextBlock
+                                        Margin="0,10"
+                                        HorizontalAlignment="Center"
+                                        FontWeight="DemiBold"
+                                        Text="Pages" />
+
+                                    <TextBlock
+                                        Margin="0,0,0,5"
+                                        Text="Rename by double click and remove by right click page name"
+                                        TextWrapping="Wrap" />
+                                    <Border
+                                        Margin="0,10"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="4">
+
+                                        <Image
+                                            MinHeight="200"
+                                            MaxHeight="300"
+                                            gif:AnimationBehavior.RepeatBehavior="Forever"
+                                            gif:AnimationBehavior.SourceUri="/Resources/TutorialGifs/RenameRemovePage.gif" />
+                                    </Border>
+                                    <Border
+                                        Height="1"
+                                        BorderBrush="Gray"
+                                        BorderThickness="1" Margin="30,10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="3">
+                                    <TextBlock
+                                        Margin="0,10,0,10"
+                                        HorizontalAlignment="Center"
+                                        FontWeight="DemiBold"
+                                        Text="Move Images" />
+                                    <TextBlock
+                                        Margin="0,0,0,5"
+                                        Text="Rename by double click and remove by right click page name"
+                                        TextWrapping="Wrap" />
+                                    <Border
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Margin="0,10">
+                                        <Image
+                                            MinHeight="200"
+                                            MaxHeight="300"
+                                            gif:AnimationBehavior.RepeatBehavior="Forever"
+                                            gif:AnimationBehavior.SourceUri="/Resources/TutorialGifs/MoveImages.gif" />
+                                    </Border>
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+                    </BlockUIContainer>
+                </Section>
+                <!--  Allusion Files and Images Section  -->
+                <Section>
+                    <Paragraph>
+                        <Run FontSize="18" FontWeight="Bold">The Focus View</Run>
+                    </Paragraph>
+                    <BlockUIContainer>
+                        <Border
+                            Padding="10"
+                            Background="{DynamicResource BackGround}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <TextBlock Margin="0,0,0,5" TextWrapping="Wrap">
+                                Double click any of your image items on the canvas, and an always-on-top window pops up.<LineBreak />
+                                <LineBreak />
+                                Place this above your viewport on your favorite mesh-mashing software to improve your workflow
+                                and ease the strain of your design process.<LineBreak />
+                                <LineBreak />
+                                Zoom and Pan are planned.</TextBlock>
+                        </Border>
+                    </BlockUIContainer>
+
+                </Section>
+
+
 
             </FlowDocument>
-
         </FlowDocumentScrollViewer>
     </Grid>
 </Window>

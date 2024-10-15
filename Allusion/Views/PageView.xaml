@@ -93,9 +93,20 @@
                                     cm:View.Model="{Binding}"
                                     IsHitTestVisible="True">
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu>
+                                        <ContextMenu x:Name="ImageContextMenu">
                                             <MenuItem cm:Message.Attach="AddNote" Header="Add note" />
                                             <MenuItem cm:Message.Attach="RemoveNote" Header="Remove Note" />
+                                            <!--<MenuItem
+                                                DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                DisplayMemberPath="DisplayName"
+                                                Header="Move to..."
+                                                ItemsSource="{Binding Board.Pages}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="cm:Message.Attach" Value="[Event Click] = [MoveImage($dataContext)]" />
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>-->
                                             <!--<MenuItem Header="Size">
                                                 <MenuItem cm:Message.Attach="SetSize('0.25')" Header="25%" />
                                                 <MenuItem cm:Message.Attach="SetSize('0.50')" Header="50%" />

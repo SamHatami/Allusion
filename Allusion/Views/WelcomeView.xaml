@@ -24,7 +24,8 @@
             Margin="10"
             Padding="10"
             FontSize="14"
-            Style="{DynamicResource DescriptionTextBlock}"
+            FontFamily="{DynamicResource LatoFont}"
+            Foreground="{DynamicResource Foreground}"
             TextWrapping="Wrap">
             <Run FontWeight="Bold">Welcome to Allusion!</Run>
             <LineBreak />

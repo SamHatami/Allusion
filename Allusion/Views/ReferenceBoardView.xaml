@@ -120,6 +120,7 @@
                                     GotFocus="UIElement_OnGotFocus"
                                     KeyDown="OnRenameKeyDown"
                                     LostFocus="OnRenameLostFocus"
+                                    Style="{DynamicResource DescriptionTextBox}"
                                     Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                     Visibility="Collapsed" />
                             </Grid>

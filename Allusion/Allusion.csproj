@@ -11,7 +11,9 @@
   <ItemGroup>
     <None Remove="Resources\DefaultNoImage.png" />
     <None Remove="Resources\TutorialGifs\DragAndDropWeb.gif" />
-    <None Remove="Resources\TutorialGifs\ResizeAddRemoveNote.gif" />
+    <None Remove="Resources\TutorialGifs\MoveImages.gif" />
+    <None Remove="Resources\TutorialGifs\RenameRemovePage.gif" />
+    <None Remove="Resources\TutorialGifs\ResizeRemoveNote.gif" />
     <None Remove="Themes\Fonts\Lato-Black.ttf" />
     <None Remove="Themes\Fonts\Lato-BlackItalic.ttf" />
     <None Remove="Themes\Fonts\Lato-Bold.ttf" />
@@ -27,7 +29,9 @@
   <ItemGroup>
     <Resource Include="Resources\DefaultNoImage.png" />
     <Resource Include="Resources\TutorialGifs\DragAndDropWeb.gif" />
-    <Resource Include="Resources\TutorialGifs\ResizeAddRemoveNote.gif" />
+    <Resource Include="Resources\TutorialGifs\MoveImages.gif" />
+    <Resource Include="Resources\TutorialGifs\RenameRemovePage.gif" />
+    <Resource Include="Resources\TutorialGifs\ResizeRemoveNote.gif" />
     <Resource Include="Themes\Fonts\Lato-Black.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

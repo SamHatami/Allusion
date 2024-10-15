@@ -1,4 +1,5 @@
-﻿using System.Net.Mime;
+﻿using System.Collections.Specialized;
+using System.Net.Mime;
 using Allusion.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +8,7 @@ using System.Windows.Input;
 using FontAwesome.Sharp;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Thumb = System.Windows.Controls.Primitives.Thumb;
+using System.Windows.Data;
 
 namespace Allusion.Views;
 
@@ -17,11 +19,31 @@ public partial class PageView : UserControl
 {
     private string _oldDescription;
     private FrameworkElement _dragIcon;
-
+    private PageViewModel _pageViewModel;
     public PageView()
     {
         InitializeComponent();
+        Loaded += OnLoaded;
+
     }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        _pageViewModel = this.DataContext as PageViewModel;
+        _pageViewModel.Board.Pages.CollectionChanged += OnPageCollectionChanged();
+    }
+
+    private NotifyCollectionChangedEventHandler? OnPageCollectionChanged()
+    {
+        var contextMenu = (ContextMenu)ImageCanvas.FindName("ImageContextMenu");
+
+        if (contextMenu == null) return null;
+
+        contextMenu.Items.Refresh();
+
+        return null;
+    }
+
 
     private void OnResizeThumbDragDelta(object sender, DragDeltaEventArgs e)
     {

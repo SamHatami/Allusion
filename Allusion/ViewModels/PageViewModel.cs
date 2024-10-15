@@ -21,17 +21,24 @@ using Size = System.Windows.Size;
 
 namespace Allusion.ViewModels;
 
-public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner, IHandle<NewImageItemsEvent>, IHandle<DropOnTabEvent>,
+public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner, IHandle<NewImageItemsEvent>,
+    IHandle<DropOnTabEvent>,
     IHandle<PageSelectedEvent>, IHandle<SelectionEvent>
 {
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
-    private readonly ReferenceBoardViewModel _parent;
+    public ReferenceBoardViewModel Board { get; }
 
 
-    public List<ImageViewModel> SelectedImages { get;} = [];
+    public List<ImageViewModel> SelectedImages { get; } = [];
 
     public BindableCollection<ImageViewModel> Images { get; set; }
+
+
+    public IEnumerable<PageViewModel> OtherPages
+    {
+        get { return Board?.Pages.Where(p => p != this) ?? Enumerable.Empty<PageViewModel>(); }
+    }
 
 
     private bool _showHelpBox;
@@ -69,11 +76,11 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         {
             _displayName = value;
             NotifyOfPropertyChange(nameof(DisplayName));
-            _pageManager.RenamePage(_page, DisplayName);
+            _pageManager.RenamePage(Page, DisplayName);
         }
     }
 
-    private BoardPage _page { get; set; }
+    public BoardPage Page { get; }
 
     private bool _isSelected;
     private readonly IWindowManager _windowManger;
@@ -87,7 +94,6 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
             _isSelected = value;
             AllowDrop = !_isSelected;
             NotifyOfPropertyChange(nameof(PageIsSelected));
-
         }
     }
 
@@ -105,20 +111,19 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     }
 
 
-
-    public PageViewModel(IPageManager pageManager, IEventAggregator events, BoardPage page, ReferenceBoardViewModel parent)
+    public PageViewModel(IPageManager pageManager, IEventAggregator events, BoardPage page,
+        ReferenceBoardViewModel board)
     {
         _pageManager = pageManager;
         _events = events;
-        _parent = parent;
-        _page = page;
-        DisplayName = _page.Name;
+        Board = board;
+        Page = page;
+        DisplayName = Page.Name;
         _events.SubscribeOnBackgroundThread(this);
         _events.SubscribeOnUIThread(this);
         Images = new BindableCollection<ImageViewModel>();
         _windowManger = IoC.Get<IWindowManager>();
         Images.CollectionChanged += (sender, args) => UpdateInfoBool();
-
 
         InitializePage();
     }
@@ -126,12 +131,12 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     private void InitializePage()
     {
         AllowDrop = !_isSelected;
-         //Remove any imageitems without valid files.
-        _pageManager.CleanPage(_page);
+        //Remove any imageitems without valid files.
+        _pageManager.CleanPage(Page);
         //BoardIsModified = false;
-        if (_page.ImageItems is null) return;
+        if (Page.ImageItems is null) return;
 
-        foreach (var imageItem in _page.ImageItems)
+        foreach (var imageItem in Page.ImageItems)
             Images.Add(new ImageViewModel(imageItem, _events)
             {
                 PosX = imageItem.PosX,
@@ -139,7 +144,6 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
             });
 
         UpdateInfoBool();
-
     }
 
     private void UpdateInfoBool()
@@ -152,21 +156,18 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         dynamic settings = new ExpandoObject();
         settings.WindowState = WindowState.Normal;
         _windowManger.ShowWindowAsync(new FocusViewModel(image.Item), null, settings);
-
-
     }
 
     private void AddItems(ImageItem[] items)
     {
-
         var itemsAdded = false;
         foreach (var item in items)
         {
-            if (_page.ImageItems.Contains(item))
+            if (Page.ImageItems.Contains(item))
                 continue; //override contains and isequal with a bitmap service comparor something
 
             Images.Add(new ImageViewModel(item, _events));
-            _pageManager.AddImage(item, _page);
+            _pageManager.AddImage(item, Page);
             itemsAdded = true;
         }
 
@@ -176,19 +177,35 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     public async Task PasteOnCanvas()
     {
-
-        await _parent.PasteOnCanvas();
+        await Board.PasteOnCanvas();
     }
 
     public async Task Save()
     {
-        await _parent.Save();
+        await Board.Save();
     }
 
     public void RemovePage()
     {
-        _parent.RemovePage();
+        Board.RemovePage();
     }
+
+    public void MoveImage(PageViewModel targetPage)
+    {
+        foreach (var image in SelectedImages)
+        {
+            _pageManager.AddImage(image.Item, targetPage.Page);
+            _pageManager.RemoveImage(image.Item, this.Page);
+
+            Images.Remove(image);
+            targetPage.Images.Add(image);
+        }
+
+        Images.Refresh();
+        SelectedImages.Clear();
+
+    }
+
     public void FitToView()
     {
         //Perhaps use https://github.com/ThomasMiz/RectpackSharp
@@ -198,15 +215,10 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     {
         if (!PageIsSelected) return Task.CompletedTask;
 
-        if(Application.Current.Dispatcher.CheckAccess())
+        if (Application.Current.Dispatcher.CheckAccess())
             AddItems(message.Items);
         else
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                AddItems(message.Items);
-            });
-        }
+            Application.Current.Dispatcher.Invoke(() => { AddItems(message.Items); });
 
         return Task.CompletedTask;
     }
@@ -239,7 +251,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     public void TransferImageItems()
     {
-        _page.ImageItems = Images.Select(i => i.Item).ToList();
+        Page.ImageItems = Images.Select(i => i.Item).ToList();
     }
 
     public void DeleteSelectedImages()
@@ -248,7 +260,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         foreach (var image in selectedImages)
         {
             Images.Remove(image);
-            _pageManager.RemoveImage(image.Item, _page);
+            _pageManager.RemoveImage(image.Item, Page);
         }
     }
 
@@ -271,10 +283,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     public Task HandleAsync(DropOnTabEvent message, CancellationToken cancellationToken)
     {
-        
-
         if ((PageViewModel)message.TargetPage == this && message.ImageVM is ImageViewModel[] images)
-        {
             foreach (var image in images)
             {
                 image.PosX = new Random().NextDouble() * 50 + 10;
@@ -282,15 +291,11 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
                 image.Dropped = false;
                 image.IsSelected = false;
                 Images.Add(image);
-                _pageManager.AddImage(image.Item, _page);
+                _pageManager.AddImage(image.Item, Page);
                 ClearSelection();
             }
-
-        }
-        else if(Images.Intersect(message.ImageVM as ImageViewModel[]).Any())
-        {
+        else if (Images.Intersect(message.ImageVM as ImageViewModel[]).Any())
             Images.RemoveRange(message.ImageVM as ImageViewModel[]);
-        }
 
         return Task.CompletedTask;
     }
@@ -303,9 +308,10 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         image.IsSelected = true;
         SelectedImages.Add(image);
     }
+
     public Task HandleAsync(SelectionEvent message, CancellationToken cancellationToken)
     {
-        if(message.Images == null)
+        if (message.Images == null)
         {
             ClearSelection();
         }
@@ -332,15 +338,10 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
             }
 
 
-
             foreach (var image in message.Images)
                 image.IsSelected = true;
             SelectedImages.AddRange(message.Images);
-
-
-
         }
-
 
 
         return Task.CompletedTask;

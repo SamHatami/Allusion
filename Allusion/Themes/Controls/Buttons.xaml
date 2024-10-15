@@ -169,12 +169,23 @@
                                         <ColorAnimation
                                             Storyboard.TargetName="border"
                                             Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                            To="LightGray"
+                                            To="Gray"
                                             Duration="0:0:0.2">
                                             <ColorAnimation.EasingFunction>
                                                 <CubicEase EasingMode="EaseInOut" />
                                             </ColorAnimation.EasingFunction>
                                         </ColorAnimation>
+
+                                        <ColorAnimation
+                                            Storyboard.TargetName="contentPresenter"
+                                            Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)"
+                                            To="White"
+                                            Duration="0:0:0.2">
+                                            <ColorAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseInOut" />
+                                            </ColorAnimation.EasingFunction>
+                                        </ColorAnimation>
+
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>

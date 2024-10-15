@@ -52,6 +52,7 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
         Pages = [];
         if(_board.Pages is null) return;
         Pages.AddRange(_board.Pages.Select(p => new PageViewModel(_pageManager, _events, p, this)));
+        NotifyOfPropertyChange(nameof(Pages));
 
         ActivePageViewModel = Pages[0];
         ActivePageViewModel.PageIsSelected = true;
@@ -101,6 +102,7 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
 
     public void RemovePage()
     {
+        _boardManager.DeletePage(_board, ActivePageViewModel.Page);
         var currentPageIndex = Pages.IndexOf((PageViewModel)ActivePageViewModel);
         Pages.Remove((PageViewModel)ActivePageViewModel);
 

@@ -31,14 +31,17 @@ public class ImageBehavior : Behavior<UIElement>
         base.OnAttached();
 
         if (!(VisualTreeHelper.GetParent(AssociatedObject) is ContentPresenter contentPresenter)) return; //onödigt?
-        
+
         _mainCanvas = GetMainCanvas(AssociatedObject);
         _contentPresenters = VisualTreeHelpers.FindContentPresentersForImageViews(_mainCanvas);
+
         SetDataContextAndEvents();
+
         if (AssociatedObject is Grid gridContainer && gridContainer.Children[1] is Border border)
             _imageViewModel = border.DataContext as ImageViewModel;
 
         _isInDropMode = _imageViewModel.Dropped;
+
         _events = IoC.Get<IEventAggregator>();
         _events.SubscribeOnUIThread(this); //Listen to FileDropEvent to if the imageviewmodel is the same as the one here, otherwise
 
@@ -51,6 +54,7 @@ public class ImageBehavior : Behavior<UIElement>
         AssociatedObject.MouseMove += OnMouseMove;
         AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
     }
+
     protected override void OnDetaching()
     {
         base.OnDetaching();
@@ -182,19 +186,15 @@ public class ImageBehavior : Behavior<UIElement>
     // Move the drag icon as the mouse moves
     private void MoveDragIcon(Point position)
     {
- 
-            Canvas.SetLeft(_dragIcon, position.X);
-            Canvas.SetTop(_dragIcon, position.Y);
-        
+        Canvas.SetLeft(_dragIcon, position.X);
+        Canvas.SetTop(_dragIcon, position.Y);
     }
 
     // Remove the drag icon when resizing is complete
     private void RemoveDragIcon()
     {
-
-            _mainCanvas.Children.Remove(_dragIcon);
-            _dragIcon = null;
-        
+        _mainCanvas.Children.Remove(_dragIcon);
+        _dragIcon = null;
     }
 
     private void EnterDropMode()

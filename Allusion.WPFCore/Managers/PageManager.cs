@@ -34,6 +34,7 @@ public class PageManager : IPageManager
         }
 
     }
+
     public void AddImage(ImageItem imageItem, BoardPage page)
     {
         var randomFileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
@@ -72,7 +73,14 @@ public class PageManager : IPageManager
         page.Name = newName;
         var directory = Path.GetFileName(page.PageFolder);
         var newDirectory = page.PageFolder.Replace(directory, newName);
-        
+
+
+        if (Directory.Exists(newDirectory))
+        {
+            //Implement status events that's handled in the mainview
+            throw new IOException($"The directory '{newDirectory}' already exists.");
+        }
+
         Directory.Move(page.PageFolder, newDirectory);
 
         page.BackupFolder = page.BackupFolder.Replace(directory, newName);
