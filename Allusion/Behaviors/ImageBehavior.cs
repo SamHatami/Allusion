@@ -67,9 +67,14 @@ public class ImageBehavior : Behavior<UIElement>
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (!_page.SelectedImages.Contains(_imageViewModel))
+        {
             //TODO: Ersätt detta med en selectionService. EventAggregatorn hinner inte ifatt innan CaptureMouse kommer igång
             //Task.Run(async => await...) fungerar inte heller
             _page.SetSingleSelection(_imageViewModel);
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+                _page.AddToSelection(_imageViewModel);
+        }   
 
         var startPosition = e.GetPosition(_mainCanvas);
 

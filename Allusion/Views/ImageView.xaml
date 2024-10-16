@@ -9,9 +9,12 @@
     d:DataContext="{d:DesignInstance Type=viewModels:ImageViewModel}"
     AllowDrop="False"
     IsSelected="{Binding IsSelected, NotifyOnSourceUpdated=True}"
-    mc:Ignorable="d" >
+    mc:Ignorable="d">
 
-    <Border Background="{DynamicResource ImageItem.Border}" AllowDrop="True" Drop="ImageView_OnDrop">
+    <Border
+        AllowDrop="True"
+        Background="{DynamicResource ImageItem.Border}"
+        Drop="ImageView_OnDrop">
 
         <Border.Style>
             <Style TargetType="Border">

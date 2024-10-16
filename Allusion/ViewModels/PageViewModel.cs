@@ -328,7 +328,9 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
                     break;
 
                 case SelectionType.Multi:
-                    //TODO:
+                    //SelectedImages.AddRange(message.Images);
+                    //foreach (var image in message.Images)
+                    //    image.IsSelected = true;
                     break;
 
                 case SelectionType.Single:
@@ -336,8 +338,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
                         return Task.CompletedTask;
                     break;
             }
-
-
+            
             foreach (var image in message.Images)
                 image.IsSelected = true;
             SelectedImages.AddRange(message.Images);
@@ -345,5 +346,11 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
 
         return Task.CompletedTask;
+    }
+
+    public void AddToSelection(ImageViewModel imageViewModel)
+    {
+        SelectedImages.Add(imageViewModel);
+        imageViewModel.IsSelected = true;
     }
 }
