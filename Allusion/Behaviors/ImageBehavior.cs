@@ -1,4 +1,5 @@
-﻿using Allusion.ViewModels;
+﻿using System.Runtime.InteropServices.Marshalling;
+using Allusion.ViewModels;
 using Allusion.WPFCore.Utilities;
 using Caliburn.Micro;
 using FontAwesome.Sharp;
@@ -126,8 +127,8 @@ public class ImageBehavior : Behavior<UIElement>
 
             if (!_isInDropMode && dropEffect == DragDropEffects.None) //Replace with bool
             {
-                image.PosX = originalPos.X;
-                image.PosY = originalPos.Y;
+                ResetPositions();
+
                 Mouse.OverrideCursor = null;
                 ExitDropMode();
             }
@@ -137,6 +138,16 @@ public class ImageBehavior : Behavior<UIElement>
             // If the image is within bounds, reset to normal behavior
             ExitDropMode();
         }
+    }
+
+    private void ResetPositions()
+    {
+        for (int i = 0; i < _selectedImages.Length; i++)
+        {
+            _selectedImages[i].PosX = _originalPositions[i].X;
+            _selectedImages[i].PosY = _originalPositions[i].Y;
+        }
+
     }
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
