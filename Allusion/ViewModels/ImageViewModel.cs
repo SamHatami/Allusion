@@ -38,7 +38,19 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
         }
     }
 
-    public double Scale; // Is set code behind of thumb, probably not the best idea, not sure how to not do this.
+    private double _scale;
+
+    public double Scale// Is set code behind of thumb, probably not the best idea, not sure how to not do this.
+    {
+        get => _scale;
+        set
+        {
+            _scale = value;
+            NotifyOfPropertyChange(nameof(Scale));
+            Height = _imageSource.Height * Scale; // Set the dimensions to keep them when drag/drop
+            Width = _imageSource.Width * Scale;
+        }
+    } 
     public double AspectRatio { get; set; }
     private double _descriptorHeight = 30.0;
 
