@@ -77,12 +77,11 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid x:Name="ImageGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-
                             <Grid
                                 Name="ImageContent"
                                 Grid.Row="0"
@@ -135,7 +134,6 @@
                                     Icon="BorderTopLeft"
                                     Visibility="Hidden" />
                             </Grid>
-
                             <Border
                                 Grid.Row="1"
                                 BorderBrush="{DynamicResource Border}"
@@ -163,7 +161,6 @@
                                         Visibility="Collapsed" />
                                 </Grid>
                             </Border>
-
                             <b:Interaction.Behaviors>
                                 <behaviors:ImageBehavior />
                             </b:Interaction.Behaviors>

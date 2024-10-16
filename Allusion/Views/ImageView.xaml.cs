@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Input;
 using Allusion.Controls;
 using Allusion.ViewModels;
+using Allusion.WPFCore.Events;
+using Caliburn.Micro;
 using Microsoft.VisualBasic.Logging;
 using Window = System.Windows.Window;
 
@@ -16,11 +18,14 @@ namespace Allusion.Views
         private ImageViewModel _viewModel;
         private double _aspectRatio;
         private Window? _window;
+        private IEventAggregator _events;
 
         public ImageView()
         {
             InitializeComponent();
             Loaded += OnLoaded;
+            _events = IoC.Get<IEventAggregator>();
+
         }
 
 
@@ -58,6 +63,12 @@ namespace Allusion.Views
         private void ImageClick(ModifierKeys modifiers)
         {
             //_viewModel.ImageClick(modifiers);
+        }
+
+        private void ImageView_OnDrop(object sender, DragEventArgs e)
+        {
+            //Let the drop pass to the canvas
+            e.Handled = false;
         }
     }
 }
