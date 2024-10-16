@@ -5,6 +5,7 @@ using Allusion.WPFCore.Interfaces;
 
 namespace Allusion.WPFCore.Utilities;
 
+//Not my code, cant recall source
 public static class VisualTreeHelpers
 {
     public static List<ContentPresenter> FindContentPresentersForImageViews(DependencyObject parent)
@@ -31,5 +32,26 @@ public static class VisualTreeHelpers
         }
 
         return contentPresenters;
+    }
+
+    public static IEnumerable<T> FindVisualChildren<T>(DependencyObject dependencyObject) where T : DependencyObject
+    {
+        if (dependencyObject != null)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
+
+                if (child is T typedChild)
+                {
+                    yield return typedChild;
+                }
+
+                foreach (T childOfChild in FindVisualChildren<T>(child))
+                {
+                    yield return childOfChild;
+                }
+            }
+        }
     }
 }

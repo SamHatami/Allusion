@@ -4,8 +4,8 @@ using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Allusion.Controls;
 using Allusion.Events;
+using Allusion.WPFCore.Controls;
 using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 

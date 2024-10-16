@@ -5,6 +5,7 @@
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:Allusion.Behaviors"
     xmlns:cm="http://caliburnmicro.com"
+    xmlns:controls="clr-namespace:Allusion.WPFCore.Controls;assembly=Allusion.WPFCore"
     xmlns:converter="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"

@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using Allusion.Views;
+using Allusion.WPFCore.Controls;
 
 namespace Allusion.Behaviors;
 
@@ -66,15 +68,20 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+
+        //TODO: Ersätt detta med en selectionService. EventAggregatorn hinner inte ifatt innan CaptureMouse kommer igång
+        //Task.Run(async => await...) fungerar inte heller
         if (!_page.SelectedImages.Contains(_imageViewModel))
         {
-            //TODO: Ersätt detta med en selectionService. EventAggregatorn hinner inte ifatt innan CaptureMouse kommer igång
-            //Task.Run(async => await...) fungerar inte heller
-            _page.SetSingleSelection(_imageViewModel);
-
-            if (Keyboard.Modifiers == ModifierKeys.Control)
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
                 _page.AddToSelection(_imageViewModel);
-        }   
+            }
+            else
+            {
+                _page.SetSingleSelection(_imageViewModel);
+            }
+        }
 
         var startPosition = e.GetPosition(_mainCanvas);
 
@@ -125,7 +132,7 @@ public class ImageBehavior : Behavior<UIElement>
         var newTop = mousePos.Y + relativePos.Y;
         image.PosY = newTop;
 
-        if (newTop < -10 && Mouse.LeftButton == MouseButtonState.Pressed)
+        if (newTop < -1 && Mouse.LeftButton == MouseButtonState.Pressed)
         {
             // If the image goes beyond the top of the canvas, enable drop mode
             EnterDropMode();
@@ -136,11 +143,13 @@ public class ImageBehavior : Behavior<UIElement>
 
                 Mouse.OverrideCursor = null;
                 ExitDropMode();
+                return;
             }
         }
-        else
+        else if(newTop < 0)
         {
             // If the image is within bounds, reset to normal behavior
+            ResetPositions();
             ExitDropMode();
         }
     }
@@ -215,7 +224,20 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void EnterDropMode()
     {
-        _contentPresenters.ForEach(i => i.Opacity = 0.5); //need to filter out those who are not selected
+        _mainCanvas.AllowDrop = false;
+        var imageViews = VisualTreeHelpers.FindVisualChildren<ImageView>(_mainCanvas);
+
+        foreach (var imageView in imageViews)
+        {
+            if(imageView.Content is Border imageBorder)
+                imageBorder.AllowDrop = false;
+        }
+
+        foreach (var presenter in _contentPresenters.Where(i => i.Content is ImageViewModel image && image.IsSelected))
+        {
+            presenter.Opacity = 0.5;
+
+        }
 
         var data = new DataObject();
         data.SetData("ImageVM", _selectedImages);
@@ -224,7 +246,20 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void ExitDropMode()
     {
-        _contentPresenters.ForEach(i => i.Opacity = 1.0); // Reset opacity
+        var imageViews = VisualTreeHelpers.FindVisualChildren<ImageView>(_mainCanvas);
+        _mainCanvas.AllowDrop = true;
+        foreach (var imageView in imageViews)
+        {
+            var border = imageView.Template.FindName("ImageBorder", imageView) as Border;
+            if (imageView.Content is Border imageBorder)
+                imageBorder.AllowDrop = true;
+        }
+
+        foreach (var presenter in _contentPresenters.Where(i => i.Content is ImageViewModel image && image.IsSelected))
+        {
+            presenter.Opacity = 1;
+
+        }
     }
 
     private void SetDataContextAndEvents()

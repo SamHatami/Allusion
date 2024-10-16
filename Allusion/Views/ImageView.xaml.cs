@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using Allusion.Controls;
 using Allusion.ViewModels;
+using Allusion.WPFCore.Controls;
 using Allusion.WPFCore.Events;
 using Caliburn.Micro;
 using Microsoft.VisualBasic.Logging;
