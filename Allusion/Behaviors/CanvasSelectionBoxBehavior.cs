@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -18,6 +19,8 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
     private Canvas? _mainCanvas;
 
     private IEventAggregator? _events;
+    private double _signedWidth;
+    private double _signedHeight;
 
     protected override void OnAttached()
     {
@@ -72,11 +75,21 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
     }
     private void CreateSelectionHitTest()
     {
-        var hitRectangle = new RectangleGeometry()
+        // Get the signed width and height for hit testing
+        var width = _selectionRectangle.ActualWidth;
+        var height = _selectionRectangle.ActualHeight;
+
+        // Calculate the top-left corner for the rectangle based on current mouse position
+        var topLeftX = _signedWidth < 0 ? _startPoint.X + _signedWidth : _startPoint.X;
+        var topLeftY = _signedHeight < 0 ? _startPoint.Y + _signedHeight : _startPoint.Y;
+
+        // Create a rectangle geometry for hit testing
+        var hitRectangle = new RectangleGeometry
         {
-            Rect = new Rect(_startPoint, new Size(_selectionRectangle.ActualWidth, _selectionRectangle.ActualHeight))
+            Rect = new Rect(topLeftX, topLeftY, Math.Abs(width), Math.Abs(height))
         };
 
+        Trace.WriteLine(hitRectangle.Bounds.Height + " " + hitRectangle.Bounds.Width + " " + hitRectangle.Bounds.Size + " " + hitRectangle.Rect.Bottom  + " " + hitRectangle.Rect.Right);
         var hitParameters = new GeometryHitTestParameters(hitRectangle);
 
         VisualTreeHelper.HitTest(_mainCanvas, null, CheckSelection, hitParameters);
@@ -107,14 +120,16 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
             var currentMousePosition = e.GetPosition(_mainCanvas);
 
             //only left to right expands selection box
-            var width = currentMousePosition.X - _startPoint.X;
-            var height = currentMousePosition.Y - _startPoint.Y;
+            _signedWidth = currentMousePosition.X - _startPoint.X;
+            _signedHeight = currentMousePosition.Y - _startPoint.Y;
 
-            if (width > 0 && height > 0)
-            {
-                _selectionRectangle.Width = width;
-                _selectionRectangle.Height = height;
-            }
+            _selectionRectangle.Width = Math.Abs(_signedWidth);
+            _selectionRectangle.Height = Math.Abs(_signedHeight);
+
+            var _actualWidth = _signedWidth < 0 ? currentMousePosition.X : _startPoint.X;
+            var _actualHeight = _signedHeight < 0 ? currentMousePosition.Y : _startPoint.Y;
+            Canvas.SetLeft(_selectionRectangle, _actualWidth );
+            Canvas.SetTop(_selectionRectangle, _actualHeight);
         }
     }
 
