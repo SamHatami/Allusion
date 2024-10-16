@@ -152,6 +152,9 @@
                                     <TextBox
                                         x:Name="RenameTextBox"
                                         Width="{Binding ActualWidth, ElementName=ImageContent}"
+                                        Height="Auto"
+                                        MaxHeight="150"
+                                        AcceptsReturn="True"
                                         GotFocus="UIElement_OnGotFocus"
                                         KeyDown="OnRenameKeyDown"
                                         LostFocus="OnRenameLostFocus"
