@@ -63,7 +63,7 @@
                                         <DataTrigger Binding="{Binding PageIsSelected}" Value="False">
                                             <Setter Property="Background" Value="{DynamicResource Tab.Button.UnSelected}" />
                                             <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Border.UnSelected}" />
-                                        </DataTrigger>                                        
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding AllowDrop}" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource Tab.Button.Selected}" />
                                             <Setter Property="BorderBrush" Value="{DynamicResource Tab.Button.Border.Selected}" />
@@ -71,8 +71,8 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
                                             <Setter Property="BorderBrush" Value="{DynamicResource Mouse.IsOver}" />
-                                        </Trigger>                      
-              
+                                        </Trigger>
+
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
@@ -110,6 +110,10 @@
                                                 x:Name="RemovePage"
                                                 cm:Message.Attach="[RemovePage]"
                                                 Header="Remove" />
+                                            <MenuItem
+                                                x:Name="OpenPageFolder"
+                                                cm:Message.Attach="[OpenPageFolder]"
+                                                Header="Open Folder" />
                                         </ContextMenu>
                                     </Label.ContextMenu>
                                 </Label>

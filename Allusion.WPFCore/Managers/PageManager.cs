@@ -1,8 +1,10 @@
-﻿using Allusion.WPFCore.Board;
+﻿using System.Diagnostics;
+using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Interfaces;
 using Allusion.WPFCore.Service;
 using Caliburn.Micro;
 using System.IO;
+using System.Windows.Controls;
 
 namespace Allusion.WPFCore.Managers;
 
@@ -66,6 +68,30 @@ public class PageManager : IPageManager
         page.ImageItems.Remove(imageItem);
     }
 
+    public void OpenPageFolder(BoardPage page)
+    {
+        if (Directory.Exists(page.PageFolder))
+            Directory.CreateDirectory(page.PageFolder);
+
+        try
+        {
+
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = page.PageFolder,
+                UseShellExecute = true
+            };
+            Process.Start(processInfo);
+
+        }
+        catch (Exception e)
+        {
+            StaticLogger.Error("Could not open folder");
+            throw;
+        }
+    }
+
+
     public void RenamePage(BoardPage page, string newName)
     {
         if(string.IsNullOrEmpty(newName) ||string.Equals(page.Name,newName)) return;
@@ -81,7 +107,13 @@ public class PageManager : IPageManager
             throw new IOException($"The directory '{newDirectory}' already exists.");
         }
 
-        Directory.Move(page.PageFolder, newDirectory);
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(newDirectory);
+        else
+        {
+            Directory.Move(page.PageFolder, newDirectory);
+        }
+
 
         page.BackupFolder = page.BackupFolder.Replace(directory, newName);
         page.PageFolder = newDirectory;

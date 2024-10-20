@@ -353,4 +353,10 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         SelectedImages.Add(imageViewModel);
         imageViewModel.IsSelected = true;
     }
+
+
+    public void OpenPageFolder()
+    {
+        _pageManager.OpenPageFolder(Page);
+    }
 }

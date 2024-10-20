@@ -15,4 +15,6 @@ public interface IPageManager
 
     public void RenamePage(BoardPage page, string newName);
 
+    public void OpenPageFolder(BoardPage page);
+
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using Allusion.WPFCore.Board;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Allusion.WPFCore.Interfaces;
