@@ -109,7 +109,7 @@ public class PageManager : IPageManager
         
         if (Directory.Exists(newDirectory)) //Replace with directoryHelper class
         {
-            StaticLogger.Info($"The directory '{newDirectory}' already exists.", true);
+            StaticLogger.Info($"The directory '{newDirectory}' already exists.", true, true);
         }
 
         if (!Directory.Exists(page.PageFolder))
@@ -119,11 +119,11 @@ public class PageManager : IPageManager
             try
             {
                 Directory.Move(page.PageFolder, newDirectory);
+                StaticLogger.WriteToLog("Renamed", StaticLogger.LogLevel.Info);
             }
             catch (Exception e)
             {
-                StaticLogger.Error("Something went wrong when renaming folder");
-                StaticLogger.WriteToLog(e.Message,StaticLogger.LogLevel.Error);
+                StaticLogger.Error("Something went wrong when renaming folder",true, e.Message);
             }
 
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Allusion.WPFCore.Service;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,8 +35,10 @@ public static class BitmapImageExtensions
 
             return data;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
+            StaticLogger.Error("Error encoding image");
+            StaticLogger.WriteToLog(e.Message, StaticLogger.LogLevel.Error);
         }
 
         return data;

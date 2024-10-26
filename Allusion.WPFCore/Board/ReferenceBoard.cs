@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using Allusion.WPFCore.Service;
 
 namespace Allusion.WPFCore.Board;
 
@@ -45,8 +46,7 @@ public class ReferenceBoard
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            StaticLogger.Error("Could not open board", true, e.Message);
         }
 
         return project;
@@ -73,8 +73,8 @@ public class ReferenceBoard
         }
         catch (Exception e)
         {
-            Trace.WriteLine(e);
-            throw;
+            StaticLogger.Error("Could not save board", true, e.Message);
+            saveSuccess = false;
         }
 
         return saveSuccess;
@@ -103,8 +103,7 @@ public class ReferenceBoard
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                StaticLogger.Warning("Could not backup images", true);
             }
         }
     }
