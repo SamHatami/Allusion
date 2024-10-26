@@ -9,6 +9,7 @@ using FontAwesome.Sharp;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Thumb = System.Windows.Controls.Primitives.Thumb;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace Allusion.Views;
 
@@ -20,6 +21,7 @@ public partial class PageView : UserControl
     private string _oldDescription;
     private FrameworkElement _dragIcon;
     private PageViewModel _pageViewModel;
+    private BitmapImage _image;
     public PageView()
     {
         InitializeComponent();
@@ -55,20 +57,22 @@ public partial class PageView : UserControl
 
         var contentControl = thumb.Parent as FrameworkElement;
         var vm = contentControl.DataContext as ImageViewModel;
+        if (vm.ImageSource is BitmapImage image)
+            _image = image;
 
         var aspectRatio = vm.AspectRatio;
 
         // Calculate new width and height
 
-        var horizontalScaleFactor = 1 + e.HorizontalChange * 0.1 / contentControl.Width;
-        var verticalScaleFactor = 1 + e.VerticalChange * 0.1 / contentControl.Height;
+        var horizontalScaleFactor = 1 + e.HorizontalChange * 0.1 / contentControl.ActualWidth;
+        var verticalScaleFactor = 1 + e.VerticalChange * 0.1 / contentControl.ActualHeight;
 
         var scaleFactor = Math.Min(horizontalScaleFactor, verticalScaleFactor);
 
-        contentControl.Width = Math.Max(100, contentControl.Width * scaleFactor);
-        contentControl.Height = Math.Max(100, contentControl.Width / aspectRatio);
+        contentControl.Width = Math.Max(100, contentControl.ActualWidth * scaleFactor);
+        contentControl.Height = Math.Max(100, contentControl.ActualWidth / aspectRatio);
 
-        vm.Scale = contentControl.Width / vm.ImageSource.Width;
+        vm.Scale = contentControl.Width / _image.PixelWidth;
 
 
     }

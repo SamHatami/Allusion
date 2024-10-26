@@ -51,6 +51,7 @@ public static class BitmapUtils
         catch (NotSupportedException e)
         {
             Console.WriteLine(e);
+
             throw;
         }
         catch (NullReferenceException e)

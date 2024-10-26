@@ -66,7 +66,7 @@ public class ReferenceBoardManager : IReferenceBoardManager
         {
             saved = await Task.Run(() => ReferenceBoard.Save(referenceBoard));
             if(saved)
-                StaticLogger.Info($"{referenceBoard.Name} saved", true);
+                StaticLogger.Info($"{referenceBoard.Name} saved", true,true);
         }
         catch (Exception e)
         {

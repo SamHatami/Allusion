@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Allusion.Events;
 using Allusion.WPFCore.Interfaces;
+using System.Windows.Media.Imaging;
 
 namespace Allusion.ViewModels;
 
@@ -163,9 +164,13 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
         _posY = _item.PosY;
         Scale = _item.Scale > 0 ? _item.Scale : 1.0;
         Description = _item.Description;
-        Height = _imageSource.Height * Scale;
-        Width = _imageSource.Width * Scale;
-        AspectRatio = _imageSource.Width / _imageSource.Height;
+
+        if (ImageSource is BitmapImage bitmapImage)
+        {
+            Height = bitmapImage.PixelHeight * Scale; // Correctly calculates height
+            Width = bitmapImage.PixelWidth * Scale;   // Correctly calculates width
+            AspectRatio = (double)bitmapImage.PixelWidth / bitmapImage.PixelHeight; // Correct aspect ratio
+        }
     }
 
 

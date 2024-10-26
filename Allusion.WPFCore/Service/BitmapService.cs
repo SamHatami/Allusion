@@ -34,8 +34,7 @@ public class BitmapService : IBitmapService
             }
             catch (Exception e)
             {
-                StaticLogger.Error("Could not get from URI");
-                StaticLogger.WriteToLog(e.Message, StaticLogger.LogLevel.Error);
+                StaticLogger.Error("Could not get from URI", true, e.Message);
             }
 
         return bitmaps.ToArray();
@@ -70,8 +69,7 @@ public class BitmapService : IBitmapService
         }
         catch (Exception e)
         {
-            StaticLogger.Error("Could fetch image");
-            StaticLogger.WriteToLog(e.Message,StaticLogger.LogLevel.Error); //TODO: this should be an option when logging
+            StaticLogger.Error("Could fetch image", true, e.Message);
         }
 
         // Create a MemoryStream from the byte array

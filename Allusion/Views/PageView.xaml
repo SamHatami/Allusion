@@ -15,6 +15,7 @@
     d:DataContext="{d:DesignInstance Type=viewModels:PageViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    SnapsToDevicePixels="True"
     mc:Ignorable="d">
 
 
@@ -80,18 +81,19 @@
                     <DataTemplate>
                         <Grid x:Name="ImageGrid">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid
                                 Name="ImageContent"
-                                Grid.Row="0"
+                                Grid.Row="0" 
                                 Width="{Binding Width, Mode=OneWay}"
-                                Height="{Binding Height, Mode=OneWay}">
+                                Height="{Binding Height, Mode=OneWay}" UseLayoutRounding="False">
                                 <ContentControl
                                     cm:Message.Attach="[Event MouseDoubleClick] = [FocusImage($dataContext)]"
                                     cm:View.Model="{Binding}"
-                                    IsHitTestVisible="True">
+                                    IsHitTestVisible="True"              
+>
                                     <ContentControl.ContextMenu>
                                         <ContextMenu x:Name="ImageContextMenu">
                                             <MenuItem cm:Message.Attach="AddNote" Header="Add note" />
@@ -115,13 +117,12 @@
                                             </MenuItem>-->
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
-
                                 </ContentControl>
                                 <Thumb
                                     x:Name="ResizeThumb"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
-                                    Background="Gray"
+                                    Background="{DynamicResource ImageItem.Border}"
                                     DragCompleted="ResizeThumb_OnDragCompleted"
                                     DragDelta="OnResizeThumbDragDelta"
                                     DragStarted="ResizeThumb_OnDragStarted"
@@ -137,9 +138,9 @@
                             </Grid>
                             <Border
                                 Grid.Row="1"
-                                BorderBrush="{DynamicResource Border}"
+                                BorderBrush="{DynamicResource ImageItem.Border}"
                                 Visibility="{Binding Description, Converter={StaticResource StringToVis}}">
-                                <Grid x:Name="DescriptionGrid" Background="Gray">
+                                <Grid x:Name="DescriptionGrid">
                                     <TextBlock
                                         x:Name="PageLabel"
                                         Width="{Binding ActualWidth, ElementName=ImageContent}"

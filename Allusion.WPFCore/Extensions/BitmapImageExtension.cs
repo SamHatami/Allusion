@@ -37,8 +37,7 @@ public static class BitmapImageExtensions
         }
         catch (Exception e)
         {
-            StaticLogger.Error("Error encoding image");
-            StaticLogger.WriteToLog(e.Message, StaticLogger.LogLevel.Error);
+            StaticLogger.Error("Error encoding image", true, e.Message);
         }
 
         return data;

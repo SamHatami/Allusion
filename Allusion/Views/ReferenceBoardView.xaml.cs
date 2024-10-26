@@ -67,7 +67,7 @@ namespace Allusion.Views
                 if (result != ValidationResult.ValidResult)
                 {
                     // Log the error
-                    StaticLogger.Error(result.ErrorContent.ToString());
+                    StaticLogger.Error(result.ErrorContent.ToString(), false,"");
 
                     // Mark the event as handled to prevent the illegal character from being added
                     e.Handled = true;

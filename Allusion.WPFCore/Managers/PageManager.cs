@@ -66,7 +66,7 @@ public class PageManager : IPageManager
         if (!page.ImageItems.Contains(imageItem)) return;
 
         page.ImageItems.Remove(imageItem);
-        StaticLogger.Info("Removed image", false);
+        StaticLogger.Info("Removed image", false,false);
     }
 
     public void OpenPageFolder(BoardPage page)
@@ -87,8 +87,7 @@ public class PageManager : IPageManager
         }
         catch (Exception e)
         {
-            StaticLogger.Error("Could not open folder");
-            StaticLogger.WriteToLog(e.Message, StaticLogger.LogLevel.Error);
+            StaticLogger.Error("Could not open folder",true, e.Message);
          
         }
     }
