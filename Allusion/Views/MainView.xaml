@@ -17,7 +17,7 @@
     DragLeave="MainView_OnDragLeave"
     Initialized="OnWindowInitialized"
     StateChanged="WindowStateChangedHandler"
-    Topmost="True"
+    Topmost="{Binding Configuration.TopMost, Mode=TwoWay,NotifyOnSourceUpdated=True}"
     mc:Ignorable="d">
     <Window.Resources>
         <converters:InvertBoolToVis x:Key="InvertBoolVis" />
@@ -82,11 +82,11 @@
                     Grid.Column="1"
                     RenderOptions.EdgeMode="Aliased"
                     Style="{DynamicResource TitleBarButtonStyle}"
-                    ToolTip="Turn on/off always on top">
+                    ToolTip="Help!!">
                     <fa:IconImage Width="16" Icon="QuestionCircle" />
                 </Button>
                 <Button
-                    x:Name="TopMostButton"
+                    x:Name="SetTopMost"
                     Grid.Column="2"
                     Click="Settings_Click"
                     RenderOptions.EdgeMode="Aliased"
@@ -238,7 +238,7 @@
 
         <ContentControl
             Grid.Row="1"
-            Width="250"
+            Width="150"
             Margin="0,20"
             VerticalAlignment="Bottom"
             cm:View.Model="{Binding Notification}" />

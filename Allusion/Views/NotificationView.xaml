@@ -8,12 +8,14 @@
     <Border
         Background="{Binding Background}"
         BorderBrush="{Binding BorderBrush}"
-        CornerRadius="4">
+        BorderThickness="1"
+        CornerRadius="4"
+        Opacity="0.85">
         <TextBlock
             MinWidth="100"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            FontSize="14"
+            FontSize="12"
             Foreground="White"
             Text="{Binding Message}"
             TextWrapping="Wrap" />

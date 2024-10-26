@@ -17,6 +17,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     private bool BoardIsModified; //TODO: Byt till BoardState
 
+    
     private ReferenceBoard _currentRefBoard { get; set; }
 
     private NotificationViewModel _notification;
@@ -45,7 +46,17 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private readonly IEventAggregator _events;//
     private readonly IReferenceBoardManager _boardManager;
     private readonly IWindowManager _windowManager;
-    private readonly AllusionConfiguration _configuration;
+    private AllusionConfiguration _configuration;
+
+    public AllusionConfiguration Configuration
+    {
+        get => _configuration;
+        set
+        {
+            _configuration = value;
+            NotifyOfPropertyChange(nameof(Configuration));
+        }
+    }
     private Size _windowSize;
     private readonly HelpViewModel _help;
 
@@ -107,6 +118,12 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         {
             ShowNewRefBoardDialog();
         }
+    }
+
+    public void SetTopMost()
+    {
+        Configuration.TopMost = !Configuration.TopMost;
+        AllusionConfiguration.Save(_configuration);
     }
 
     private void ShowNewRefBoardDialog()
@@ -236,10 +253,10 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private void FirstTime()
     {
         if (_configuration.FirstStartUp)
+        {
             _windowManager.ShowDialogAsync(new WelcomeViewModel());
-#if !DEBUG
-          _configuration.FirstStartUp = false;
-        AllusionConfiguration.Save(_configuration);
-#endif
+            _configuration.FirstStartUp = false;
+            AllusionConfiguration.Save(_configuration);
+        }
     }
 }

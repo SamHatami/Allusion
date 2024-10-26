@@ -78,7 +78,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         get => _displayName;
         set
         {
-            if (!string.IsNullOrEmpty(value) && value != _displayName) 
+            if (!string.IsNullOrEmpty(value.Trim()) && value.Trim() != _displayName) 
             {
                 _displayName = value.Trim();
                 NotifyOfPropertyChange(nameof(DisplayName));

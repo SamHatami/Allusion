@@ -38,6 +38,6 @@
             d:DesignHeight="100"
             d:DesignWidth="100"
             Source="{Binding ImageSource}"
-            Stretch="UniformToFill" />
+            Stretch="Uniform" />
     </Border>
 </controls:ImageControl>

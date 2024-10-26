@@ -10,7 +10,9 @@ namespace Allusion.WPFCore;
 [Serializable]
 public class AllusionConfiguration
 {
-    public bool FirstStartUp = true;
+    public bool FirstStartUp { get; set; }= true;
+    public bool TopMost {get; set; }= true;
+
     private string _globalFolder = string.Empty;
 
     public string GlobalFolder

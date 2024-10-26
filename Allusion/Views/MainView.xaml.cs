@@ -74,10 +74,8 @@ public partial class MainView : Window
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        this.Topmost = this.Topmost != true;
-
-
-        DisplayIcon.Foreground = this.Topmost ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Black);
+        var vm = (MainViewModel)this.DataContext; //haha...inte på detta viset...men klockar är mkt.
+       DisplayIcon.Foreground = vm.Configuration.TopMost ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Black);
     }
 
     private void ThemeSwitch_Click(object sender, RoutedEventArgs e)

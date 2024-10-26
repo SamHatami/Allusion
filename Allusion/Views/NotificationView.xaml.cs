@@ -37,7 +37,7 @@ public partial class NotificationView : UserControl
         // Create the fade-out animation
         var fadeOutAnimation = new DoubleAnimation
         {
-            From = 1.0, // Start from fully visible
+            From = 0.85, // Start from fully visible
             To = 0.0, // Fade to completely transparent
             Duration = TimeSpan.FromSeconds(2) // 1-second fade duration
         };

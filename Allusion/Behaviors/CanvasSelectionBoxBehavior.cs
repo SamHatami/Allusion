@@ -136,7 +136,7 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
 
 
  
-
+    
     private void SetSelectionBoxStart()
     {
         Canvas.SetLeft(_selectionRectangle, _startPoint.X);
