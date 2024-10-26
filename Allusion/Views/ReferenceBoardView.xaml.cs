@@ -59,11 +59,12 @@ namespace Allusion.Views
             }
         }
 
-        private void RenameTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void RenameTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) //TODO: Gör behavior av detta?
         {
-
-            
                 ValidationResult result = FolderNameValidation.Validate(e.Text, CultureInfo.InvariantCulture);
+                
+                if(e.Text == "\r") return; //kul...
+
                 if (result != ValidationResult.ValidResult)
                 {
                     // Log the error

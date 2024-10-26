@@ -238,7 +238,7 @@
 
         <ContentControl
             Grid.Row="1"
-            Width="250"
+            Width="150"
             Margin="0,20"
             VerticalAlignment="Bottom"
             cm:View.Model="{Binding Notification}" />
