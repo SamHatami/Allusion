@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Allusion.WPFCore.Service;
+using Allusion.WPFCore.ValidationRules;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +57,22 @@ namespace Allusion.Views
             {
                 oldRenameText = textbox.Text;
             }
+        }
+
+        private void RenameTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+
+            
+                ValidationResult result = FolderNameValidation.Validate(e.Text, CultureInfo.InvariantCulture);
+                if (result != ValidationResult.ValidResult)
+                {
+                    // Log the error
+                    StaticLogger.Error(result.ErrorContent.ToString());
+
+                    // Mark the event as handled to prevent the illegal character from being added
+                    e.Handled = true;
+                }
+
         }
     }
 }

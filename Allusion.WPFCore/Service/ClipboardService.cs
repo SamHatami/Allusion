@@ -105,7 +105,7 @@ public class ClipboardService : IClipboardService
                     catch (Exception ex)
                     {
                         // Handle or log the exception as needed
-                        MessageBox.Show($"Error loading SourceImage {file}: {ex.Message}");
+                        StaticLogger.Error($"Error loading SourceImage {file}: {ex.Message}");
                     }
         }
 

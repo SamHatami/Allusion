@@ -66,6 +66,7 @@ public class PageManager : IPageManager
         if (!page.ImageItems.Contains(imageItem)) return;
 
         page.ImageItems.Remove(imageItem);
+        StaticLogger.Info("Removed image", false);
     }
 
     public void OpenPageFolder(BoardPage page)
@@ -87,40 +88,53 @@ public class PageManager : IPageManager
         catch (Exception e)
         {
             StaticLogger.Error("Could not open folder");
-            throw;
+            StaticLogger.WriteToLog(e.Message, StaticLogger.LogLevel.Error);
+         
         }
     }
 
 
     public void RenamePage(BoardPage page, string newName)
     {
+        //Illegal chars are expected to be catched before reaching this 
         if(string.IsNullOrEmpty(newName) ||string.Equals(page.Name,newName)) return;
 
         page.Name = newName;
-        var directory = Path.GetFileName(page.PageFolder);
-        var newDirectory = page.PageFolder.Replace(directory, newName);
 
+        var oldDirectoryPath = page.PageFolder;
+        var oldDirectoryName = Path.GetFileName(oldDirectoryPath);
 
-        if (Directory.Exists(newDirectory))
+        var parentDirectory = Path.GetDirectoryName(oldDirectoryPath);
+        var newDirectory = Path.Combine(parentDirectory, newName);
+        
+        if (Directory.Exists(newDirectory)) //Replace with directoryHelper class
         {
-            //Implement status events that's handled in the mainview
-            throw new IOException($"The directory '{newDirectory}' already exists.");
+            StaticLogger.Info($"The directory '{newDirectory}' already exists.", true);
         }
 
-        if (!Directory.Exists(directory))
+        if (!Directory.Exists(page.PageFolder))
             Directory.CreateDirectory(newDirectory);
         else
         {
-            Directory.Move(page.PageFolder, newDirectory);
+            try
+            {
+                Directory.Move(page.PageFolder, newDirectory);
+            }
+            catch (Exception e)
+            {
+                StaticLogger.Error("Something went wrong when renaming folder");
+                StaticLogger.WriteToLog(e.Message,StaticLogger.LogLevel.Error);
+            }
+
         }
 
 
-        page.BackupFolder = page.BackupFolder.Replace(directory, newName);
+        page.BackupFolder = page.BackupFolder.Replace(oldDirectoryName, newName);
         page.PageFolder = newDirectory;
 
         foreach (var item in page.ImageItems)
         {
-            item.ItemPath = item.ItemPath.Replace(directory, newDirectory);
+            item.ItemPath = item.ItemPath.Replace(oldDirectoryName, newDirectory);
         }
     }
 

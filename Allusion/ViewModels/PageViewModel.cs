@@ -3,16 +3,20 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using Allusion.Events;
 using Allusion.Views;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
+using Allusion.WPFCore.Service;
+using Allusion.WPFCore.ValidationRules;
 using Caliburn.Micro;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Application = System.Windows.Application;
@@ -74,9 +78,12 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         get => _displayName;
         set
         {
-            _displayName = value;
-            NotifyOfPropertyChange(nameof(DisplayName));
-            _pageManager.RenamePage(Page, DisplayName);
+            if (!string.IsNullOrEmpty(value) && value != _displayName) 
+            {
+                _displayName = value.Trim();
+                NotifyOfPropertyChange(nameof(DisplayName));
+                _pageManager.RenamePage(Page, DisplayName);
+            }
         }
     }
 

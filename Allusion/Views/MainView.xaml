@@ -33,7 +33,7 @@
             <!--  TITLE BAR ROW  -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Style="{DynamicResource WindowTitleBar}">
+        <Border Grid.Row="0" Style="{DynamicResource WindowTitleBar}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -235,5 +235,13 @@
                 </Grid>
             </Border>
         </Grid>
+
+        <ContentControl
+            Grid.Row="1"
+            Width="250"
+            Margin="0,20"
+            VerticalAlignment="Bottom"
+            cm:View.Model="{Binding Notification}" />
+
     </Grid>
 </Window>

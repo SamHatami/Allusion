@@ -9,8 +9,11 @@ public static class StaticLogger
 
     public static event LogEventHandler LogEvent = delegate { };
    
-    public static void Info(string message)
+    public static void Info(string message, bool includeTimeStamp)
     {
+        if (includeTimeStamp)
+            message = $"{TimeStamp(DateTime.Now)} - {message}";
+
         LogEvent(message, LogLevel.Info);
     }       
     

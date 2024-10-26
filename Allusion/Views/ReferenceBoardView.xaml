@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:validations="[validations ]clr-namespace:Allusion.WPFCore.ValidationRules;assembly=Allusion.WPFCore"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewModels:ReferenceBoardViewModel}"
     d:DesignHeight="450"
@@ -15,7 +16,6 @@
     Style="{DynamicResource MainControl}"
     mc:Ignorable="d">
 
-    <UserControl.Resources />
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -126,6 +126,7 @@
                                     LostFocus="OnRenameLostFocus"
                                     Style="{DynamicResource DescriptionTextBox}"
                                     Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                    PreviewTextInput="RenameTextBox_PreviewTextInput"
                                     Visibility="Collapsed" />
                             </Grid>
                         </Button>
@@ -143,4 +144,6 @@
 
         <ContentControl Grid.Row="1" cm:View.Model="{Binding ActivePageViewModel}" />
     </Grid>
+
+
 </UserControl>

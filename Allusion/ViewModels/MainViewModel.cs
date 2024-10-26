@@ -6,6 +6,7 @@ using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using System.Diagnostics;
 using System.Windows;
+using Allusion.WPFCore.Service;
 
 namespace Allusion.ViewModels;
 
@@ -18,8 +19,19 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     private ReferenceBoard _currentRefBoard { get; set; }
 
-    private ReferenceBoardViewModel? _refBoardViewModel;
+    private NotificationViewModel _notification;
+    public NotificationViewModel Notification
+    {
+        get => _notification;
+        set
+        {
+            _notification = value;
+            NotifyOfPropertyChange(nameof(Notification));
+        }
+    }
 
+
+    private ReferenceBoardViewModel? _refBoardViewModel;
     public ReferenceBoardViewModel? RefBoardViewModel
     {
         get => _refBoardViewModel;
@@ -47,6 +59,13 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
         _help = help;
+
+        StaticLogger.LogEvent += OnLogEvent;
+    }
+
+    private void OnLogEvent(string message, StaticLogger.LogLevel loglevel)
+    {
+        Notification = new NotificationViewModel(message, loglevel);
     }
 
     public void StartUpByFile(string filePath)
