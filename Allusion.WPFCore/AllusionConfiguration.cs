@@ -2,6 +2,7 @@
 using Allusion.WPFCore.Interfaces;
 using System.IO;
 using System.Printing;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -35,7 +36,7 @@ public class AllusionConfiguration
     public static string DataFolder { get; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Allusion");
 
-    private static string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "AllusionConfiguration.json");
+    private static string _configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AllusionConfiguration.json");
 
     public static AllusionConfiguration Read()
     {
