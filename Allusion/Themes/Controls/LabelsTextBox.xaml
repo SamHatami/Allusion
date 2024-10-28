@@ -32,7 +32,8 @@
     </Style>
 
     <Style x:Key="DialogTextBox" TargetType="{x:Type TextBox}">
-        <Setter Property="Padding" Value="2" />
+        <Setter Property="Padding" Value="5,2" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBox.Foreground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Border}" />
@@ -42,15 +43,19 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border
-                        x:Name="Border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2">
-                        <ScrollViewer
+                    x:Name="Border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2">
+                        <Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <!-- Wrap the ScrollViewer in a Grid to control vertical alignment -->
+                            <ScrollViewer
                             x:Name="PART_ContentHost"
                             HorizontalScrollBarVisibility="Hidden"
-                            VerticalScrollBarVisibility="Hidden" />
+                            VerticalScrollBarVisibility="Hidden" 
+                            Margin="{TemplateBinding Padding}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -65,15 +70,15 @@
         </Setter>
     </Style>
 
+
     <Style x:Key="DescriptionTextBox" TargetType="{x:Type TextBox}">
         <Setter Property="Height" Value="{StaticResource TextBox.Height}" />
         <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBox.Foreground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Border}" />
         <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -103,14 +108,12 @@
 
 
     <Style x:Key="RenamePageName" TargetType="{x:Type TextBox}">
-        <Setter Property="Height" Value="{StaticResource TextBox.Height}" />
+        <Setter Property="Padding" Value="2" />
         <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBox.Foreground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Border}" />
         <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Padding" Value="10" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -118,12 +121,16 @@
                         x:Name="Border"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="0">
-                        <ScrollViewer
-                            x:Name="PART_ContentHost"
-                            HorizontalScrollBarVisibility="Hidden"
-                            VerticalScrollBarVisibility="Hidden" />
+                        BorderThickness="0"
+                        CornerRadius="1">
+                        <Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <!-- Wrap the ScrollViewer in a Grid to control vertical alignment -->
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" 
+                                Margin="{TemplateBinding Padding}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -136,17 +143,10 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="Validation.HasError" Value="true">
-                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
-            </Trigger>
-            <Trigger Property="Validation.HasError" Value="False">
-                <Setter Property="ToolTip" Value="Enter new name" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="DescriptionTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="LineHeight" Value="18" />
         <Setter Property="Background" Value="{DynamicResource ImageItem.TextBlock.Background}" />
         <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
         <Setter Property="VerticalAlignment" Value="Center" />

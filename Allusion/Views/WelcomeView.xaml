@@ -26,7 +26,7 @@
             FontSize="14"
             FontFamily="{DynamicResource LatoFont}"
             Foreground="{DynamicResource Foreground}"
-            TextWrapping="Wrap">
+            TextWrapping="Wrap" LineHeight="20">
             <Run FontWeight="Bold">Welcome to Allusion!</Run>
             <LineBreak />
             <LineBreak />

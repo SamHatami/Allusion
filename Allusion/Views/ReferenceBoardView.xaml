@@ -120,11 +120,10 @@
                                 <TextBox
                                     x:Name="RenameTextBox"
                                     Width="Auto"
-                                    VerticalContentAlignment="Center"
                                     GotFocus="UIElement_OnGotFocus"
                                     KeyDown="OnRenameKeyDown"
                                     LostFocus="OnRenameLostFocus"
-                                    Style="{DynamicResource DescriptionTextBox}"
+                                    Style="{DynamicResource RenamePageName}"
                                     Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                     PreviewTextInput="RenameTextBox_PreviewTextInput"
                                     Visibility="Collapsed" />

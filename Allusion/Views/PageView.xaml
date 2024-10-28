@@ -154,13 +154,11 @@
                                     <TextBox
                                         x:Name="RenameTextBox"
                                         Width="{Binding ActualWidth, ElementName=ImageContent}"
-                                        Height="Auto"
-                                        MaxHeight="150"
                                         AcceptsReturn="True"
                                         GotFocus="UIElement_OnGotFocus"
                                         KeyDown="OnRenameKeyDown"
                                         LostFocus="OnRenameLostFocus"
-                                        Style="{DynamicResource DescriptionTextBox}"
+                                        Style="{DynamicResource RenamePageName}"
                                         Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         TextWrapping="Wrap"
                                         Visibility="Collapsed" />
