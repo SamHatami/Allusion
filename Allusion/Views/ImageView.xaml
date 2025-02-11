@@ -22,7 +22,7 @@
         <Border.Style>
             <Style TargetType="Border">
                 <Setter Property="BorderBrush" Value="{DynamicResource ImageItem.Border}" />
-                <Setter Property="BorderThickness" Value="12" />
+                <Setter Property="BorderThickness" Value="4" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnTargetUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="True">
                         <Setter Property="BorderBrush" Value="DarkOliveGreen" />

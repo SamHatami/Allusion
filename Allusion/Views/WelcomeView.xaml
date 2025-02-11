@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="WelcomeView"
     Width="520"
-    Height="560"
+    SizeToContent="Height"
     Style="{DynamicResource DialogWindow}"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
@@ -17,10 +17,12 @@
     </WindowChrome.WindowChrome>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock
+            Grid.Row="1"
             Margin="10"
             Padding="10"
             FontSize="14"
@@ -50,7 +52,7 @@
 
         <Button
             x:Name="Ok"
-            Grid.Row="1"
+            Grid.Row="2"
             Width="60"
             Margin="10"
             Content="Let's Go!"
