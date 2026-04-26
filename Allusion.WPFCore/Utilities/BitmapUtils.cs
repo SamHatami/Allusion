@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Allusion.WPFCore.Service;
 
 namespace Allusion.WPFCore.Utilities;
 
@@ -11,7 +12,7 @@ public static class BitmapUtils
     public static void SaveToFile(BitmapImage bitmap, string fullFileNameWithoutExtension)
     {
         var fileNamePNG = fullFileNameWithoutExtension + ".png";
-        using var fileStream = new FileStream(fullFileNameWithoutExtension, FileMode.Create);
+        using var fileStream = new FileStream(fileNamePNG, FileMode.Create);
         BitmapEncoder encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(bitmap));
         encoder.Save(fileStream);
@@ -31,7 +32,7 @@ public static class BitmapUtils
         }
         catch (UriFormatException e)
         {
-            Console.WriteLine(e);
+            StaticLogger.Error($"Invalid URI format for image: {imageUri}", true, e.Message);
             throw;
         }
 
@@ -42,24 +43,26 @@ public static class BitmapUtils
     //Note: This is not fully done, the scale will be wrong.
     public static BitmapSource? CreateFromBytes(byte[] imageBytes)
     {
-        BitmapSource? bitmapSource = null;
+        if (imageBytes == null || imageBytes.Length == 0)
+        {
+            StaticLogger.Error("Cannot create bitmap from null or empty byte array", false, string.Empty);
+            return null;
+        }
+
         try
         {
-            bitmapSource = (BitmapSource)new ImageSourceConverter().ConvertFrom(imageBytes);
-
+            return (BitmapSource)new ImageSourceConverter().ConvertFrom(imageBytes);
         }
         catch (NotSupportedException e)
         {
-            Console.WriteLine(e);
-
+            StaticLogger.Error("Unsupported image format in byte array", true, e.Message);
             throw;
         }
-        catch (NullReferenceException e)
+        catch (Exception e)
         {
-
+            StaticLogger.Error("Failed to create bitmap from byte array", true, e.Message);
+            return null;
         }
-
-        return bitmapSource;
     }
 
     public static string GetUrl(BitmapImage? bitmapSource)

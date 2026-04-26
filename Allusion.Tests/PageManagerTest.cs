@@ -1,6 +1,7 @@
 ﻿using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Interfaces;
 using Allusion.WPFCore.Managers;
+using Allusion.WPFCore.Service;
 using Caliburn.Micro;
 using FakeItEasy;
 using FluentAssertions;
@@ -12,6 +13,8 @@ namespace Allusion.Tests
         private PageManager _pageManager;
         private IEventAggregator _fakeEventAggregator;
         private IClipboardService _fakeClipboardService;
+        private IBitmapService _fakeBitmapService;
+        private ImageItemService _fakeImageItemService;
         private BoardPage _boardPage;
         private ReferenceBoard _parentBoard;
 
@@ -19,7 +22,9 @@ namespace Allusion.Tests
         {
             _fakeEventAggregator = A.Fake<IEventAggregator>();
             _fakeClipboardService = A.Fake<IClipboardService>();
-            _pageManager = new PageManager(_fakeEventAggregator, _fakeClipboardService);
+            _fakeBitmapService = A.Fake<IBitmapService>();
+            _fakeImageItemService = A.Fake<ImageItemService>();
+            _pageManager = new PageManager(_fakeEventAggregator, _fakeClipboardService, _fakeBitmapService);
 
             // Mock the parent ReferenceBoard
             _parentBoard = new ReferenceBoard("TestBoard", "C:\\TestBoardFolder");
@@ -37,8 +42,9 @@ namespace Allusion.Tests
         public void CleanPage_ShouldRemoveItemsWithNonExistingPaths()
         {
             // Arrange
-            var imageItem1 = new ImageItem(0,0,1) { ItemPath = "C:\\TestBoardFolder\\TestPage\\image1.png" };
-            var imageItem2 = new ImageItem(0,0,1) { ItemPath = "C:\\TestBoardFolder\\TestPage\\image2.png" };
+            Directory.CreateDirectory(_boardPage.PageFolder); // Ensure directory exists
+            var imageItem1 = new ImageItem(0,0,1, _fakeBitmapService, _fakeImageItemService) { ItemPath = "C:\\TestBoardFolder\\TestPage\\image1.png" };
+            var imageItem2 = new ImageItem(0,0,1, _fakeBitmapService, _fakeImageItemService) { ItemPath = "C:\\TestBoardFolder\\TestPage\\image2.png" };
 
             _boardPage.ImageItems.Add(imageItem1);
             _boardPage.ImageItems.Add(imageItem2);
@@ -60,7 +66,7 @@ namespace Allusion.Tests
         public void AddImage_ShouldAddImageToPageAndSetItemPath()
         {
             // Arrange
-            var imageItem = new ImageItem(0,0,1);
+            var imageItem = new ImageItem(0,0,1, _fakeBitmapService, _fakeImageItemService);
             string expectedPath = Path.Combine(_boardPage.PageFolder, "randomFileName.png");
 
             // Act
@@ -76,7 +82,7 @@ namespace Allusion.Tests
         public void RemoveImage_ShouldRemoveImageFromPage()
         {
             // Arrange
-            var imageItem = new ImageItem(0,0,1);
+            var imageItem = new ImageItem(0,0,1, _fakeBitmapService, _fakeImageItemService);
             _boardPage.ImageItems.Add(imageItem);
 
             // Act
@@ -96,7 +102,7 @@ namespace Allusion.Tests
             _boardPage.PageFolder = "C:\\TestBoardFolder\\TestPage";
             _boardPage.BackupFolder = "C:\\TestBoardFolder\\TestPage\\old";
 
-            var imageItem = new ImageItem(0, 0, 1) { ItemPath = "C:\\TestBoardFolder\\TestPage\\image.png" };
+            var imageItem = new ImageItem(0, 0, 1, _fakeBitmapService, _fakeImageItemService) { ItemPath = "C:\\TestBoardFolder\\TestPage\\image.png" };
             _boardPage.ImageItems.Add(imageItem);
 
             // Act
@@ -124,17 +130,22 @@ namespace Allusion.Tests
         }
 
         [Fact]
-        public void OpenPageFolder_ShouldThrowExceptionIfDirectoryCannotBeOpened()
+        public void OpenPageFolder_ShouldHandleInvalidDirectoryGracefully()
         {
             // Arrange
-            string invalidPageFolder = "C:\\InvalidFolder";
+            string invalidPageFolder = "C:\\<invalid*chars>\\folder";
             _boardPage.PageFolder = invalidPageFolder;
 
-            // Act
-            System.Action action = () => _pageManager.OpenPageFolder(_boardPage);
-
-            // Assert
-            action.Should().Throw<DirectoryNotFoundException>();
+            // Act & Assert - Should not throw any exception
+            try
+            {
+                _pageManager.OpenPageFolder(_boardPage);
+            }
+            catch (Exception ex)
+            {
+                // If any exception is thrown, the test should fail
+                Assert.Fail($"OpenPageFolder should not throw exceptions, but threw: {ex.Message}");
+            }
         }
     }
 }

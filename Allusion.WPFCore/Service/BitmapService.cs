@@ -11,6 +11,13 @@ namespace Allusion.WPFCore.Service;
 
 public class BitmapService : IBitmapService
 {
+    private readonly HttpClient _httpClient;
+
+    public BitmapService(HttpClient httpClient)
+    {
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
+
     public BitmapImage? GetFromUri(string? uriString)
     {
         if (!File.Exists(uriString)) return null;
@@ -45,15 +52,13 @@ public class BitmapService : IBitmapService
         return new BitmapImage(new Uri(uri));
     }
 
-    public async Task<BitmapImage?> DownloadAndConvert(string url)
+    public async Task<BitmapImage?> DownloadAndConvert(string url, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(url)) return null;
-        using var client = new HttpClient();
 
-        BitmapSource bitmapSource = null;
-        byte[] imageBytes = null;
         try
         {
+            byte[] imageBytes;
             if (url.StartsWith("data:image"))
             {
                 var base64Data = url.Substring(url.IndexOf(",") + 1);
@@ -61,21 +66,32 @@ public class BitmapService : IBitmapService
             }
             else
             {
-                imageBytes = await client.GetByteArrayAsync(url);
-
+                imageBytes = await _httpClient.GetByteArrayAsync(url, cancellationToken);
             }
 
-            bitmapSource = BitmapUtils.CreateFromBytes(imageBytes);
+            var bitmapSource = BitmapUtils.CreateFromBytes(imageBytes);
+            if (bitmapSource == null)
+            {
+                StaticLogger.Error("Failed to create bitmap from downloaded data", false, string.Empty);
+                return null;
+            }
+
+            return bitmapSource.ConvertToBitmapImage();
+        }
+        catch (OperationCanceledException)
+        {
+            // Operation was cancelled, return null
+            return null;
+        }
+        catch (HttpRequestException e)
+        {
+            StaticLogger.Error($"HTTP error downloading image from {url}", true, e.Message);
+            return null;
         }
         catch (Exception e)
         {
-            StaticLogger.Error("Could fetch image", true, e.Message);
+            StaticLogger.Error($"Failed to download and convert image from {url}", true, e.Message);
+            return null;
         }
-
-        // Create a MemoryStream from the byte array
-
-        Debug.Assert(bitmapSource != null, nameof(bitmapSource) + " != null");
-
-        return bitmapSource.ConvertToBitmapImage();
     }
 }

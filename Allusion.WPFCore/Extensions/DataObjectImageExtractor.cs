@@ -58,7 +58,7 @@ public class DataObjectImageExtractor
         return null;
     } //This is handled by the clipboardService
 
-    public async Task<BitmapImage?> GetWebBitmapAsync(IDataObject dataObject)
+    public async Task<BitmapImage?> GetWebBitmapAsync(IDataObject dataObject, CancellationToken cancellationToken = default)
     {
         if (dataObject.GetDataPresent(DataFormats.Bitmap))
             return dataObject.GetData(DataFormats.Bitmap) as BitmapImage;
@@ -68,14 +68,14 @@ public class DataObjectImageExtractor
         {
             BitmapImage? bitmap = null;
             if (TryGetUrl(dataObject, out var imageUrl)) 
-                return await _bitmapService.DownloadAndConvert(imageUrl);
+                return await _bitmapService.DownloadAndConvert(imageUrl, cancellationToken);
 
         }
         // Check if the data contains plain text. Need to check if its a valid url ?
         else if (dataObject.GetDataPresent(DataFormats.Text))
         {
             var textData = dataObject.GetData(DataFormats.Text) as string;
-            return await _bitmapService.DownloadAndConvert(textData);
+            return await _bitmapService.DownloadAndConvert(textData, cancellationToken);
             // You could handle the URL or plain text here
         }
 

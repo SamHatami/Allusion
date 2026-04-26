@@ -10,6 +10,7 @@ using Caliburn.Micro;
 using Allusion.ViewModels.Dialogs;
 using Allusion.WPFCore.Managers;
 using Allusion.WPFCore.Service;
+using System.Net.Http;
 
 namespace Allusion;
 
@@ -31,10 +32,12 @@ public class Bootstrapper : BootstrapperBase
 
         _container.Singleton<IWindowManager, WindowManager>();
         _container.Singleton<IEventAggregator, EventAggregator>();
+        _container.RegisterInstance(typeof(HttpClient), "HttpClient", new HttpClient { Timeout = TimeSpan.FromSeconds(30) });
         _container.PerRequest<IBitmapService, BitmapService>();
         _container.Singleton<IClipboardService, ClipboardService>();
 
         _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
+        _container.Singleton<ImageItemService>();
         _container.Singleton<IPageManager, PageManager>();
         _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
         _container.Singleton<HelpViewModel>();

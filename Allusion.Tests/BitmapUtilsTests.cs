@@ -30,26 +30,28 @@ namespace Allusion.Tests
         }
 
         [Fact]
-        public void CreateFromBytes_NotSupportedForEmptyByteArray()
+        public void CreateFromBytes_ReturnsNullForEmptyByteArray()
         {
             // Arrange
             var emptyBytes = Array.Empty<byte>();
 
             // Act
+            var result = BitmapUtils.CreateFromBytes(emptyBytes);
 
             // Assert
-            Assert.Throws<NotSupportedException>(() => BitmapUtils.CreateFromBytes(emptyBytes));
+            result.Should().BeNull();
         }
 
         [Fact]
-        public void CreateFromBytes_NotSupportedForNull()
+        public void CreateFromBytes_ReturnsNullForNull()
         {
             // Arrange
 
             // Act
+            var result = BitmapUtils.CreateFromBytes(null);
 
             // Assert
-            Assert.Throws<NotSupportedException>(() => BitmapUtils.CreateFromBytes(null));
+            result.Should().BeNull();
         }
 
         [Fact]

@@ -13,12 +13,13 @@ public class ReferenceBoardManager : IReferenceBoardManager
 {
     public AllusionConfiguration CurrentConfiguration { get; private set; }
     private readonly IEventAggregator _events;
-    private BitmapService _bitmapService = new();
+    private readonly IBitmapService _bitmapService;
 
-    public ReferenceBoardManager(IEventAggregator events, AllusionConfiguration configuration)
+    public ReferenceBoardManager(IEventAggregator events, AllusionConfiguration configuration, IBitmapService bitmapService)
     {
         _events = events;
         CurrentConfiguration = configuration;
+        _bitmapService = bitmapService ?? throw new ArgumentNullException(nameof(bitmapService));
     }
 
 

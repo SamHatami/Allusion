@@ -11,20 +11,21 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 {
     private readonly IEventAggregator _events;
     private readonly IClipboardService _clipboardService;
+    private readonly IBitmapService _bitmapService;
 
-    public ImageItemService(IEventAggregator events, IClipboardService clipboardService)
+    public ImageItemService(IEventAggregator events, IClipboardService clipboardService, IBitmapService bitmapService)
     {
         _events = events;
         _clipboardService = clipboardService;
+        _bitmapService = bitmapService ?? throw new ArgumentNullException(nameof(bitmapService));
         _events.SubscribeOnBackgroundThread(this);
     }
 
-    private async  Task GetPastedImageItems(Size scaleToSize)
+    private async Task GetPastedImageItems(Size scaleToSize)
     {
         var bitmaps = await _clipboardService.GetPastedBitmaps();
 
         CreateAndPublishItems(bitmaps, scaleToSize);
-
     }
 
     public async Task GetDroppedImageItems(IDataObject dataobject, Point dropPoint, Size scaleToSize) //Perhaps should go into clipboardservice, unclear
@@ -44,10 +45,10 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
         });
 
 
-     
+
     }
 
-    public ImageItem CreateImageItemFromBitmapImages(BitmapImage bitmap,Size scaleToSize, Point dropPoint = default)
+    public ImageItem CreateImageItemFromBitmapImages(BitmapImage bitmap, Size scaleToSize, Point dropPoint = default)
     {
         double insertPosX, insertPosY = 0;
 
@@ -64,7 +65,7 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 
         //var path = BitmapUtils.GetUrl(bitmap);
 
-        double scale  = default;
+        double scale = default;
 
         //Switch back to UI thread for bitmap.PixelHeight
 
@@ -72,7 +73,7 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
         scale = GetScale(scaleToSize.Height, bitmap.PixelHeight);
 
 
-        var item = new ImageItem(insertPosX, insertPosY, scale);
+        var item = new ImageItem(insertPosX, insertPosY, scale, _bitmapService, this);
         item.SetSourceImage(bitmap);
         return item;
     }
@@ -85,7 +86,7 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 
     public async Task HandleAsync(PasteOnCanvasEvent message, CancellationToken cancellationToken)
     {
-       await GetPastedImageItems(message.CurrentWindowSize); //published from MainViewModel
+        await GetPastedImageItems(message.CurrentWindowSize); //published from MainViewModel
 
     }
 

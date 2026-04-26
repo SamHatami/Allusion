@@ -13,10 +13,10 @@ public class PageManager : IPageManager
     private readonly ImageItemService _imageItemService;
     private readonly IEventAggregator _events;
 
-    public PageManager(IEventAggregator events, IClipboardService clipboardService)
+    public PageManager(IEventAggregator events, IClipboardService clipboardService, IBitmapService bitmapService)
     {
         _events = events;
-        _imageItemService = new ImageItemService(events, clipboardService);
+        _imageItemService = new ImageItemService(events, clipboardService, bitmapService);
     }
 
     //Health check if there a hidden items or some other issues that might arrive in the future
@@ -71,11 +71,12 @@ public class PageManager : IPageManager
 
     public void OpenPageFolder(BoardPage page)
     {
-        if (Directory.Exists(page.PageFolder))
-            Directory.CreateDirectory(page.PageFolder);
-
         try
         {
+            if (!Directory.Exists(page.PageFolder))
+            {
+                Directory.CreateDirectory(page.PageFolder);
+            }
 
             var processInfo = new ProcessStartInfo
             {
@@ -87,8 +88,7 @@ public class PageManager : IPageManager
         }
         catch (Exception e)
         {
-            StaticLogger.Error("Could not open folder",true, e.Message);
-         
+            StaticLogger.Error("Could not open folder", true, e.Message);
         }
     }
 
@@ -133,7 +133,7 @@ public class PageManager : IPageManager
 
         foreach (var item in page.ImageItems)
         {
-            item.ItemPath = item.ItemPath.Replace(oldDirectoryName, newDirectory);
+            item.ItemPath = item.ItemPath.Replace(oldDirectoryPath, newDirectory);
         }
     }
 

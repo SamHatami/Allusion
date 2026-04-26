@@ -19,7 +19,7 @@ public class ImageItem : IItem
     public Guid MemberOfPage { get; set; } = Guid.Empty;
 
 
-    [JsonIgnore] private readonly IBitmapService _bitmapService = new BitmapService();
+    [JsonIgnore] private readonly IBitmapService _bitmapService;
     [JsonIgnore] private readonly ImageItemService _itemService;
     [JsonIgnore] private BitmapImage _sourceImage;
     [JsonIgnore] public BitmapImage SourceImage
@@ -39,11 +39,13 @@ public class ImageItem : IItem
     [JsonIgnore] private bool _loaded;
 
     [JsonConstructor]
-    public ImageItem(double posX, double posY, double scale)
+    public ImageItem(double posX, double posY, double scale, IBitmapService bitmapService, ImageItemService itemService)
     {
         PosX = posX;
         PosY = posY;
         Scale = scale;
+        _bitmapService = bitmapService ?? throw new ArgumentNullException(nameof(bitmapService));
+        _itemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
     }
 
     public void SetSourceImage(BitmapImage bitmap)
