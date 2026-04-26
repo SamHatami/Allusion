@@ -29,6 +29,8 @@ namespace Allusion.Tests
             var board = new ReferenceBoard(boardName, baseFolder);
 
             board.Name.Should().Be(boardName);
+            board.FileFormatVersion.Should().Be(ReferenceBoard.CurrentFileFormatVersion);
+            board.BoardId.Should().NotBeEmpty();
             board.BaseFolder.Should().Be(baseFolder);
             board.BackupFolder.Should().Be(Path.Combine(baseFolder, "Old"));
             board.Pages.Should().HaveCount(1);
@@ -58,6 +60,8 @@ namespace Allusion.Tests
 
             loadedBoard.Should().NotBeNull();
             loadedBoard!.Name.Should().Be(board.Name);
+            loadedBoard.FileFormatVersion.Should().Be(ReferenceBoard.CurrentFileFormatVersion);
+            loadedBoard.BoardId.Should().NotBeEmpty();
             loadedBoard.BaseFolder.Should().Be(board.BaseFolder);
             loadedBoard.Pages.Should().HaveCount(board.Pages.Count);
         }
@@ -107,6 +111,54 @@ namespace Allusion.Tests
             image.Scale.Should().Be(0.5);
             image.Description.Should().Be("reference");
             image.ItemPath.Should().Be(imagePath);
+        }
+
+        [Fact]
+        public void Read_ShouldResolveLegacyAbsolutePathsFromMovedBoardFile()
+        {
+            var oldBoardFolder = Path.Combine(_testDirectory, "OldLocation", "TestBoard");
+            var oldPageFolder = Path.Combine(oldBoardFolder, "Page 1");
+            var oldImagePath = Path.Combine(oldPageFolder, "image.png");
+            var movedBoardFolder = Path.Combine(_testDirectory, "MovedLocation", "TestBoard");
+            Directory.CreateDirectory(movedBoardFolder);
+            var filePath = Path.Combine(movedBoardFolder, "TestBoard.allusion");
+            var json = $$"""
+                         {
+                           "Name": "TestBoard",
+                           "BaseFolder": "{{oldBoardFolder.Replace("\\", "\\\\")}}",
+                           "BackupFolder": "{{Path.Combine(oldBoardFolder, "Old").Replace("\\", "\\\\")}}",
+                           "Pages": [
+                             {
+                               "Name": "Page 1",
+                               "PageFolder": "{{oldPageFolder.Replace("\\", "\\\\")}}",
+                               "BackupFolder": "{{Path.Combine(oldPageFolder, "old").Replace("\\", "\\\\")}}",
+                               "Description": "",
+                               "ImageItems": [
+                                 {
+                                   "ItemPath": "{{oldImagePath.Replace("\\", "\\\\")}}",
+                                   "PosX": 12.0,
+                                   "PosY": 34.0,
+                                   "Scale": 0.5
+                                 }
+                               ],
+                               "NoteItems": [],
+                               "BoardId": "00000000-0000-0000-0000-000000000000"
+                             }
+                           ]
+                         }
+                         """;
+            File.WriteAllText(filePath, json);
+
+            var loadedBoard = ReferenceBoard.Read(filePath);
+
+            loadedBoard.Should().NotBeNull();
+            loadedBoard!.BaseFolder.Should().Be(movedBoardFolder);
+            var page = loadedBoard.Pages.Single();
+            page.PageFolder.Should().Be(Path.Combine(movedBoardFolder, "Page 1"));
+            page.RelativePageFolder.Should().Be("Page 1");
+            var image = page.ImageItems.Single();
+            image.ItemPath.Should().Be(Path.Combine(movedBoardFolder, "Page 1", "image.png"));
+            image.RelativeItemPath.Should().Be(Path.Combine("Page 1", "image.png"));
         }
 
         [Fact]
@@ -161,10 +213,16 @@ namespace Allusion.Tests
             var jsonContent = File.ReadAllText(filePath);
             jsonContent.Should().Contain("TestBoard");
             jsonContent.Should().Contain("Pages");
+            jsonContent.Should().Contain("FileFormatVersion");
+            jsonContent.Should().Contain("BoardId");
+            jsonContent.Should().Contain("RelativePageFolder");
 
             var deserialized = JsonSerializer.Deserialize<ReferenceBoard>(jsonContent);
             deserialized.Should().NotBeNull();
             deserialized!.Name.Should().Be(board.Name);
+            deserialized.FileFormatVersion.Should().Be(ReferenceBoard.CurrentFileFormatVersion);
+            deserialized.BoardId.Should().NotBeEmpty();
+            deserialized.Pages.Single().RelativePageFolder.Should().Be("UnnamedPage-0");
         }
 
         [Fact]
