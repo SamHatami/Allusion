@@ -12,6 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using Allusion.Events;
 using Allusion.Views;
+using Allusion.ViewModels.Arrangement;
+using Allusion.ViewModels.Dialogs;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
@@ -31,6 +33,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 {
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
+    private readonly ArrangeImageLayoutService _arrangeService = new();
     public ReferenceBoardViewModel Board { get; }
 
 
@@ -218,6 +221,96 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     public void FitToView()
     {
         //Perhaps use https://github.com/ThomasMiz/RectpackSharp
+    }
+
+    public async Task Arrange()
+    {
+        await ArrangeSettings();
+    }
+
+    public void ArrangeKeepCurrent()
+    {
+        ArrangeImages(GetDefaultArrangeImages(), new ArrangeImageLayoutOptions
+        {
+            ScaleMode = ArrangeScaleMode.KeepCurrent
+        });
+    }
+
+    public void ArrangeAverageHeight()
+    {
+        ArrangeImages(GetDefaultArrangeImages(), new ArrangeImageLayoutOptions
+        {
+            ScaleMode = ArrangeScaleMode.AverageHeight
+        });
+    }
+
+    public void ArrangeSmallestHeight()
+    {
+        ArrangeImages(GetDefaultArrangeImages(), new ArrangeImageLayoutOptions
+        {
+            ScaleMode = ArrangeScaleMode.SmallestHeight
+        });
+    }
+
+    public async Task ArrangeSettings()
+    {
+        var dialog = new ArrangeImagesViewModel(SelectedImages.Count > 0);
+        var accepted = await _windowManger.ShowDialogAsync(dialog);
+
+        if (accepted != true) return;
+
+        var images = dialog.SelectedScope == ArrangeScope.SelectedImages
+            ? SelectedImages.ToArray()
+            : Images.ToArray();
+
+        ArrangeImages(images, dialog.CreateOptions());
+    }
+
+    public void ZoomToExtent(Size viewportSize)
+    {
+        var bounds = GetImageBounds(Images);
+        Viewport.FrameBounds(viewportSize, bounds);
+    }
+
+    private ImageViewModel[] GetDefaultArrangeImages()
+    {
+        return SelectedImages.Count > 0
+            ? SelectedImages.ToArray()
+            : Images.ToArray();
+    }
+
+    private void ArrangeImages(IReadOnlyList<ImageViewModel> images, ArrangeImageLayoutOptions options)
+    {
+        if (images.Count == 0) return;
+
+        var originX = images.Min(image => image.PosX);
+        var originY = images.Min(image => image.PosY);
+        var layoutItems = images
+            .Select(image => new ArrangeImageLayoutItem(image.Width, image.Height, image.Scale))
+            .ToArray();
+        var results = _arrangeService.Arrange(layoutItems, options);
+
+        for (var i = 0; i < images.Count; i++)
+        {
+            images[i].Scale = results[i].Scale;
+            images[i].PosX = originX + results[i].X;
+            images[i].PosY = originY + results[i].Y;
+        }
+
+        _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
+    }
+
+    private static Rect GetImageBounds(IEnumerable<ImageViewModel> images)
+    {
+        var imageArray = images.ToArray();
+        if (imageArray.Length == 0) return Rect.Empty;
+
+        var left = imageArray.Min(image => image.PosX);
+        var top = imageArray.Min(image => image.PosY);
+        var right = imageArray.Max(image => image.PosX + image.Width);
+        var bottom = imageArray.Max(image => image.PosY + image.Height);
+
+        return new Rect(left, top, right - left, bottom - top);
     }
 
     public Task HandleAsync(NewImageItemsEvent message, CancellationToken cancellationToken)

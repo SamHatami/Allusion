@@ -40,7 +40,10 @@ public class ImageItemService : IHandle<DragDropEvent>, IHandle<PasteOnCanvasEve
 
         Application.Current.Dispatcher.Invoke(() =>
         {
-            var items = bitmaps.Select(bitmap => CreateImageItemFromBitmapImages(bitmap, scaleToSize, dropPoint)).ToArray();
+            var items = bitmaps
+                .OfType<BitmapImage>()
+                .Select(bitmap => CreateImageItemFromBitmapImages(bitmap, scaleToSize, dropPoint))
+                .ToArray();
             _events.PublishOnUIThreadAsync(new NewImageItemsEvent(items));
         });
 

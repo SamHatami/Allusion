@@ -4,6 +4,7 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
     <system:Double x:Key="CornerRadius">4</system:Double>
+    <CornerRadius x:Key="DefaultCornerRadius">4</CornerRadius>
     <system:Double x:Key="PrimaryButtonHeight">30</system:Double>
     <system:Double x:Key="TextBox.Height">25</system:Double>
 

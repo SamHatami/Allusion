@@ -45,7 +45,7 @@ public class ImageDataStrategy : IClipboardDataStrategy
     public Task<BitmapImage?[]> ExtractBitmapsAsync(IDataObject dataObject, CancellationToken cancellationToken = default)
     {
         var bitmap = dataObject.GetData(DataFormats.Bitmap) as BitmapImage;
-        return Task.FromResult(bitmap != null ? new[] { bitmap } : Array.Empty<BitmapImage>());
+        return Task.FromResult<BitmapImage?[]>(bitmap is not null ? [bitmap] : []);
     }
 }
 
@@ -66,20 +66,14 @@ public class FileDropStrategy : IClipboardDataStrategy
     public Task<BitmapImage?[]> ExtractBitmapsAsync(IDataObject dataObject, CancellationToken cancellationToken = default)
     {
         var files = dataObject.GetData(DataFormats.FileDrop, true) as string[];
-        if (files == null) return Task.FromResult(Array.Empty<BitmapImage>());
+        if (files == null) return Task.FromResult<BitmapImage?[]>([]);
 
         var bitmaps = files
-            .Where(file => File.Exists(file) && IsImageFile(file))
+            .Where(file => File.Exists(file) && SupportedImageFormats.IsSupportedFile(file))
             .Select(file => _bitmapService.GetFromUri(file))
             .Where(bitmap => bitmap != null)
             .ToArray();
 
-        return Task.FromResult(bitmaps);
-    }
-
-    private static bool IsImageFile(string filePath)
-    {
-        string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tif", ".tga" };
-        return imageExtensions.Contains(Path.GetExtension(filePath).ToLower());
+        return Task.FromResult<BitmapImage?[]>(bitmaps);
     }
 }

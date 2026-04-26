@@ -77,6 +77,23 @@ public class CanvasViewport : PropertyChangedBase
         OffsetY = 0;
     }
 
+    public void FrameBounds(Size viewportSize, Rect bounds, double padding = 48)
+    {
+        if (viewportSize.Width <= 0 || viewportSize.Height <= 0 || bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0)
+        {
+            Reset();
+            return;
+        }
+
+        var usableWidth = Math.Max(1, viewportSize.Width - padding * 2);
+        var usableHeight = Math.Max(1, viewportSize.Height - padding * 2);
+        var nextZoom = Clamp(Math.Min(usableWidth / bounds.Width, usableHeight / bounds.Height), MinZoom, MaxZoom);
+
+        Zoom = nextZoom;
+        OffsetX = (viewportSize.Width - bounds.Width * Zoom) / 2 - bounds.X * Zoom;
+        OffsetY = (viewportSize.Height - bounds.Height * Zoom) / 2 - bounds.Y * Zoom;
+    }
+
     private static double Clamp(double value, double min, double max)
     {
         if (value < min) return min;

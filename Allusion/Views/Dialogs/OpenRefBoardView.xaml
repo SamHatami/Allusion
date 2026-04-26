@@ -65,12 +65,10 @@
                 <Button
                     x:Name="BrowseGlobalFolder"
                     Grid.Column="1"
-                    Width="{DynamicResource TextBox.Height}"
-                    Background="{DynamicResource Button.Secondary.Background}"
-                    BorderBrush="{DynamicResource Border}">
+                    cm:Message.Attach="[BrowseGlobalFolder]"
+                    Style="{DynamicResource DialogIconButton}">
                     <fa:IconImage
                         Height="12"
-                        Foreground="{DynamicResource Foreground.Front}"
                         Icon="FolderOpen" />
                 </Button>
             </Grid>
@@ -90,13 +88,13 @@
                 SelectedIndex="0"
                 SelectedItem="{Binding SelectedRefBoard}"
                 SelectionMode="Single"
+                cm:Message.Attach="[Event MouseDoubleClick] = [Open]"
                 Style="{DynamicResource ListBox}"
                 Loaded="OnViewLoaded">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
                             <Label
-                                cm:Message.Attach="[Event MouseDoubleClick] = [Open]"
                                 Content="{Binding Name}"
                                 Style="{DynamicResource DialogLabel}" />
 

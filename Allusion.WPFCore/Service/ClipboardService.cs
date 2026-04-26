@@ -69,7 +69,7 @@ public class ClipboardService : IClipboardService
                 try
                 {
                     var bitmaps = await strategy.ExtractBitmapsAsync(droppedObject, cancellationToken);
-                    allBitmaps.AddRange(bitmaps.Where(b => b != null));
+                    allBitmaps.AddRange(bitmaps.OfType<BitmapImage>());
                 }
                 catch (Exception ex)
                 {

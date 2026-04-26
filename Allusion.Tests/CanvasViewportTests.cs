@@ -61,4 +61,16 @@ public class CanvasViewportTests
         viewport.OffsetX.Should().Be(0);
         viewport.OffsetY.Should().Be(0);
     }
+
+    [Fact]
+    public void FrameBounds_ShouldZoomAndCenterBoundsInsideViewport()
+    {
+        var viewport = new CanvasViewport();
+
+        viewport.FrameBounds(new Size(1000, 800), new Rect(100, 50, 400, 200), 100);
+
+        viewport.Zoom.Should().Be(2);
+        viewport.OffsetX.Should().Be(-100);
+        viewport.OffsetY.Should().Be(100);
+    }
 }

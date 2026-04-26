@@ -19,7 +19,7 @@ public class DataObjectImageExtractor
         _bitmapService = bitmapService;
     }
 
-    public BitmapSource[] GetBitmapFromLocal(IDataObject dataObject)
+    public BitmapSource[]? GetBitmapFromLocal(IDataObject dataObject)
     {
         //This is just so crazy...
         List<BitmapSource> bitmaps = [];
@@ -33,15 +33,15 @@ public class DataObjectImageExtractor
         {
             var filePaths = dataObject.GetData("FileContents") as string[];
 
-            return _bitmapService.LoadFromUri(filePaths);
+            return _bitmapService.LoadFromUri(filePaths).OfType<BitmapSource>().ToArray();
         }
 
         //if the SourceImage was pasted from explorer
         if (formats.Contains("FileName"))
         {
-            string[] filePaths = dataObject.GetData("FileName") as string[];
+            string[]? filePaths = dataObject.GetData("FileName") as string[];
 
-            return _bitmapService.LoadFromUri(filePaths);
+            return _bitmapService.LoadFromUri(filePaths).OfType<BitmapSource>().ToArray();
         }
 
         if (formats.Contains("PNG"))
@@ -66,7 +66,6 @@ public class DataObjectImageExtractor
         // Check if the data contains HTML (could include the SourceImage URL)
         if (dataObject.GetDataPresent(DataFormats.Html))
         {
-            BitmapImage? bitmap = null;
             if (TryGetUrl(dataObject, out var imageUrl)) 
                 return await _bitmapService.DownloadAndConvert(imageUrl, cancellationToken);
 
@@ -100,7 +99,7 @@ public class DataObjectImageExtractor
         var path = string.Empty;
         if (dataObject.GetDataPresent(DataFormats.StringFormat))
         {
-            path = dataObject.GetData(DataFormats.StringFormat) as string;
+            path = dataObject.GetData(DataFormats.StringFormat) as string ?? string.Empty;
 
             path = path.Trim('"');
         }
@@ -108,13 +107,15 @@ public class DataObjectImageExtractor
         return path;
     }
 
-    private static string HtmlTest(string html)
+    private static string HtmlTest(string? html)
     {
+        if (string.IsNullOrWhiteSpace(html)) return string.Empty;
+
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(html);
 
         var node = htmlDoc.DocumentNode.SelectSingleNode("//img");
-        if (node is null) return String.Empty;
+        if (node?.Attributes["src"] is null) return string.Empty;
         var imageSource = node.Attributes["src"].Value;
 
         return imageSource;

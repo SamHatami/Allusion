@@ -44,6 +44,7 @@ public class Bootstrapper : BootstrapperBase
         _container.Singleton<MainViewModel>();
         _container.PerRequest<OpenRefBoardViewModel>();
         _container.PerRequest<NewRefBoardViewModel>();
+        _container.PerRequest<ArrangeImagesViewModel>();
         _container.PerRequest<DialogViewModel>();
 
     }

@@ -52,29 +52,37 @@ namespace Allusion.Tests
         public async Task FileDropStrategy_ExtractBitmapsAsync_ShouldReturnOnlyExistingImageFiles()
         {
             var imagePath = CreateTempFile(".png");
+            var tiffPath = CreateTempFile(".tiff");
             var textPath = CreateTempFile(".txt");
+            var tgaPath = CreateTempFile(".tga");
             var missingPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.png");
             var dataObject = A.Fake<IDataObject>();
             var bitmapService = A.Fake<IBitmapService>();
             var expected = new BitmapImage();
+            var expectedTiff = new BitmapImage();
             var strategy = new FileDropStrategy(bitmapService);
 
             try
             {
-                A.CallTo(() => dataObject.GetData(DataFormats.FileDrop, true)).Returns(new[] { imagePath, textPath, missingPath });
+                A.CallTo(() => dataObject.GetData(DataFormats.FileDrop, true)).Returns(new[] { imagePath, tiffPath, textPath, tgaPath, missingPath });
                 A.CallTo(() => bitmapService.GetFromUri(imagePath)).Returns(expected);
+                A.CallTo(() => bitmapService.GetFromUri(tiffPath)).Returns(expectedTiff);
 
                 var result = await strategy.ExtractBitmapsAsync(dataObject);
 
-                result.Should().ContainSingle().Which.Should().BeSameAs(expected);
+                result.Should().Equal(expected, expectedTiff);
                 A.CallTo(() => bitmapService.GetFromUri(imagePath)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => bitmapService.GetFromUri(tiffPath)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => bitmapService.GetFromUri(textPath)).MustNotHaveHappened();
+                A.CallTo(() => bitmapService.GetFromUri(tgaPath)).MustNotHaveHappened();
                 A.CallTo(() => bitmapService.GetFromUri(missingPath)).MustNotHaveHappened();
             }
             finally
             {
                 File.Delete(imagePath);
+                File.Delete(tiffPath);
                 File.Delete(textPath);
+                File.Delete(tgaPath);
             }
         }
 

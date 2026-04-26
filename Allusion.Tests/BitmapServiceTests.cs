@@ -24,13 +24,13 @@ namespace Allusion.Tests
         }
 
         [Fact]
-        public void LoadFromUri_ShouldReturnNullForNullInput()
+        public void LoadFromUri_ShouldReturnEmptyForNullInput()
         {
             var bitmapService = CreateBitmapService();
 
             var result = bitmapService.LoadFromUri((string[]?)null);
 
-            result.Should().BeNull();
+            result.Should().BeEmpty();
         }
 
         [Fact]

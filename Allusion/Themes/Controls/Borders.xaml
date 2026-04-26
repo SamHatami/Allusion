@@ -2,5 +2,8 @@
 
     <Style x:Key="InfoBox" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Info.BackGround}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Allusion.Logo.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{DynamicResource DefaultCornerRadius}" />
     </Style>
 </ResourceDictionary>

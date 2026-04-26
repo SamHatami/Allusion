@@ -50,6 +50,8 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
             NotifyOfPropertyChange(nameof(Scale));
             Height = _imageSource.Height * Scale; // Set the dimensions to keep them when drag/drop
             Width = _imageSource.Width * Scale;
+            NotifyOfPropertyChange(nameof(Height));
+            NotifyOfPropertyChange(nameof(Width));
         }
     } 
     public double AspectRatio { get; set; }

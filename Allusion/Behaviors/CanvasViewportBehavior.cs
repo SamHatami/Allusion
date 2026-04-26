@@ -64,6 +64,13 @@ public class CanvasViewportBehavior : Behavior<FrameworkElement>
     {
         if (_page == null) return;
 
+        if (e.ChangedButton == MouseButton.Middle && e.ClickCount == 2)
+        {
+            _page.ZoomToExtent(AssociatedObject.RenderSize);
+            e.Handled = true;
+            return;
+        }
+
         if (e.ChangedButton == MouseButton.Middle || (e.ChangedButton == MouseButton.Left && Keyboard.IsKeyDown(Key.Space)))
         {
             BeginPan(e.GetPosition(AssociatedObject));

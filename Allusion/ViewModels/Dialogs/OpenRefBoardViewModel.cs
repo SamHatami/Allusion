@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Allusion.WPFCore;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
+using Microsoft.Win32;
 
 namespace Allusion.ViewModels.Dialogs
 {
@@ -15,12 +17,12 @@ namespace Allusion.ViewModels.Dialogs
     {
         private readonly IReferenceBoardManager _refBoardManager;
         private readonly IEventAggregator _events;
-        private readonly IWindowManager _windowManager;
         public const string Title = "Open or Create new Art board";
+        public bool CloseWhenCompleted { get; set; } = true;
 
         public BindableCollection<RefBoardInfo> RefBoardPaths { get; set; } = [];
 
-        private string _globalFolder;
+        private string _globalFolder = string.Empty;
 
         public string GlobalFolder
         {
@@ -32,9 +34,10 @@ namespace Allusion.ViewModels.Dialogs
             }
         }
 
-        private RefBoardInfo _selectedRefBoard;
+        private RefBoardInfo? _selectedRefBoard;
+        private string _newBoardName = "UntitledRefBoard";
 
-        public RefBoardInfo SelectedRefBoard
+        public RefBoardInfo? SelectedRefBoard
         {
             get => _selectedRefBoard;
             set
@@ -45,16 +48,33 @@ namespace Allusion.ViewModels.Dialogs
             }
         }
 
-        public OpenRefBoardViewModel(IReferenceBoardManager refBoardManager, IEventAggregator events, IWindowManager windowManager)
+        public string NewBoardName
+        {
+            get => _newBoardName;
+            set
+            {
+                _newBoardName = value;
+                NotifyOfPropertyChange(nameof(NewBoardName));
+            }
+        }
+
+        public OpenRefBoardViewModel(IReferenceBoardManager refBoardManager, IEventAggregator events)
         {
             _refBoardManager = refBoardManager;
             _events = events;
-            _windowManager = windowManager;
 
             GlobalFolder = _refBoardManager.CurrentConfiguration.GlobalFolder;
 
+            RefreshBoards();
+
+        }
+
+        public void RefreshBoards()
+        {
+            RefBoardPaths.Clear();
             RefBoardPaths.AddRange(_refBoardManager.GetAllRefBoardInfos());
 
+            SelectedRefBoard = RefBoardPaths.FirstOrDefault();
         }
 
         public Task Cancel()
@@ -73,15 +93,33 @@ namespace Allusion.ViewModels.Dialogs
                 return Task.CompletedTask;
 
             _events.PublishOnBackgroundThreadAsync(new BoardOpenedEvent(openedRefBoard));
-            return TryCloseAsync(true);
+            return CloseWhenCompleted ? TryCloseAsync(true) : Task.CompletedTask;
         }
 
-        public void New()
+        public Task New()
         {
-            var newBoardWin = _windowManager.ShowDialogAsync(new NewRefBoardViewModel(_events)).Result ?? false;
+            if (string.IsNullOrWhiteSpace(NewBoardName))
+                return Task.CompletedTask;
 
-            if (newBoardWin)
-                TryCloseAsync(true);
+            _events.PublishOnBackgroundThreadAsync(new NewRefBoardEvent(NewBoardName.Trim()));
+            return CloseWhenCompleted ? TryCloseAsync(true) : Task.CompletedTask;
+        }
+
+        public void BrowseGlobalFolder()
+        {
+            var dialog = new OpenFolderDialog
+            {
+                Title = "Choose Global Art Board Folder",
+                InitialDirectory = Directory.Exists(GlobalFolder) ? GlobalFolder : AllusionConfiguration.DefaultFolder
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            GlobalFolder = dialog.FolderName;
+            _refBoardManager.CurrentConfiguration.GlobalFolder = GlobalFolder;
+            AllusionConfiguration.Save(_refBoardManager.CurrentConfiguration);
+            RefreshBoards();
         }
     }
 

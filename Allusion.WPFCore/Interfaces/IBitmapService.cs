@@ -13,7 +13,7 @@ namespace Allusion.WPFCore.Interfaces
         public BitmapImage? GetFromUri(string? uriString);
         public BitmapImage?[] LoadFromUri(string[]? fileUriStrings);
         public BitmapImage? LoadFromUri(string uri);
-        public Task<BitmapImage?> DownloadAndConvert(string url, CancellationToken cancellationToken = default);
+        public Task<BitmapImage?> DownloadAndConvert(string? url, CancellationToken cancellationToken = default);
 
     }
 }

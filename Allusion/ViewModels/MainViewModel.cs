@@ -43,6 +43,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         }
     }
 
+    public OpenRefBoardViewModel StartBoardPicker { get; }
+
     private readonly IEventAggregator _events;//
     private readonly IReferenceBoardManager _boardManager;
     private readonly IWindowManager _windowManager;
@@ -70,6 +72,10 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
         _help = help;
+        StartBoardPicker = new OpenRefBoardViewModel(_boardManager, _events)
+        {
+            CloseWhenCompleted = false
+        };
 
         StaticLogger.LogEvent += OnLogEvent;
     }
@@ -98,6 +104,9 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public async Task NewRefBoardDialog()
     {
+        if (RefBoardViewModel is null)
+            return;
+
         if (BoardIsModified)
         {
             var dialogResult = await AskSaveDialog().ConfigureAwait(true);
@@ -106,17 +115,17 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
             {
                 case DialogResultType.Yes:
                     await _refBoardViewModel.Save();
-                    ShowNewRefBoardDialog();
+                    ShowStartBoardPicker();
                     break;
 
                 case DialogResultType.No:
-                    ShowNewRefBoardDialog();
+                    ShowStartBoardPicker();
                     break;
             }
         }
         else
         {
-            ShowNewRefBoardDialog();
+            ShowStartBoardPicker();
         }
     }
 
@@ -126,13 +135,11 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         AllusionConfiguration.Save(_configuration);
     }
 
-    private void ShowNewRefBoardDialog()
-    {
-        _windowManager.ShowDialogAsync(IoC.Get<NewRefBoardViewModel>());
-    }
-
     public async Task OpenRefBoardDialog()
     {
+        if (RefBoardViewModel is null)
+            return;
+
         //replace with something else.
         if (BoardIsModified)
         {
@@ -142,11 +149,11 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
             {
                 case DialogResultType.Yes:
                     await _refBoardViewModel.Save();
-                    await ShowOpenBoardDialog();
+                    ShowStartBoardPicker();
                     break;
 
                 case DialogResultType.No:
-                    await ShowOpenBoardDialog();
+                    ShowStartBoardPicker();
                     break;
 
                 case DialogResultType.Cancel: return;
@@ -154,13 +161,15 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         }
         else
         {
-            await ShowOpenBoardDialog();
+            ShowStartBoardPicker();
         }
     }
 
-    private async Task ShowOpenBoardDialog()
+    private void ShowStartBoardPicker()
     {
-        await _windowManager.ShowDialogAsync(IoC.Get<OpenRefBoardViewModel>());
+        StartBoardPicker.RefreshBoards();
+        RefBoardViewModel = null;
+        BoardIsModified = false;
     }
 
     public async Task PasteOnCanvas()

@@ -78,6 +78,15 @@
                         cm:Message.Attach="[PasteOnCanvas]"
                         Header="Paste"
                         IsEnabled="True" />
+                    <MenuItem Header="Arrange">
+                        <MenuItem Header="Presets" IsEnabled="False" />
+                        <Separator />
+                        <MenuItem cm:Message.Attach="[ArrangeKeepCurrent]" Header="Keep current size" />
+                        <MenuItem cm:Message.Attach="[ArrangeAverageHeight]" Header="Normalize average height" />
+                        <MenuItem cm:Message.Attach="[ArrangeSmallestHeight]" Header="Normalize smallest height" />
+                        <Separator />
+                        <MenuItem cm:Message.Attach="[ArrangeSettings]" Header="Settings" />
+                    </MenuItem>
                     <MenuItem cm:Message.Attach="[Save]" Header="Save" />
                 </ContextMenu>
             </Canvas.ContextMenu>

@@ -70,6 +70,39 @@
         </Setter>
     </Style>
 
+    <Style x:Key="DialogContentGrid" TargetType="{x:Type Grid}">
+        <Setter Property="Margin" Value="10,0,10,10" />
+    </Style>
+
+    <Style x:Key="DialogComboBox" TargetType="{x:Type ComboBox}">
+        <Setter Property="Height" Value="30" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBox.Foreground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Border}" />
+        <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type ComboBoxItem}">
+                    <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextBox.Foreground}" />
+                    <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
+                    <Setter Property="Padding" Value="5,2" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource Mouse.IsOver}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource Button.Secondary.Selected}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <Style x:Key="DescriptionTextBox" TargetType="{x:Type TextBox}">
         <Setter Property="Height" Value="{StaticResource TextBox.Height}" />

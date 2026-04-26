@@ -27,9 +27,9 @@ public class BitmapService : IBitmapService
             : Application.Current.Dispatcher.Invoke(() => BitmapUtils.LoadImageFromUri(uriString));
     }
 
-    public BitmapImage[]? LoadFromUri(string[]? fileUriStrings)
+    public BitmapImage?[] LoadFromUri(string[]? fileUriStrings)
     {
-        if (fileUriStrings == null) return null;
+        if (fileUriStrings == null) return [];
 
         List<BitmapImage> bitmaps = [];
         var existingFiles = fileUriStrings.Where(File.Exists);
@@ -37,7 +37,7 @@ public class BitmapService : IBitmapService
         foreach (var file in existingFiles)
             try
             {
-                bitmaps.Add(new BitmapImage(new Uri(file)));
+                bitmaps.Add(BitmapUtils.LoadImageFromUri(file));
             }
             catch (Exception e)
             {
@@ -47,12 +47,12 @@ public class BitmapService : IBitmapService
         return bitmaps.ToArray();
     }
 
-    public BitmapImage LoadFromUri(string uri)
+    public BitmapImage? LoadFromUri(string uri)
     {
-        return new BitmapImage(new Uri(uri));
+        return File.Exists(uri) ? BitmapUtils.LoadImageFromUri(uri) : null;
     }
 
-    public async Task<BitmapImage?> DownloadAndConvert(string url, CancellationToken cancellationToken = default)
+    public async Task<BitmapImage?> DownloadAndConvert(string? url, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(url)) return null;
 
