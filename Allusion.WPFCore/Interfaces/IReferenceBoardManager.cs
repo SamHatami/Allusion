@@ -10,11 +10,13 @@ public interface IReferenceBoardManager
 {
     public AllusionConfiguration CurrentConfiguration { get; } //as IAllusionConfiguration
 
-    public ReferenceBoard Open(string fullPath = "");
+    public ReferenceBoard? Open(string fullPath = "");
 
     public ReferenceBoard CreateNew(string name = "UntitledRefBoard");
 
     public void RenameBoard(ReferenceBoard board, string newName);
+
+    public void RemoveFromBoardList(RefBoardInfo boardInfo, bool deleteLocalFiles);
 
     public Task<bool> Save(ReferenceBoard board);
 

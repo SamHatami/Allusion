@@ -1,46 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Allusion.WPFCore.Events;
+using System.IO;
 using Caliburn.Micro;
 
-namespace Allusion.ViewModels.Dialogs
+namespace Allusion.ViewModels.Dialogs;
+
+public class NewRefBoardViewModel : DialogScreen
 {
-    public class NewRefBoardViewModel : Screen
+    private string _prompt = "Name";
+    private string _okText = "Ok";
+    private string _newBoardName = string.Empty;
+    private string _errorMessage = string.Empty;
+
+    public string Prompt
     {
-        private IEventAggregator _events;
-
-        private string _newBoardName;
-
-        public string NewBoardName
+        get => _prompt;
+        set
         {
-            get => _newBoardName;
-            set
-            {
-                _newBoardName = value;
-                NotifyOfPropertyChange(nameof(NewBoardName));
-            }
+            _prompt = value;
+            NotifyOfPropertyChange(nameof(Prompt));
         }
-        public NewRefBoardViewModel(IEventAggregator events)
+    }
+
+    public string OkText
+    {
+        get => _okText;
+        set
         {
-            _events = events;
+            _okText = value;
+            NotifyOfPropertyChange(nameof(OkText));
         }
+    }
 
-        public Task Ok()
+    public string NewBoardName
+    {
+        get => _newBoardName;
+        set
         {
-            if (string.IsNullOrEmpty(NewBoardName))
-                return Task.CompletedTask;
-
-            _events.PublishOnBackgroundThreadAsync(new NewRefBoardEvent(NewBoardName));
-
-            return TryCloseAsync(true);
+            _newBoardName = value;
+            NotifyOfPropertyChange(nameof(NewBoardName));
         }
+    }
 
-        public Task Cancel()
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set
         {
-            return TryCloseAsync(false);
+            _errorMessage = value;
+            NotifyOfPropertyChange(nameof(ErrorMessage));
         }
+    }
+
+    public string ResultName { get; private set; } = string.Empty;
+
+    public NewRefBoardViewModel(IEventAggregator events)
+    {
+        Title = "Create New Board";
+    }
+
+    public Task Ok()
+    {
+        var name = NewBoardName.Trim();
+        if (string.IsNullOrEmpty(name))
+        {
+            ErrorMessage = "A board name is required.";
+            return Task.CompletedTask;
+        }
+
+        if (name is "." or ".." || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+        {
+            ErrorMessage = "Board names cannot contain path characters.";
+            return Task.CompletedTask;
+        }
+
+        ErrorMessage = string.Empty;
+        ResultName = name;
+        return CloseWithResult(DialogResultType.Ok);
+    }
+
+    public Task Cancel()
+    {
+        return CloseWithResult(DialogResultType.Cancel);
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Allusion.Views.Dialogs;
 
 /// <summary>
 /// Interaction logic for OperRefBoardView.xaml
 /// </summary>
-public partial class OpenRefBoardView : Window
+public partial class OpenRefBoardView : UserControl
 {
     public OpenRefBoardView()
     {
@@ -24,5 +25,29 @@ public partial class OpenRefBoardView : Window
         // Set focus to the first item
         firstItem.Focus();
         Keyboard.Focus(firstItem);
+    }
+
+    private void OnRefBoardsPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListBox) return;
+
+        var item = FindParent<ListBoxItem>(e.OriginalSource as DependencyObject);
+        if (item is null) return;
+
+        item.IsSelected = true;
+        item.Focus();
+    }
+
+    private static T? FindParent<T>(DependencyObject? current) where T : DependencyObject
+    {
+        while (current is not null)
+        {
+            if (current is T parent)
+                return parent;
+
+            current = VisualTreeHelper.GetParent(current);
+        }
+
+        return null;
     }
 }

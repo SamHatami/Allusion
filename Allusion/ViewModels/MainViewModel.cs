@@ -72,7 +72,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
         _help = help;
-        StartBoardPicker = new OpenRefBoardViewModel(_boardManager, _events)
+        StartBoardPicker = new OpenRefBoardViewModel(_boardManager, _events, _windowManager)
         {
             CloseWhenCompleted = false
         };
@@ -88,6 +88,9 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     public void StartUpByFile(string filePath)
     {
         var openedRefBoard = _boardManager.Open(filePath);
+        if (openedRefBoard is null)
+            return;
+
         _events.PublishOnBackgroundThreadAsync(new BoardOpenedEvent(openedRefBoard));
     }
 
@@ -168,6 +171,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private void ShowStartBoardPicker()
     {
         StartBoardPicker.RefreshBoards();
+        NotifyOfPropertyChange(nameof(StartBoardPicker));
         RefBoardViewModel = null;
         BoardIsModified = false;
     }

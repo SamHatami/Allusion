@@ -1,12 +1,9 @@
-﻿using Screen = Caliburn.Micro.Screen;
-
 namespace Allusion.ViewModels.Dialogs;
 
-public class DialogViewModel : Screen
+public class DialogViewModel : DialogScreen
 {
-    public DialogResultType DialogResult { get; private set; }
     private readonly DialogType _type;
-    public string Title { get; }
+
     public string Message { get; }
     public bool ShowOk { get; private set; }
     public bool ShowYes { get; private set; }
@@ -40,28 +37,24 @@ public class DialogViewModel : Screen
         }
     }
 
-    public void Ok()
+    public Task Ok()
     {
-        DialogResult = DialogResultType.Ok;
-        TryCloseAsync();
+        return CloseWithResult(DialogResultType.Ok);
     }
 
-    public void No()
+    public Task No()
     {
-        DialogResult = DialogResultType.No;
-        TryCloseAsync();
+        return CloseWithResult(DialogResultType.No);
     }
 
-    public void Yes()
+    public Task Yes()
     {
-        DialogResult = DialogResultType.Yes;
-        TryCloseAsync();
+        return CloseWithResult(DialogResultType.Yes);
     }
 
-    public void Cancel()
+    public Task Cancel()
     {
-        DialogResult = DialogResultType.Cancel;
-        TryCloseAsync();
+        return CloseWithResult(DialogResultType.Cancel);
     }
 }
 

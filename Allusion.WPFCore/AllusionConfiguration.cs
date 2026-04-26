@@ -13,6 +13,7 @@ public class AllusionConfiguration
 {
     public bool FirstStartUp { get; set; }= true;
     public bool TopMost {get; set; }= true;
+    public List<string> IgnoredRefBoardFiles { get; set; } = [];
 
     private string _globalFolder = string.Empty;
 

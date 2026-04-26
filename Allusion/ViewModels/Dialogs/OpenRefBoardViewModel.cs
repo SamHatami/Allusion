@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace Allusion.ViewModels.Dialogs
     {
         private readonly IReferenceBoardManager _refBoardManager;
         private readonly IEventAggregator _events;
+        private readonly IWindowManager _windowManager;
         public const string Title = "Open or Create new Art board";
         public bool CloseWhenCompleted { get; set; } = true;
 
@@ -58,10 +60,11 @@ namespace Allusion.ViewModels.Dialogs
             }
         }
 
-        public OpenRefBoardViewModel(IReferenceBoardManager refBoardManager, IEventAggregator events)
+        public OpenRefBoardViewModel(IReferenceBoardManager refBoardManager, IEventAggregator events, IWindowManager windowManager)
         {
             _refBoardManager = refBoardManager;
             _events = events;
+            _windowManager = windowManager;
 
             GlobalFolder = _refBoardManager.CurrentConfiguration.GlobalFolder;
 
@@ -96,13 +99,98 @@ namespace Allusion.ViewModels.Dialogs
             return CloseWhenCompleted ? TryCloseAsync(true) : Task.CompletedTask;
         }
 
-        public Task New()
+        public async Task New()
         {
-            if (string.IsNullOrWhiteSpace(NewBoardName))
-                return Task.CompletedTask;
+            var dialog = new NewRefBoardViewModel(_events)
+            {
+                Title = "Create New Board",
+                Prompt = "Board name",
+                OkText = "Create",
+                NewBoardName = GetDefaultBoardName()
+            };
 
-            _events.PublishOnBackgroundThreadAsync(new NewRefBoardEvent(NewBoardName.Trim()));
-            return CloseWhenCompleted ? TryCloseAsync(true) : Task.CompletedTask;
+            var accepted = await _windowManager.ShowDialogAsync(dialog);
+            if (accepted != true || string.IsNullOrWhiteSpace(dialog.ResultName))
+                return;
+
+            await _events.PublishOnBackgroundThreadAsync(new NewRefBoardEvent(dialog.ResultName));
+            if (CloseWhenCompleted)
+                await TryCloseAsync(true);
+        }
+
+        public async Task Rename()
+        {
+            if (SelectedRefBoard is null)
+                return;
+
+            var dialog = new NewRefBoardViewModel(_events)
+            {
+                Title = "Rename Board",
+                Prompt = "Board name",
+                OkText = "Rename",
+                NewBoardName = SelectedRefBoard.Name
+            };
+
+            var accepted = await _windowManager.ShowDialogAsync(dialog);
+            if (accepted != true || string.IsNullOrWhiteSpace(dialog.ResultName))
+                return;
+
+            var openedRefBoard = _refBoardManager.Open(SelectedRefBoard.FilePath);
+            if (openedRefBoard is null)
+                return;
+
+            try
+            {
+                _refBoardManager.RenameBoard(openedRefBoard, dialog.ResultName);
+                RefreshBoards();
+                SelectedRefBoard = RefBoardPaths.FirstOrDefault(board => string.Equals(board.Name, dialog.ResultName, StringComparison.Ordinal));
+            }
+            catch (Exception e)
+            {
+                var errorDialog = new DialogViewModel("Could not rename board", e.Message, DialogType.Information);
+                await _windowManager.ShowDialogAsync(errorDialog);
+            }
+        }
+
+        public void OpenLocation()
+        {
+            if (SelectedRefBoard is null || !Directory.Exists(SelectedRefBoard.ImageFolder))
+                return;
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = SelectedRefBoard.ImageFolder,
+                    UseShellExecute = true
+                });
+            }
+            catch
+            {
+                // Shell handoff can fail when Explorer is unavailable; the board list should stay usable.
+            }
+        }
+
+        public async Task Remove()
+        {
+            if (SelectedRefBoard is null)
+                return;
+
+            var dialog = new RemoveRefBoardViewModel(SelectedRefBoard.Name);
+            var accepted = await _windowManager.ShowDialogAsync(dialog);
+            if (accepted != true || dialog.DialogResult != DialogResultType.Ok)
+                return;
+
+            try
+            {
+                _refBoardManager.RemoveFromBoardList(SelectedRefBoard, dialog.DeleteLocalFiles);
+                RefreshBoards();
+            }
+            catch (Exception e)
+            {
+                var errorDialog = new DialogViewModel("Could not remove board", e.Message, DialogType.Information);
+                await _windowManager.ShowDialogAsync(errorDialog);
+            }
         }
 
         public void BrowseGlobalFolder()
@@ -120,6 +208,22 @@ namespace Allusion.ViewModels.Dialogs
             _refBoardManager.CurrentConfiguration.GlobalFolder = GlobalFolder;
             AllusionConfiguration.Save(_refBoardManager.CurrentConfiguration);
             RefreshBoards();
+        }
+
+        private string GetDefaultBoardName()
+        {
+            const string defaultName = "UntitledRefBoard";
+            var globalFolder = _refBoardManager.CurrentConfiguration.GlobalFolder;
+            var name = defaultName;
+            var counter = 2;
+
+            while (Directory.Exists(Path.Combine(globalFolder, name)))
+            {
+                name = $"{defaultName} {counter}";
+                counter++;
+            }
+
+            return name;
         }
     }
 
