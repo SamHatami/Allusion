@@ -12,6 +12,7 @@ public class ImageItem : IItem
 {
 
     public string ItemPath { get; set; }
+    public string RelativeItemPath { get; set; } = string.Empty;
     public double PosX { get; set; }
     public double PosY { get; set; }
     public double Scale { get; set; }

@@ -9,6 +9,7 @@ using System.Text.Json;
 
 namespace Allusion.Tests
 {
+    [Collection(AllusionConfigurationCollection.Name)]
     public class ReferenceBoardTests
     {
         private readonly string _testDirectory;
@@ -209,6 +210,7 @@ namespace Allusion.Tests
         [Fact]
         public void RemoveFromBoardList_ShouldIgnoreBoardWhenLocalFilesAreKept()
         {
+            using var configScope = AllusionConfiguration.UseDataFolderForTests(Path.Combine(_testDirectory, "Config"));
             var manager = CreateReferenceBoardManager();
             manager.CreateNew("VisibleBoard");
             manager.CreateNew("IgnoredBoard");
@@ -224,6 +226,7 @@ namespace Allusion.Tests
         [Fact]
         public void RemoveFromBoardList_ShouldDeleteBoardFolderWhenRequested()
         {
+            using var configScope = AllusionConfiguration.UseDataFolderForTests(Path.Combine(_testDirectory, "Config"));
             var manager = CreateReferenceBoardManager();
             manager.CreateNew("DeletedBoard");
             var deletedBoard = manager.GetAllRefBoardInfos().Single();

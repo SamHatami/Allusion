@@ -19,6 +19,7 @@ namespace Allusion.WPFCore.Board
                 BackupFolder = Path.Combine(_pageFolder, "old");
             }
         }
+        public string RelativePageFolder { get; set; } = string.Empty;
         public string BackupFolder { get; set; }
         public string Description { get; set; }
         public List<ImageItem> ImageItems { get; set; } = [];

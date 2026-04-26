@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using Allusion.WPFCore.Interfaces;
+using System.Diagnostics;
 using System.IO;
-using System.Printing;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -11,8 +8,10 @@ namespace Allusion.WPFCore;
 [Serializable]
 public class AllusionConfiguration
 {
-    public bool FirstStartUp { get; set; }= true;
-    public bool TopMost {get; set; }= true;
+    private const string ConfigFileName = "AllusionConfiguration.json";
+
+    public bool FirstStartUp { get; set; } = true;
+    public bool TopMost { get; set; } = true;
     public List<string> IgnoredRefBoardFiles { get; set; } = [];
 
     private string _globalFolder = string.Empty;
@@ -22,7 +21,7 @@ public class AllusionConfiguration
         get
         {
             var result = string.IsNullOrEmpty(_globalFolder) ? DefaultFolder : _globalFolder;
-            if(!Directory.Exists(result))
+            if (!Directory.Exists(result))
                 Directory.CreateDirectory(result);
             Trace.WriteLine($"GlobalFolder get: {result}");
             return result;
@@ -34,30 +33,54 @@ public class AllusionConfiguration
     public static string DefaultFolder { get; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Allusion");
 
-    public static string DataFolder { get; } =
+    private static string _dataFolder =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Allusion");
 
-    private static string _configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AllusionConfiguration.json");
+    public static string DataFolder => _dataFolder;
+
+    public static string ConfigPath => Path.Combine(DataFolder, ConfigFileName);
 
     public static AllusionConfiguration Read()
     {
-        if (!File.Exists(_configPath)) CreateNew();
+        if (!File.Exists(ConfigPath))
+            CreateNew();
 
-        var rawFile = File.ReadAllText(_configPath);
+        var rawFile = File.ReadAllText(ConfigPath);
         var configuration = JsonSerializer.Deserialize<AllusionConfiguration>(rawFile);
 
-        return configuration;
+        return configuration ?? new AllusionConfiguration();
     }
 
     public static void Save(AllusionConfiguration config)
     {
-        File.WriteAllText(_configPath, JsonSerializer.Serialize(config));
+        Directory.CreateDirectory(DataFolder);
+        File.WriteAllText(ConfigPath, JsonSerializer.Serialize(config));
     }
 
     private static void CreateNew()
     {
-        var configuration = new AllusionConfiguration();
+        Save(new AllusionConfiguration());
+    }
 
-        File.WriteAllText(_configPath, JsonSerializer.Serialize(configuration));
+    internal static IDisposable UseDataFolderForTests(string dataFolder)
+    {
+        var previousDataFolder = _dataFolder;
+        _dataFolder = dataFolder;
+        return new DataFolderScope(previousDataFolder);
+    }
+
+    private sealed class DataFolderScope : IDisposable
+    {
+        private readonly string _previousDataFolder;
+
+        public DataFolderScope(string previousDataFolder)
+        {
+            _previousDataFolder = previousDataFolder;
+        }
+
+        public void Dispose()
+        {
+            _dataFolder = _previousDataFolder;
+        }
     }
 }
