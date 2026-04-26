@@ -111,7 +111,7 @@ public class ReferenceBoard
     private static string GetBackupFilename(string backUpFolder, string originalFilePath)
     {
         var id = Guid.NewGuid().ToString();
-        var timestamp = DateTime.Now.ToShortDateString();
+        var timestamp = DateTime.Now.ToString("yyyy-MM-dd");
         var fileName = $"{timestamp}_{id}_{Path.GetFileName(originalFilePath)}";
         return Path.Combine(backUpFolder, fileName);
     }

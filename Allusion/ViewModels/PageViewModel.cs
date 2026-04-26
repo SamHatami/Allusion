@@ -38,6 +38,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     public BindableCollection<ImageViewModel> Images { get; set; }
 
+    public CanvasViewport Viewport { get; } = new();
+
 
     public IEnumerable<PageViewModel> OtherPages
     {

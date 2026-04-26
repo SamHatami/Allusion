@@ -51,13 +51,27 @@
     </UserControl.Resources>
 
 
-    <Grid>
+    <Grid
+        Background="Transparent"
+        ClipToBounds="True"
+        Focusable="True">
+        <b:Interaction.Behaviors>
+            <behaviors:CanvasViewportBehavior />
+        </b:Interaction.Behaviors>
         <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,1,0,0" />
         <Canvas
             x:Name="ImageCanvas"
+            Width="20000"
+            Height="20000"
             AllowDrop="True"
             Background="Transparent"
             Focusable="True">
+            <Canvas.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="{Binding Viewport.Zoom}" ScaleY="{Binding Viewport.Zoom}" />
+                    <TranslateTransform X="{Binding Viewport.OffsetX}" Y="{Binding Viewport.OffsetY}" />
+                </TransformGroup>
+            </Canvas.RenderTransform>
             <Canvas.ContextMenu>
                 <ContextMenu>
                     <MenuItem
@@ -179,37 +193,6 @@
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
 
-            <Border
-                Width="{Binding ActualWidth, ElementName=ImageCanvas}"
-                Height="{Binding ActualHeight, ElementName=ImageCanvas}"
-                Visibility="{Binding ShowHelpBox, Converter={StaticResource BoolToVis}}">
-                <Grid Margin="10">
-                    <Grid.ColumnDefinitions />
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-
-                    <StackPanel />
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        VerticalAlignment="Bottom"
-                        Foreground="{DynamicResource Foreground.Front}"
-                        TextAlignment="Center"
-                        TextWrapping="Wrap"><Run Language="sv-se" Text="Drop images anywhere on the canvas" /><LineBreak /><Run Language="sv-se" Text="Or simply paste with Ctrl-V" /></TextBlock>
-
-                    <fa:IconImage
-                        Grid.Row="1"
-                        Height="30"
-                        VerticalAlignment="Center"
-                        Foreground="DimGray"
-                        Icon="FileArrowDown" />
-
-                </Grid>
-            </Border>
-
             <Rectangle
                 x:Name="SelectionRectangle"
                 Fill="DarkGray"
@@ -217,6 +200,34 @@
                 Stroke="DarkOliveGreen"
                 StrokeThickness="1" />
         </Canvas>
+
+        <Border Visibility="{Binding ShowHelpBox, Converter={StaticResource BoolToVis}}">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    VerticalAlignment="Bottom"
+                    Foreground="{DynamicResource Foreground.Front}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"><Run Language="sv-se" Text="Drop images anywhere on the canvas" /><LineBreak /><Run Language="sv-se" Text="Or simply paste with Ctrl-V" /></TextBlock>
+
+                <fa:IconImage
+                    Grid.Row="1"
+                    Height="30"
+                    VerticalAlignment="Center"
+                    Foreground="DimGray"
+                    Icon="FileArrowDown" />
+
+            </Grid>
+        </Border>
 
 
         <!--  INFO NOTE  -->
