@@ -113,6 +113,58 @@ namespace Allusion.Tests
         }
 
         [Fact]
+        public async Task GetWebBitmapAsync_ShouldDownloadBitmapFromHtmlSrcSet()
+        {
+            var dataObject = A.Fake<IDataObject>();
+            var expected = new BitmapImage();
+            const string imageUrl = "https://example.com/small.jpg";
+            const string html = "<html><body><img srcset=\"https://example.com/small.jpg 1x, https://example.com/large.jpg 2x\" /></body></html>";
+
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Bitmap)).Returns(false);
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Html)).Returns(true);
+            A.CallTo(() => dataObject.GetData(DataFormats.Html)).Returns(html);
+            A.CallTo(() => _bitmapService.DownloadAndConvert(imageUrl, A<CancellationToken>._)).Returns(expected);
+
+            var result = await _extractor.GetWebBitmapAsync(dataObject);
+
+            result.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public async Task GetWebBitmapAsync_ShouldResolveRelativeHtmlImageUrlFromSourceUrl()
+        {
+            var dataObject = A.Fake<IDataObject>();
+            var expected = new BitmapImage();
+            const string imageUrl = "https://example.com/gallery/image.jpg";
+            const string html = "Version:1.0\r\nSourceURL:https://example.com/gallery/page.html\r\n<html><body><img src=\"image.jpg\" /></body></html>";
+
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Bitmap)).Returns(false);
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Html)).Returns(true);
+            A.CallTo(() => dataObject.GetData(DataFormats.Html)).Returns(html);
+            A.CallTo(() => _bitmapService.DownloadAndConvert(imageUrl, A<CancellationToken>._)).Returns(expected);
+
+            var result = await _extractor.GetWebBitmapAsync(dataObject);
+
+            result.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public async Task GetWebBitmapAsync_ShouldIgnorePlainTextThatIsNotAUrl()
+        {
+            var dataObject = A.Fake<IDataObject>();
+
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Bitmap)).Returns(false);
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Html)).Returns(false);
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Text)).Returns(true);
+            A.CallTo(() => dataObject.GetData(DataFormats.Text)).Returns("not an image url");
+
+            var result = await _extractor.GetWebBitmapAsync(dataObject);
+
+            result.Should().BeNull();
+            A.CallTo(() => _bitmapService.DownloadAndConvert(A<string>._, A<CancellationToken>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
         public void GetLocalFileUrl_ShouldTrimWrappingQuotes()
         {
             var dataObject = A.Fake<IDataObject>();
