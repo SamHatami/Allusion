@@ -110,9 +110,33 @@ internal static class ReferenceBoardFile
                     ? ResolveBoardPath(board.BaseFolder, image.RelativeItemPath)
                     : ResolveLegacyImagePath(page.PageFolder, storedPageFolder, image.ItemPath);
 
+                image.ItemPath = RepairDoublePngPath(image.ItemPath);
+
                 if (!string.IsNullOrWhiteSpace(image.ItemPath))
                     image.RelativeItemPath = GetRelativePath(board.BaseFolder, image.ItemPath);
             }
+        }
+    }
+
+    private static string RepairDoublePngPath(string imagePath)
+    {
+        if (string.IsNullOrWhiteSpace(imagePath) || File.Exists(imagePath))
+            return imagePath;
+
+        var doubledPath = imagePath + ".png";
+        if (!File.Exists(doubledPath))
+            return imagePath;
+
+        try
+        {
+            File.Move(doubledPath, imagePath);
+            return imagePath;
+        }
+        catch (Exception e)
+        {
+            StaticLogger.Warning("Could not repair image filename", true);
+            Trace.WriteLine(e);
+            return doubledPath;
         }
     }
 

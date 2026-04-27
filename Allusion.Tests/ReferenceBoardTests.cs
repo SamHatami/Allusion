@@ -114,6 +114,82 @@ namespace Allusion.Tests
         }
 
         [Fact]
+        public void SaveAndRead_ShouldRoundTripImageItems()
+        {
+            var board = new ReferenceBoard("TestBoard", Path.Combine(_testDirectory, "TestBoard"));
+            var page = board.Pages.Single();
+            var image = new ImageItem(12.0, 34.0, 0.5)
+            {
+                Description = "reference"
+            };
+            var sourceImagePath = Path.Combine(_testDirectory, "source.png");
+            File.WriteAllBytes(sourceImagePath, Convert.FromBase64String(
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="));
+            image.SetSourceImage(Allusion.WPFCore.Utilities.BitmapUtils.LoadImageFromUri(sourceImagePath));
+            image.ItemPath = Path.Combine(page.PageFolder, "image.png");
+            page.ImageItems.Add(image);
+            var filePath = Path.Combine(board.BaseFolder, "TestBoard.allusion");
+
+            ReferenceBoard.Save(board);
+
+            var loadedBoard = ReferenceBoard.Read(filePath);
+
+            loadedBoard.Should().NotBeNull();
+            var loadedPage = loadedBoard!.Pages.Single();
+            loadedPage.ImageItems.Should().ContainSingle();
+            var loadedImage = loadedPage.ImageItems.Single();
+            loadedImage.ItemPath.Should().Be(Path.Combine(loadedPage.PageFolder, "image.png"));
+            File.Exists(loadedImage.ItemPath).Should().BeTrue();
+            File.Exists(loadedImage.ItemPath + ".png").Should().BeFalse();
+            loadedImage.PosX.Should().Be(12.0);
+            loadedImage.PosY.Should().Be(34.0);
+            loadedImage.Scale.Should().Be(0.5);
+            loadedImage.Description.Should().Be("reference");
+        }
+
+        [Fact]
+        public void Read_ShouldRepairDoublePngImagePaths()
+        {
+            var boardFolder = Path.Combine(_testDirectory, "TestBoard");
+            var pageFolder = Path.Combine(boardFolder, "Page 1");
+            Directory.CreateDirectory(pageFolder);
+            var expectedImagePath = Path.Combine(pageFolder, "image.png");
+            var doubledImagePath = expectedImagePath + ".png";
+            File.WriteAllText(doubledImagePath, "image");
+            var filePath = Path.Combine(boardFolder, "TestBoard.allusion");
+            var json = $$"""
+                         {
+                           "Name": "TestBoard",
+                           "BaseFolder": "{{boardFolder.Replace("\\", "\\\\")}}",
+                           "Pages": [
+                             {
+                               "Name": "Page 1",
+                               "PageFolder": "{{pageFolder.Replace("\\", "\\\\")}}",
+                               "ImageItems": [
+                                 {
+                                   "ItemPath": "{{expectedImagePath.Replace("\\", "\\\\")}}",
+                                   "PosX": 12.0,
+                                   "PosY": 34.0,
+                                   "Scale": 0.5
+                                 }
+                               ],
+                               "NoteItems": []
+                             }
+                           ]
+                         }
+                         """;
+            File.WriteAllText(filePath, json);
+
+            var loadedBoard = ReferenceBoard.Read(filePath);
+
+            loadedBoard.Should().NotBeNull();
+            var image = loadedBoard!.Pages.Single().ImageItems.Single();
+            image.ItemPath.Should().Be(expectedImagePath);
+            File.Exists(expectedImagePath).Should().BeTrue();
+            File.Exists(doubledImagePath).Should().BeFalse();
+        }
+
+        [Fact]
         public void Read_ShouldResolveLegacyAbsolutePathsFromMovedBoardFile()
         {
             var oldBoardFolder = Path.Combine(_testDirectory, "OldLocation", "TestBoard");

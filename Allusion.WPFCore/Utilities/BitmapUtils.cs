@@ -11,7 +11,9 @@ public static class BitmapUtils
 {
     public static void SaveToFile(BitmapImage bitmap, string fullFileNameWithoutExtension)
     {
-        var fileNamePNG = fullFileNameWithoutExtension + ".png";
+        var fileNamePNG = Path.HasExtension(fullFileNameWithoutExtension)
+            ? fullFileNameWithoutExtension
+            : fullFileNameWithoutExtension + ".png";
         using var fileStream = new FileStream(fileNamePNG, FileMode.Create);
         BitmapEncoder encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(bitmap));

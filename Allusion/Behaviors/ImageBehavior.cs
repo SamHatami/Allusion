@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Allusion.Views;
+using Allusion.ViewModels.Arrangement;
 using Allusion.WPFCore.Controls;
 
 namespace Allusion.Behaviors;
@@ -28,6 +29,7 @@ public class ImageBehavior : Behavior<UIElement>
     private DragDropEffects dropEffect;
     private Point[] _originalPositions;
     private PageViewModel? _page;
+    private FrameworkElement? _viewportElement;
 
     protected override void OnAttached()
     {
@@ -36,6 +38,7 @@ public class ImageBehavior : Behavior<UIElement>
         if (!(VisualTreeHelper.GetParent(AssociatedObject) is ContentPresenter contentPresenter)) return; //onödigt?
 
         _mainCanvas = GetMainCanvas(AssociatedObject);
+        _viewportElement = VisualTreeHelper.GetParent(_mainCanvas) as FrameworkElement;
         _contentPresenters = VisualTreeHelpers.FindContentPresentersForImageViews(_mainCanvas);
 
         SetDataContextAndEvents();
@@ -115,26 +118,34 @@ public class ImageBehavior : Behavior<UIElement>
         if (AssociatedObject.IsMouseCaptured)
 
         {
-            for (var i = 0; i < _selectedImages.Length; i++)
-                MoveImage(_selectedImages[i], _originalPositions[i], _relativePositions[i], e.GetPosition(_mainCanvas));
+            var mousePosition = e.GetPosition(_mainCanvas);
+            var isAboveViewport = _viewportElement is not null && e.GetPosition(_viewportElement).Y < 0;
+            var snapToGrid = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
 
-            MoveDragIcon(e.GetPosition(_mainCanvas));
+            for (var i = 0; i < _selectedImages.Length; i++)
+                MoveImage(_selectedImages[i], _originalPositions[i], _relativePositions[i], mousePosition, isAboveViewport, snapToGrid);
+
+            MoveDragIcon(mousePosition);
         }
 
         e.Handled = true;
     }
 
-    private void MoveImage(ImageViewModel image, Point originalPos, Point relativePos, Point mousePos)
+    private void MoveImage(ImageViewModel image, Point originalPos, Point relativePos, Point mousePos, bool isAboveViewport, bool snapToGrid)
     {
         var newLeft = mousePos.X + relativePos.X;
-        image.PosX = newLeft < 0 ? 0 : newLeft;
+        if (snapToGrid)
+            newLeft = CanvasGridSnap.Snap(newLeft);
+        image.PosX = newLeft;
 
         var newTop = mousePos.Y + relativePos.Y;
+        if (snapToGrid)
+            newTop = CanvasGridSnap.Snap(newTop);
         image.PosY = newTop;
 
-        if (newTop < -1 && Mouse.LeftButton == MouseButtonState.Pressed)
+        if (isAboveViewport && Mouse.LeftButton == MouseButtonState.Pressed)
         {
-            // If the image goes beyond the top of the canvas, enable drop mode
+            // If the cursor goes beyond the top of the viewport, enable tab drop mode.
             EnterDropMode();
 
             if (!_isInDropMode && dropEffect == DragDropEffects.None) //Replace with bool
@@ -145,12 +156,6 @@ public class ImageBehavior : Behavior<UIElement>
                 ExitDropMode();
                 return;
             }
-        }
-        else if(newTop < 0)
-        {
-            // If the image is within bounds, reset to normal behavior
-            ResetPositions();
-            ExitDropMode();
         }
     }
 

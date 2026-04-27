@@ -293,8 +293,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         for (var i = 0; i < images.Count; i++)
         {
             images[i].Scale = results[i].Scale;
-            images[i].PosX = originX + results[i].X;
-            images[i].PosY = originY + results[i].Y;
+            images[i].PosX = CanvasGridSnap.Snap(originX + results[i].X);
+            images[i].PosY = CanvasGridSnap.Snap(originY + results[i].Y);
         }
 
         _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));

@@ -5,6 +5,19 @@ namespace Allusion.Tests;
 
 public class ArrangeImageLayoutServiceTests
 {
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(12, 0)]
+    [InlineData(13, 25)]
+    [InlineData(37, 25)]
+    [InlineData(38, 50)]
+    [InlineData(-12, 0)]
+    [InlineData(-13, -25)]
+    public void CanvasGridSnap_ShouldSnapToNearestGridLine(double value, double expected)
+    {
+        CanvasGridSnap.Snap(value).Should().Be(expected);
+    }
+
     [Fact]
     public void Arrange_ShouldLayOutImagesInGridWithMargin()
     {
