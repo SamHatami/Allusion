@@ -7,8 +7,8 @@ namespace Allusion.WPFCore.Board
     [Serializable]
     public class BoardPage
     {
-        public string Name { get; set; }
-        private string _pageFolder;
+        public string Name { get; set; } = string.Empty;
+        private string _pageFolder = string.Empty;
 
         public string PageFolder
         {
@@ -20,26 +20,26 @@ namespace Allusion.WPFCore.Board
             }
         }
         public string RelativePageFolder { get; set; } = string.Empty;
-        public string BackupFolder { get; set; }
-        public string Description { get; set; }
+        public string BackupFolder { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public List<ImageItem> ImageItems { get; set; } = [];
         public List<NoteItem> NoteItems { get; set; } = [];
         public Guid BoardId { get; }
 
-        [JsonIgnore] public ReferenceBoard ParentBoard { get;}
+        [JsonIgnore] public ReferenceBoard? ParentBoard { get; }
 
-        public BoardPage(ReferenceBoard parentBoard)
+        public BoardPage(ReferenceBoard? parentBoard)
         {
-            if(parentBoard is null) return; //Not good if this is the case
-
             ParentBoard = parentBoard;
             BoardId = Guid.NewGuid();
-            SetFolders();
+            if (ParentBoard is not null)
+                SetFolders();
         }
 
         public void Rename(string newName)
         {
             Name = newName;
+            if (ParentBoard is null) return;
             var newPageFolder = PageFolder = Path.Combine(ParentBoard.BaseFolder, newName);
             Directory.Move(PageFolder, newPageFolder);
 
@@ -48,10 +48,10 @@ namespace Allusion.WPFCore.Board
         private void SetFolders()
         {
             if (string.IsNullOrEmpty(Name))
-                Name = "UnnamedPage-" + ParentBoard.Pages.Count;
+                Name = "UnnamedPage-" + ParentBoard!.Pages.Count;
             if (!string.IsNullOrEmpty(BackupFolder) && !string.IsNullOrEmpty(PageFolder)) return;
            
-            PageFolder = Path.Combine(ParentBoard.BaseFolder, Name);
+            PageFolder = Path.Combine(ParentBoard!.BaseFolder, Name);
             BackupFolder = Path.Combine(PageFolder, "old");
             Directory.CreateDirectory(PageFolder);
             Directory.CreateDirectory(BackupFolder);

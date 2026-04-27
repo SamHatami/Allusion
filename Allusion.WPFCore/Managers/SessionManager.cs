@@ -13,7 +13,8 @@ public class SessionManager : IHandle<ItemRemovedEvent>, IHandle<UndoItemRemoved
 
     public Task HandleAsync(ItemRemovedEvent message, CancellationToken cancellationToken)
     {
-        Debug.Assert(message.Item == null, "remove item was null");
+        Debug.Assert(message.Item != null, "remove item was null");
+        if (message.Item is null) return Task.CompletedTask;
 
         if(!itemBin.ContainsKey(message.Owner))
             itemBin[message.Owner] = new List<IRemovableItem>();

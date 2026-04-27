@@ -11,7 +11,7 @@ public class ReferenceBoard
     public Guid BoardId { get; set; } = Guid.NewGuid();
     public string Name { get; set; }
     public string BaseFolder { get; set; }
-    public string BackupFolder { get; set; }
+    public string BackupFolder { get; set; } = string.Empty;
 
     public List<BoardPage> Pages { get; set; } = [];
 

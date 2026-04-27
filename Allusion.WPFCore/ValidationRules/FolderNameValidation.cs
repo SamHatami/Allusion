@@ -11,7 +11,10 @@ public static class FolderNameValidation
         var illegalPathChars = Path.GetInvalidPathChars();
         var illegalFilenameChars = Path.GetInvalidFileNameChars();
 
-        foreach (var c in (string)value)
+        if (value is not string folderName)
+            return new ValidationResult(false, "folder name is required");
+
+        foreach (var c in folderName)
         {
             if (illegalFilenameChars.Contains(c))
                 return new ValidationResult(false, "illegal character " + c);

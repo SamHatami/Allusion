@@ -64,7 +64,7 @@ namespace Allusion.Input
         /// <param name="context"> An <see cref="System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         /// <param name="sourceType"> A <see cref="System.Type" /> that represents the type you want to convert from. </param>
         /// <returns> true if this converter can perform the conversion; otherwise, false. </returns>
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             return sourceType == typeof(string);
         }
@@ -77,7 +77,7 @@ namespace Allusion.Input
         /// <param name="value"> The <see cref="object" /> to convert. </param>
         /// <returns> An <see cref="object" /> that represents the converted value. </returns>
         /// <exception cref="System.NotSupportedException">The conversion cannot be performed.</exception>
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
         {
             var str = (value as string);
 
@@ -97,8 +97,8 @@ namespace Allusion.Input
                     var modifiersCount = 0;
 
                     ModifierKeys currentModifier;
-                    string temp;
-                    while ((temp = keyStrings[modifiersCount]) != null && TryGetModifierKeys(temp.Trim(), out currentModifier))
+                    while (modifiersCount < keyStrings.Length &&
+                           TryGetModifierKeys(keyStrings[modifiersCount].Trim(), out currentModifier))
                     {
                         modifiersCount++;
                         modifier |= currentModifier;
@@ -109,7 +109,7 @@ namespace Allusion.Input
                         var keyString = keyStrings[i];
                         if (keyString != null)
                         {
-                            var key = (Key)keyConverter.ConvertFrom(keyString.Trim());
+                            var key = (Key)keyConverter.ConvertFrom(keyString.Trim())!;
                             keys.Add(key);
                         }
                     }
@@ -135,7 +135,7 @@ namespace Allusion.Input
         ///   <paramref name="destinationType" />
         ///   parameter is null.</exception>
         /// <exception cref="System.NotSupportedException">The conversion cannot be performed.</exception>
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
             if (destinationType == typeof(string))
             {
@@ -155,16 +155,16 @@ namespace Allusion.Input
                         sequence = gesture.KeySequences[i];
                         if (sequence.Modifiers != ModifierKeys.None)
                         {
-                            builder.Append((string)modifierKeysConverter.ConvertTo(context, culture, sequence.Modifiers, destinationType));
+                            builder.Append((string)modifierKeysConverter.ConvertTo(context, culture, sequence.Modifiers, destinationType)!);
                             builder.Append("+");
                         }
 
-                        builder.Append((string)keyConverter.ConvertTo(context, culture, sequence.Keys[0], destinationType));
+                        builder.Append((string)keyConverter.ConvertTo(context, culture, sequence.Keys[0], destinationType)!);
 
                         for (var j = 1; j < sequence.Keys.Length; j++)
                         {
                             builder.Append("+");
-                            builder.Append((string)keyConverter.ConvertTo(context, culture, sequence.Keys[0], destinationType));
+                            builder.Append((string)keyConverter.ConvertTo(context, culture, sequence.Keys[j], destinationType)!);
                         }
                     }
 

@@ -51,7 +51,7 @@ public static class BitmapUtils
 
         try
         {
-            return (BitmapSource)new ImageSourceConverter().ConvertFrom(imageBytes);
+            return new ImageSourceConverter().ConvertFrom(imageBytes) as BitmapSource;
         }
         catch (NotSupportedException e)
         {

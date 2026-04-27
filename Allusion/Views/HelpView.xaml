@@ -28,7 +28,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Button
-            x:Name="Close"
+            x:Name="CloseButton"
             HorizontalAlignment="Right"
             VerticalAlignment="Stretch"
             cm:Message.Attach="[Cancel]"

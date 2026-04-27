@@ -104,6 +104,12 @@ public class PageManager : IPageManager
         var oldDirectoryName = Path.GetFileName(oldDirectoryPath);
 
         var parentDirectory = Path.GetDirectoryName(oldDirectoryPath);
+        if (string.IsNullOrEmpty(parentDirectory))
+        {
+            StaticLogger.Error("Could not rename page because the parent folder was invalid", true, string.Empty);
+            return;
+        }
+
         var newDirectory = Path.Combine(parentDirectory, newName);
         
         if (Directory.Exists(newDirectory)) //Replace with directoryHelper class

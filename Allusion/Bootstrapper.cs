@@ -16,7 +16,7 @@ namespace Allusion;
 
 public class Bootstrapper : BootstrapperBase
 {
-    private SimpleContainer _container;
+    private SimpleContainer _container = null!;
 
     public Bootstrapper()
     {
@@ -101,7 +101,8 @@ public class Bootstrapper : BootstrapperBase
                 .Replace("[", string.Empty)
                 .Replace("]", string.Empty);
 
-            var splits = triggerDetail.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            var splits = triggerDetail.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            if (splits.Length < 2) return defaultCreateTrigger(target, triggerText);
 
             switch (splits[0])
             {
@@ -110,7 +111,7 @@ public class Bootstrapper : BootstrapperBase
                     return new KeyTrigger { Key = key };
 
                 case "Gesture":
-                    var mkg = (MultiKeyGesture)new MultiKeyGestureConverter().ConvertFrom(splits[1]);
+                    var mkg = (MultiKeyGesture)new MultiKeyGestureConverter().ConvertFrom(splits[1])!;
                     return new KeyTrigger
                         { Modifiers = mkg.KeySequences[0].Modifiers, Key = mkg.KeySequences[0].Keys[0] };
             }

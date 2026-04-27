@@ -11,7 +11,7 @@ namespace Allusion.WPFCore.Board;
 public class ImageItem : IItem
 {
 
-    public string ItemPath { get; set; }
+    public string ItemPath { get; set; } = string.Empty;
     public string RelativeItemPath { get; set; } = string.Empty;
     public double PosX { get; set; }
     public double PosY { get; set; }
@@ -22,17 +22,17 @@ public class ImageItem : IItem
 
     [JsonIgnore] private readonly IBitmapService? _bitmapService;
     [JsonIgnore] private readonly ImageItemService? _itemService;
-    [JsonIgnore] private BitmapImage _sourceImage;
+    [JsonIgnore] private BitmapImage? _sourceImage;
     [JsonIgnore] public BitmapImage SourceImage
     {
         get
         {
-            if (_loaded) return _sourceImage; 
+            if (_loaded && _sourceImage is not null) return _sourceImage;
 
             LoadItemSource();
             _loaded = true;
 
-            return _sourceImage;
+            return _sourceImage ?? BitmapUtils.DefaultImage();
         }
         private set => _sourceImage = value;
     }
