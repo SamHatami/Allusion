@@ -283,8 +283,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     {
         if (images.Count == 0) return;
 
-        var originX = images.Min(image => image.PosX);
-        var originY = images.Min(image => image.PosY);
+        var originX = CanvasGridSnap.Snap(images.Min(image => image.PosX));
+        var originY = CanvasGridSnap.Snap(images.Min(image => image.PosY));
         var layoutItems = images
             .Select(image => new ArrangeImageLayoutItem(image.Width, image.Height, image.Scale))
             .ToArray();
@@ -293,8 +293,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         for (var i = 0; i < images.Count; i++)
         {
             images[i].Scale = results[i].Scale;
-            images[i].PosX = CanvasGridSnap.Snap(originX + results[i].X);
-            images[i].PosY = CanvasGridSnap.Snap(originY + results[i].Y);
+            images[i].PosX = originX + results[i].X;
+            images[i].PosY = originY + results[i].Y;
         }
 
         _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));

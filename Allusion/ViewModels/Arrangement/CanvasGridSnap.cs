@@ -8,4 +8,9 @@ public static class CanvasGridSnap
     {
         return Math.Round(value / Size, MidpointRounding.AwayFromZero) * Size;
     }
+
+    public static double SnapUp(double value)
+    {
+        return Math.Ceiling(value / Size) * Size;
+    }
 }

@@ -14,13 +14,16 @@ namespace Allusion.Behaviors;
 public class CanvasSelectionBoxBehavior : Behavior<UIElement>
 {
     private List<ImageViewModel> _images = [];
-    private Rectangle _selectionRectangle;
+    private Rectangle? _selectionRectangle;
     private Point _startPoint;
     private Canvas? _mainCanvas;
+    private FrameworkElement? _inputSurface;
+    private PageViewModel? _page;
 
     private IEventAggregator? _events;
     private double _signedWidth;
     private double _signedHeight;
+    private bool _isSelecting;
 
     protected override void OnAttached()
     {
@@ -31,10 +34,12 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
         if (AssociatedObject is Canvas canvas)
         {
             _mainCanvas = canvas;
+            _page = _mainCanvas.DataContext as PageViewModel;
+            _inputSurface = VisualTreeHelper.GetParent(_mainCanvas) as FrameworkElement ?? _mainCanvas;
 
-            _mainCanvas.PreviewMouseLeftButtonDown += OnMouseLeftButtonDown;
-            _mainCanvas.PreviewMouseLeftButtonUp += OnMouseLeftButtonUp;
-            _mainCanvas.PreviewMouseMove += OnMouseMove;
+            _inputSurface.PreviewMouseLeftButtonDown += OnMouseLeftButtonDown;
+            _inputSurface.PreviewMouseLeftButtonUp += OnMouseLeftButtonUp;
+            _inputSurface.PreviewMouseMove += OnMouseMove;
         }
     }
 
@@ -42,80 +47,74 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
     {
         base.OnDetaching();
 
-        if (_mainCanvas == null) return;
+        if (_inputSurface == null) return;
 
-        _mainCanvas.PreviewMouseLeftButtonDown -= OnMouseLeftButtonDown;
-        _mainCanvas.PreviewMouseLeftButtonUp -= OnMouseLeftButtonUp;
-        _mainCanvas.PreviewMouseMove -= OnMouseMove;
+        _inputSurface.PreviewMouseLeftButtonDown -= OnMouseLeftButtonDown;
+        _inputSurface.PreviewMouseLeftButtonUp -= OnMouseLeftButtonUp;
+        _inputSurface.PreviewMouseMove -= OnMouseMove;
     }
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (AssociatedObject.IsMouseCaptured)
+        if (_isSelecting && _inputSurface is not null && _inputSurface.IsMouseCaptured)
         {
             CreateSelectionHitTest();
 
             if(_images.Any())
                 _events.PublishOnBackgroundThreadAsync(new SelectionEvent(_images.ToArray(), SelectionType.Multi));
 
-            AssociatedObject.ReleaseMouseCapture();
+            _inputSurface.ReleaseMouseCapture();
             ResetSelectionBox();
+            _isSelecting = false;
         }
     }
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        if (_mainCanvas is null || _inputSurface is null) return;
+        if (Keyboard.IsKeyDown(Key.Space)) return;
+        if (IsImageHit(e.OriginalSource as DependencyObject)) return;
+
         _startPoint = e.GetPosition(_mainCanvas);
         _images.Clear();
-        //Check if mouse hits canvas only
-        VisualTreeHelper.HitTest(_mainCanvas, null, CheckType,
-            new GeometryHitTestParameters(new EllipseGeometry(e.GetPosition(_mainCanvas), 1, 1)));
+
+        _events?.PublishOnBackgroundThreadAsync(new ClearSelectionEvent(), new CancellationToken(true));
+        _mainCanvas.Focus();
+        _inputSurface.CaptureMouse();
+        _isSelecting = true;
+        _selectionRectangle = _mainCanvas.FindName("SelectionRectangle") as Rectangle;
+        SetSelectionBoxStart();
 
         e.Handled = false;
     }
+
     private void CreateSelectionHitTest()
     {
-        // Get the signed width and height for hit testing
-        var width = _selectionRectangle.ActualWidth;
-        var height = _selectionRectangle.ActualHeight;
+        if (_page is null) return;
 
-        // Calculate the top-left corner for the rectangle based on current mouse position
-        var topLeftX = _signedWidth < 0 ? _startPoint.X + _signedWidth : _startPoint.X;
-        var topLeftY = _signedHeight < 0 ? _startPoint.Y + _signedHeight : _startPoint.Y;
+        var selectionBounds = GetSelectionBounds();
 
-        // Create a rectangle geometry for hit testing
-        var hitRectangle = new RectangleGeometry
+        foreach (var image in _page.Images)
         {
-            Rect = new Rect(topLeftX, topLeftY, Math.Abs(width), Math.Abs(height))
-        };
-
-        Trace.WriteLine(hitRectangle.Bounds.Height + " " + hitRectangle.Bounds.Width + " " + hitRectangle.Bounds.Size + " " + hitRectangle.Rect.Bottom  + " " + hitRectangle.Rect.Right);
-        var hitParameters = new GeometryHitTestParameters(hitRectangle);
-
-        VisualTreeHelper.HitTest(_mainCanvas, null, CheckSelection, hitParameters);
+            var imageBounds = new Rect(image.PosX, image.PosY, image.Width, image.Height);
+            if (selectionBounds.IntersectsWith(imageBounds))
+                _images.Add(image);
+        }
     }
 
-    private HitTestFilterBehavior FilterSelection(DependencyObject target)
+    private Rect GetSelectionBounds()
     {
-        if (target is Canvas { Name: "ImageCanvas" })
-            return HitTestFilterBehavior.Continue;
+        var left = _signedWidth < 0 ? _startPoint.X + _signedWidth : _startPoint.X;
+        var top = _signedHeight < 0 ? _startPoint.Y + _signedHeight : _startPoint.Y;
 
-        return HitTestFilterBehavior.ContinueSkipSelf;
-    }
-
-    private HitTestResultBehavior CheckSelection(HitTestResult result)
-    {
-        if (result.VisualHit is Border { DataContext: ImageViewModel tvm } && !_images.Contains(tvm))
-            _images.Add(tvm);
-
-        return HitTestResultBehavior.Continue;
+        return new Rect(left, top, Math.Abs(_signedWidth), Math.Abs(_signedHeight));
     }
 
     private void OnMouseMove(object sender, MouseEventArgs e)
     {
         if (_selectionRectangle == null) return;
 
-        if (AssociatedObject.IsMouseCaptured)
+        if (_isSelecting && _inputSurface is not null && _inputSurface.IsMouseCaptured)
         {
             var currentMousePosition = e.GetPosition(_mainCanvas);
 
@@ -126,19 +125,17 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
             _selectionRectangle.Width = Math.Abs(_signedWidth);
             _selectionRectangle.Height = Math.Abs(_signedHeight);
 
-            var _actualWidth = _signedWidth < 0 ? currentMousePosition.X : _startPoint.X;
-            var _actualHeight = _signedHeight < 0 ? currentMousePosition.Y : _startPoint.Y;
-            Canvas.SetLeft(_selectionRectangle, _actualWidth );
-            Canvas.SetTop(_selectionRectangle, _actualHeight);
+            var actualWidth = _signedWidth < 0 ? currentMousePosition.X : _startPoint.X;
+            var actualHeight = _signedHeight < 0 ? currentMousePosition.Y : _startPoint.Y;
+            Canvas.SetLeft(_selectionRectangle, actualWidth);
+            Canvas.SetTop(_selectionRectangle, actualHeight);
         }
     }
 
-
-
- 
-    
     private void SetSelectionBoxStart()
     {
+        if (_selectionRectangle is null) return;
+
         Canvas.SetLeft(_selectionRectangle, _startPoint.X);
         Canvas.SetTop(_selectionRectangle, _startPoint.Y);
     }
@@ -152,17 +149,16 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
         _selectionRectangle.Height = 0;
     }
 
-    private HitTestResultBehavior CheckType(HitTestResult hit)
+    private static bool IsImageHit(DependencyObject? source)
     {
-        if (hit.VisualHit is Canvas canvas)
+        while (source is not null)
         {
-            _events.PublishOnBackgroundThreadAsync(new ClearSelectionEvent(), new CancellationToken(true));
-            canvas.Focus();
-            AssociatedObject.CaptureMouse();
-            _selectionRectangle = _mainCanvas.FindName("SelectionRectangle") as Rectangle;
-            SetSelectionBoxStart();
+            if (source is FrameworkElement { DataContext: ImageViewModel })
+                return true;
+
+            source = VisualTreeHelper.GetParent(source);
         }
 
-        return HitTestResultBehavior.Stop;
+        return false;
     }
 }

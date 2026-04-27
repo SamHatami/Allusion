@@ -24,7 +24,7 @@ public class FocusBehavior : Behavior<Image>
     private Point _startPosition;
     private Rectangle? _zoomBox;
     private double _aspectRatio;
-    private FocusView _focusView;
+    private FocusView? _focusView;
     protected override void OnAttached()
     {
         base.OnAttached();
@@ -57,49 +57,47 @@ public class FocusBehavior : Behavior<Image>
     private void OnImageLoaded(object sender, RoutedEventArgs e)
     {
         _mainCanvas = GetMainCanvas(AssociatedObject, "FocusCanvas");
+        if (_mainCanvas is null) return;
+
         _zoomBox = _mainCanvas.FindName("ZoomBox") as Rectangle;
-        _focusView = GetFocusView();
-        _focusView.Loaded += OnViewLoaded;
+        _focusView = Window.GetWindow(AssociatedObject) as FocusView ?? GetFocusView();
+        if (_focusView is null) return;
+
+        ResetToFitWindow();
         _focusView.SizeChanged += OnWindowSizeChanged;
 
     }
 
-    private void OnViewLoaded(object sender, RoutedEventArgs e)
-    {
-        _focusView.Width = AssociatedObject.ActualWidth;
-        _focusView.Height = AssociatedObject.ActualHeight - SystemParameters.CaptionHeight - 1;
-    }
-
     private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        ApplyScaling();
-    }
-
-    private void ApplyScaling()
-    {
-        _mainCanvas.Width = _focusView.ActualWidth;
-        _mainCanvas.Height = _focusView.ActualHeight - SystemParameters.CaptionHeight - 1;
-
         if (_scaling.ScaleY == 1)
-        {
-            AssociatedObject.Width = _mainCanvas.Width;
-            AssociatedObject.Height = _mainCanvas.Height;
-
-            Canvas.SetLeft(AssociatedObject, 0);
-            Canvas.SetRight(AssociatedObject, 0);
-        }
+            ResetToFitWindow();
     }
 
-    private void SetCanvasSizeToWindow()
+    private void ResetToFitWindow()
     {
-                double windowWidth = _focusView.ActualWidth;
-        double windowHeight = _focusView.ActualHeight - SystemParameters.CaptionHeight - 1;
+        if (_mainCanvas is null || _focusView is null) return;
 
-        // Set the main canvas dimensions
-        _mainCanvas.Height = windowHeight;
+        var windowWidth = _focusView.ActualWidth;
+        var windowHeight = Math.Max(0, _focusView.ActualHeight - SystemParameters.CaptionHeight - 1);
+        if (windowWidth <= 0 || windowHeight <= 0) return;
+
         _mainCanvas.Width = windowWidth;
+        _mainCanvas.Height = windowHeight;
+        AssociatedObject.Width = windowWidth;
+        AssociatedObject.Height = windowHeight;
+
+        _scaling.ScaleX = 1;
+        _scaling.ScaleY = 1;
+        _translating.X = 0;
+        _translating.Y = 0;
+
+        Canvas.SetLeft(AssociatedObject, 0);
+        Canvas.SetTop(AssociatedObject, 0);
+        ResetSelectionBox();
     }
-    private FocusView GetFocusView()
+
+    private FocusView? GetFocusView()
     {
         foreach (Window window in Application.Current.Windows)
         {
@@ -142,6 +140,8 @@ public class FocusBehavior : Behavior<Image>
         AssociatedObject.PreviewMouseMove -= OnPreviewMouseMove;
         AssociatedObject.MouseRightButtonDown -= OnRightMouseDown;
         AssociatedObject.MouseRightButtonUp -= OnRightMouseUp;
+        if (_focusView is not null)
+            _focusView.SizeChanged -= OnWindowSizeChanged;
 
         base.OnDetaching();
 
@@ -222,18 +222,7 @@ public class FocusBehavior : Behavior<Image>
 
         if (e is { ChangedButton: MouseButton.Middle, ClickCount: 2 })
         {
-            _scaling.ScaleX = _scaling.ScaleY = 1;
-            AssociatedObject.Width = _mainCanvas.Width = _focusView.ActualWidth;
-            AssociatedObject.Height = _mainCanvas.Height= _focusView.ActualHeight - SystemParameters.CaptionHeight - 1;
-
-            Canvas.SetLeft(AssociatedObject,0);
-            Canvas.SetRight(AssociatedObject,0);
-
-            //_translating.Y = _mainCanvas.ActualWidth - AssociatedObject.Width;
-            //_translating.X = _mainCanvas.ActualHeight - AssociatedObject.Height;
-            
-
-
+            ResetToFitWindow();
         }
 
         if (e is { ChangedButton: MouseButton.Middle, ClickCount: 1 })

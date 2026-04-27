@@ -40,14 +40,14 @@ public class ArrangeImageLayoutService
             if (i > 0 && i % columnCount == 0)
             {
                 x = 0;
-                y += rowHeight + margin;
+                y = CanvasGridSnap.SnapUp(y + rowHeight + margin);
                 rowHeight = 0;
             }
 
             var size = arrangedSizes[i];
             results.Add(new ArrangeImageLayoutResult(x, y, size.Scale));
 
-            x += size.Width + margin;
+            x = CanvasGridSnap.SnapUp(x + size.Width + margin);
             rowHeight = Math.Max(rowHeight, size.Height);
         }
 

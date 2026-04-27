@@ -18,6 +18,16 @@ public class ArrangeImageLayoutServiceTests
         CanvasGridSnap.Snap(value).Should().Be(expected);
     }
 
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 25)]
+    [InlineData(25, 25)]
+    [InlineData(26, 50)]
+    public void CanvasGridSnap_ShouldSnapUpToNextGridLine(double value, double expected)
+    {
+        CanvasGridSnap.SnapUp(value).Should().Be(expected);
+    }
+
     [Fact]
     public void Arrange_ShouldLayOutImagesInGridWithMargin()
     {
@@ -34,10 +44,29 @@ public class ArrangeImageLayoutServiceTests
         result.Should().HaveCount(3);
         result[0].X.Should().Be(0);
         result[0].Y.Should().Be(0);
-        result[1].X.Should().Be(110);
+        result[1].X.Should().Be(125);
         result[1].Y.Should().Be(0);
         result[2].X.Should().Be(0);
-        result[2].Y.Should().Be(70);
+        result[2].Y.Should().Be(75);
+    }
+
+    [Fact]
+    public void Arrange_ShouldNotOverlapImagesAfterGridSnap()
+    {
+        var service = new ArrangeImageLayoutService();
+        var items = new[]
+        {
+            new ArrangeImageLayoutItem(113, 49, 1),
+            new ArrangeImageLayoutItem(87, 131, 1),
+            new ArrangeImageLayoutItem(216, 77, 1),
+            new ArrangeImageLayoutItem(42, 203, 1)
+        };
+
+        var result = service.Arrange(items, new ArrangeImageLayoutOptions { Margin = 0 });
+
+        result[1].X.Should().BeGreaterThanOrEqualTo(result[0].X + items[0].Width);
+        result[2].Y.Should().BeGreaterThanOrEqualTo(result[0].Y + Math.Max(items[0].Height, items[1].Height));
+        result[3].X.Should().BeGreaterThanOrEqualTo(result[2].X + items[2].Width);
     }
 
     [Fact]
