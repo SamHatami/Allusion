@@ -28,6 +28,9 @@ jobs:
       - name: Test
         run: dotnet test Allusion.Tests/Allusion.Tests.csproj --configuration Release --no-restore
 
+      - name: Restore Windows publish target
+        run: dotnet restore Allusion/Allusion.csproj --runtime win-x64
+
       - name: Publish single executable
         run: >
           dotnet publish Allusion/Allusion.csproj

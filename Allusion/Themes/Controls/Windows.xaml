@@ -3,7 +3,7 @@
 
     <Style x:Key="DialogWindow" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{DynamicResource Dialog.BackGround}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Allusion.Logo.Border}" />
         <Setter Property="BorderThickness" Value="2" />
     </Style>
 
