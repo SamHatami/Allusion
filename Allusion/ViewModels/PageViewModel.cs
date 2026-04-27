@@ -272,6 +272,17 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         Viewport.FrameBounds(viewportSize, bounds);
     }
 
+    public bool ScaleSelectedImages(double scaleFactor)
+    {
+        if (SelectedImages.Count == 0) return false;
+
+        foreach (var image in SelectedImages)
+            image.Scale *= scaleFactor;
+
+        _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
+        return true;
+    }
+
     private ImageViewModel[] GetDefaultArrangeImages()
     {
         return SelectedImages.Count > 0

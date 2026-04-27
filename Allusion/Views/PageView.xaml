@@ -23,22 +23,23 @@
 
         <converter:StringToVisibilityConverter x:Key="StringToVis" />
         <converter:InvertBoolToVis x:Key="InvertBoolVis" />
+        <converter:InverseZoomDoubleConverter x:Key="InverseZoomDouble" />
         <Style x:Key="TriangleThumbStyle" TargetType="Thumb">
-            <Setter Property="Width" Value="15" />
-            <Setter Property="Height" Value="15" />
+            <Setter Property="Width" Value="{Binding DataContext.Viewport.Zoom, RelativeSource={RelativeSource AncestorType=Canvas}, Converter={StaticResource InverseZoomDouble}, ConverterParameter=15}" />
+            <Setter Property="Height" Value="{Binding DataContext.Viewport.Zoom, RelativeSource={RelativeSource AncestorType=Canvas}, Converter={StaticResource InverseZoomDouble}, ConverterParameter=15}" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Grid>
+                        <Viewbox Stretch="Fill">
                             <Polygon
                                 x:Name="TriangleThumb"
                                 Fill="{DynamicResource Tab.Button.Selected}"
                                 Points="15,-5 -5,15 15,15"
                                 StrokeThickness="0" />
-                        </Grid>
+                        </Viewbox>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="TriangleThumb" Property="Fill" Value="WhiteSmoke" />
@@ -118,7 +119,9 @@
                                     IsHitTestVisible="True"              
 >
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu x:Name="ImageContextMenu">
+                                        <ContextMenu
+                                            x:Name="ImageContextMenu"
+                                            DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                             <MenuItem cm:Message.Attach="AddNote" Header="Add note" />
                                             <MenuItem cm:Message.Attach="RemoveNote" Header="Remove Note" />
                                             <!--<MenuItem
@@ -132,12 +135,18 @@
                                                     </Style>
                                                 </MenuItem.ItemContainerStyle>
                                             </MenuItem>-->
-                                            <!--<MenuItem Header="Size">
+                                            <MenuItem Header="Size">
                                                 <MenuItem cm:Message.Attach="SetSize('0.25')" Header="25%" />
                                                 <MenuItem cm:Message.Attach="SetSize('0.50')" Header="50%" />
                                                 <MenuItem cm:Message.Attach="SetSize('0.75')" Header="75%" />
-                                                <MenuItem cm:Message.Attach="SetSize('1')" Header="100%" />
-                                            </MenuItem>-->
+                                                <MenuItem cm:Message.Attach="SetSize('1.00')" Header="100%" />
+                                                <MenuItem cm:Message.Attach="SetSize('1.25')" Header="125%" />
+                                                <MenuItem cm:Message.Attach="SetSize('1.50')" Header="150%" />
+                                                <MenuItem cm:Message.Attach="SetSize('1.75')" Header="175%" />
+                                                <MenuItem cm:Message.Attach="SetSize('2.00')" Header="200%" />
+                                                <MenuItem cm:Message.Attach="SetSize('2.25')" Header="225%" />
+                                                <MenuItem cm:Message.Attach="SetSize('2.50')" Header="250%" />
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                 </ContentControl>

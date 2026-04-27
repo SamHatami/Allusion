@@ -78,7 +78,7 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
         _startPoint = e.GetPosition(_mainCanvas);
         _images.Clear();
 
-        _events?.PublishOnBackgroundThreadAsync(new ClearSelectionEvent(), new CancellationToken(true));
+        _events?.PublishOnUIThreadAsync(new SelectionEvent(null, SelectionType.DeSelect));
         _mainCanvas.Focus();
         _inputSurface.CaptureMouse();
         _isSelecting = true;

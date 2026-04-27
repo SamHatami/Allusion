@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Allusion.WPFCore.Controls;assembly=Allusion.WPFCore"
+    xmlns:converter="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
@@ -11,6 +12,10 @@
     IsSelected="{Binding IsSelected, NotifyOnSourceUpdated=True}"
     SnapsToDevicePixels="True"
     mc:Ignorable="d">
+
+    <controls:ImageControl.Resources>
+        <converter:InverseZoomThicknessConverter x:Key="InverseZoomThickness" />
+    </controls:ImageControl.Resources>
 
     <Border
         x:Name="ImageBorder"
@@ -22,7 +27,7 @@
         <Border.Style>
             <Style TargetType="Border">
                 <Setter Property="BorderBrush" Value="{DynamicResource ImageItem.Border}" />
-                <Setter Property="BorderThickness" Value="4" />
+                <Setter Property="BorderThickness" Value="{Binding DataContext.Viewport.Zoom, RelativeSource={RelativeSource AncestorType=Canvas}, Converter={StaticResource InverseZoomThickness}, ConverterParameter=4}" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnTargetUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="True">
                         <Setter Property="BorderBrush" Value="DarkOliveGreen" />

@@ -7,6 +7,7 @@ namespace Allusion.Behaviors;
 
 public class CanvasViewportBehavior : Behavior<FrameworkElement>
 {
+    private const double SelectionScaleStep = 1.15;
     private bool _isPanning;
     private Point _lastPanPoint;
     private Cursor? _previousCursor;
@@ -55,6 +56,16 @@ public class CanvasViewportBehavior : Behavior<FrameworkElement>
     private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
         if (_page == null) return;
+
+        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+        {
+            var scaleFactor = e.Delta > 0 ? SelectionScaleStep : 1 / SelectionScaleStep;
+            if (_page.ScaleSelectedImages(scaleFactor))
+            {
+                e.Handled = true;
+                return;
+            }
+        }
 
         _page.Viewport.ZoomAt(e.GetPosition(AssociatedObject), e.Delta);
         e.Handled = true;
