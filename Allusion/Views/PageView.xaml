@@ -11,7 +11,7 @@
     xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:Allusion.ViewModels"
-    cm:Message.Attach="              [Gesture Ctrl+Z] = [UndoRemove];"
+    cm:Message.Attach="[Gesture Ctrl+Z] = [UndoRemove]; [Gesture Ctrl+Shift+F] = [BringToFront]; [Gesture Ctrl+Shift+B] = [SendToBack];"
     d:DataContext="{d:DesignInstance Type=viewModels:PageViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -87,6 +87,21 @@
                         <MenuItem cm:Message.Attach="[ArrangeSmallestHeight]" Header="Normalize smallest height" />
                         <Separator />
                         <MenuItem cm:Message.Attach="[ArrangeSettings]" Header="Settings" />
+                    </MenuItem>
+                    <MenuItem Header="Order">
+                        <MenuItem cm:Message.Attach="[BringToFront]" Header="Bring to front" />
+                        <MenuItem cm:Message.Attach="[BringForward]" Header="Bring forward" />
+                        <MenuItem cm:Message.Attach="[SendBackward]" Header="Send backward" />
+                        <MenuItem cm:Message.Attach="[SendToBack]" Header="Send to back" />
+                    </MenuItem>
+                    <MenuItem Header="Align">
+                        <MenuItem cm:Message.Attach="[AlignLeft]" Header="Left" />
+                        <MenuItem cm:Message.Attach="[AlignHorizontalCenters]" Header="Horizontal centers" />
+                        <MenuItem cm:Message.Attach="[AlignRight]" Header="Right" />
+                        <Separator />
+                        <MenuItem cm:Message.Attach="[AlignTop]" Header="Top" />
+                        <MenuItem cm:Message.Attach="[AlignVerticalCenters]" Header="Vertical centers" />
+                        <MenuItem cm:Message.Attach="[AlignBottom]" Header="Bottom" />
                     </MenuItem>
                     <MenuItem cm:Message.Attach="[Save]" Header="Save" />
                 </ContextMenu>
@@ -207,6 +222,7 @@
                     <Style>
                         <Setter Property="Canvas.Left" Value="{Binding PosX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Property="Canvas.Top" Value="{Binding PosY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Property="Panel.ZIndex" Value="{Binding ZIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>

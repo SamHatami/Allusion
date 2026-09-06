@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,8 +33,11 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
         if (AssociatedObject is Canvas canvas)
         {
             _mainCanvas = canvas;
-            _page = _mainCanvas.DataContext as PageViewModel;
             _inputSurface = VisualTreeHelper.GetParent(_mainCanvas) as FrameworkElement ?? _mainCanvas;
+
+            // Behaviors attach while the XAML is parsed, before Caliburn binds the PageViewModel.
+            _mainCanvas.DataContextChanged += OnDataContextChanged;
+            SetPage(_mainCanvas.DataContext);
 
             _inputSurface.PreviewMouseLeftButtonDown += OnMouseLeftButtonDown;
             _inputSurface.PreviewMouseLeftButtonUp += OnMouseLeftButtonUp;
@@ -47,11 +49,24 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
     {
         base.OnDetaching();
 
+        if (_mainCanvas is not null)
+            _mainCanvas.DataContextChanged -= OnDataContextChanged;
+
         if (_inputSurface == null) return;
 
         _inputSurface.PreviewMouseLeftButtonDown -= OnMouseLeftButtonDown;
         _inputSurface.PreviewMouseLeftButtonUp -= OnMouseLeftButtonUp;
         _inputSurface.PreviewMouseMove -= OnMouseMove;
+    }
+
+    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        SetPage(e.NewValue);
+    }
+
+    private void SetPage(object? dataContext)
+    {
+        _page = dataContext as PageViewModel;
     }
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -60,8 +75,8 @@ public class CanvasSelectionBoxBehavior : Behavior<UIElement>
         {
             CreateSelectionHitTest();
 
-            if(_images.Any())
-                _events.PublishOnBackgroundThreadAsync(new SelectionEvent(_images.ToArray(), SelectionType.Multi));
+            if (_images.Any())
+                _events?.PublishOnUIThreadAsync(new SelectionEvent(_images.ToArray(), SelectionType.Multi));
 
             _inputSurface.ReleaseMouseCapture();
             ResetSelectionBox();

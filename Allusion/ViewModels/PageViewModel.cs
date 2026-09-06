@@ -178,7 +178,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
             if (Page.ImageItems.Contains(item))
                 continue; //override contains and isequal with a bitmap service comparor something
 
-            Images.Add(new ImageViewModel(item, _events));
+            Images.Add(new ImageViewModel(item, _events) { ZIndex = NextZIndex() });
             _pageManager.AddImage(item, Page);
             itemsAdded = true;
         }
@@ -281,6 +281,75 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
         _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
         return true;
+    }
+
+    public void BringToFront() => ApplyZOrder(ZOrderOperation.BringToFront);
+
+    public void SendToBack() => ApplyZOrder(ZOrderOperation.SendToBack);
+
+    public void BringForward() => ApplyZOrder(ZOrderOperation.BringForward);
+
+    public void SendBackward() => ApplyZOrder(ZOrderOperation.SendBackward);
+
+    public void AlignLeft() => AlignSelected(AlignEdge.Left);
+
+    public void AlignRight() => AlignSelected(AlignEdge.Right);
+
+    public void AlignTop() => AlignSelected(AlignEdge.Top);
+
+    public void AlignBottom() => AlignSelected(AlignEdge.Bottom);
+
+    public void AlignHorizontalCenters() => AlignSelected(AlignEdge.HorizontalCenters);
+
+    public void AlignVerticalCenters() => AlignSelected(AlignEdge.VerticalCenters);
+
+    private void ApplyZOrder(ZOrderOperation operation)
+    {
+        if (SelectedImages.Count == 0) return;
+
+        var selected = new HashSet<ImageViewModel>(SelectedImages);
+        var reordered = ImageZOrderService.Reorder(GetZOrderStack(), selected, operation);
+
+        for (var i = 0; i < reordered.Count; i++)
+            reordered[i].ZIndex = i;
+
+        _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
+    }
+
+    private List<ImageViewModel> GetZOrderStack()
+    {
+        // Ties fall back to collection order, which is how boards saved before
+        // ZIndex existed were stacked.
+        return Images
+            .Select((image, index) => (image, index))
+            .OrderBy(pair => pair.image.ZIndex)
+            .ThenBy(pair => pair.index)
+            .Select(pair => pair.image)
+            .ToList();
+    }
+
+    private void AlignSelected(AlignEdge edge)
+    {
+        var images = SelectedImages.ToArray();
+        if (images.Length < 2) return;
+
+        var items = images
+            .Select(image => new ImageAlignItem(image.PosX, image.PosY, image.Width, image.Height))
+            .ToArray();
+        var results = ImageAlignmentService.Align(items, edge);
+
+        for (var i = 0; i < images.Length; i++)
+        {
+            images[i].PosX = results[i].X;
+            images[i].PosY = results[i].Y;
+        }
+
+        _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
+    }
+
+    private int NextZIndex()
+    {
+        return Images.Count == 0 ? 0 : Images.Max(image => image.ZIndex) + 1;
     }
 
     private ImageViewModel[] GetDefaultArrangeImages()
@@ -403,6 +472,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
                 image.PosY = new Random().NextDouble() * 50 + 10;
                 image.Dropped = false;
                 image.IsSelected = false;
+                image.ZIndex = NextZIndex();
                 Images.Add(image);
                 _pageManager.AddImage(image.Item, Page);
                 ClearSelection();
@@ -424,39 +494,14 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     public Task HandleAsync(SelectionEvent message, CancellationToken cancellationToken)
     {
-        if (message.Images == null)
-        {
-            ClearSelection();
-        }
-        else
-        {
-            ClearSelection();
+        ClearSelection();
 
-            //Framtida ctrl-click val
-            switch (message.Type)
-            {
-                case SelectionType.DeSelect:
-                    foreach (var image in Images)
-                        image.IsSelected = false;
-                    break;
+        if (message.Images == null) return Task.CompletedTask;
 
-                case SelectionType.Multi:
-                    //SelectedImages.AddRange(message.Images);
-                    //foreach (var image in message.Images)
-                    //    image.IsSelected = true;
-                    break;
+        foreach (var image in message.Images)
+            image.IsSelected = true;
 
-                case SelectionType.Single:
-                    if (SelectedImages.Intersect(message.Images).Any())
-                        return Task.CompletedTask;
-                    break;
-            }
-            
-            foreach (var image in message.Images)
-                image.IsSelected = true;
-            SelectedImages.AddRange(message.Images);
-        }
-
+        SelectedImages.AddRange(message.Images);
 
         return Task.CompletedTask;
     }

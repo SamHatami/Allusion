@@ -123,6 +123,21 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
         }
     }
 
+    private int _zIndex;
+
+    public int ZIndex
+    {
+        get => _zIndex;
+        set
+        {
+            if (value != _zIndex)
+                _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
+
+            _zIndex = value;
+            NotifyOfPropertyChange(nameof(ZIndex));
+        }
+    }
+
     private int _pageMember;
 
     public int PageMember //TODO: Probably use a MoveToPageEvent. This comes from a user input
@@ -164,6 +179,7 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
         ImageSource = _item.SourceImage;
         _posX = _item.PosX;
         _posY = _item.PosY;
+        _zIndex = _item.ZIndex;
         Scale = _item.Scale > 0 ? _item.Scale : 1.0;
         Description = _item.Description;
 
@@ -183,6 +199,7 @@ public class ImageViewModel : PropertyChangedBase, IRemovableItem, IImageViewMod
         _item.PosX = PosX;
         _item.PosY = PosY;
         _item.Scale = Scale;
+        _item.ZIndex = ZIndex;
 
         return _item;
     }

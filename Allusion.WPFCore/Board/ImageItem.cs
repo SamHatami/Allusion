@@ -16,6 +16,7 @@ public class ImageItem : IItem
     public double PosX { get; set; }
     public double PosY { get; set; }
     public double Scale { get; set; }
+    public int ZIndex { get; set; }
     public string Description { get; set; } = string.Empty;
     public Guid MemberOfPage { get; set; } = Guid.Empty;
 

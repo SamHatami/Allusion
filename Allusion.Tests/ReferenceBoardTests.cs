@@ -111,6 +111,7 @@ namespace Allusion.Tests
             image.Scale.Should().Be(0.5);
             image.Description.Should().Be("reference");
             image.ItemPath.Should().Be(imagePath);
+            image.ZIndex.Should().Be(0);
         }
 
         [Fact]
@@ -120,7 +121,8 @@ namespace Allusion.Tests
             var page = board.Pages.Single();
             var image = new ImageItem(12.0, 34.0, 0.5)
             {
-                Description = "reference"
+                Description = "reference",
+                ZIndex = 3
             };
             var sourceImagePath = Path.Combine(_testDirectory, "source.png");
             File.WriteAllBytes(sourceImagePath, Convert.FromBase64String(
@@ -145,6 +147,7 @@ namespace Allusion.Tests
             loadedImage.PosY.Should().Be(34.0);
             loadedImage.Scale.Should().Be(0.5);
             loadedImage.Description.Should().Be("reference");
+            loadedImage.ZIndex.Should().Be(3);
         }
 
         [Fact]

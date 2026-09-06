@@ -69,6 +69,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
                                 <!--  Row 0  -->
@@ -118,6 +120,30 @@
                                     Grid.Column="1"
                                     Margin="2,5"
                                     Text="Ctrl + V" />
+
+                                <!--  Row 4  -->
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Margin="2,5"
+                                    Text="Bring to Front" />
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Margin="2,5"
+                                    Text="Ctrl + Shift + F" />
+
+                                <!--  Row 5  -->
+                                <TextBlock
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Margin="2,5"
+                                    Text="Send to Back" />
+                                <TextBlock
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Margin="2,5"
+                                    Text="Ctrl + Shift + B" />
                             </Grid>
                         </Border>
                     </BlockUIContainer>
