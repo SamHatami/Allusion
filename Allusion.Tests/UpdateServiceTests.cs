@@ -120,6 +120,18 @@ public class UpdateServiceTests
         handler.CallCount.Should().Be(1);
     }
 
+    [Fact]
+    public async Task CheckForUpdates_ShouldNotCacheNegativeResults()
+    {
+        var handler = new StubHandler(ReleaseJson("v1.7"));
+        var service = CreateService(handler, "1.7.0");
+
+        await service.CheckForUpdatesAsync();
+        await service.CheckForUpdatesAsync();
+
+        handler.CallCount.Should().Be(2);
+    }
+
     [Theory]
     [InlineData("v1.7", "1.7")]
     [InlineData("1.7.0", "1.7.0")]

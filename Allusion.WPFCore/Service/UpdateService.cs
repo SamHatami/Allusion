@@ -38,8 +38,11 @@ public class UpdateService : IUpdateService
             return _cachedResult;
 
         var result = await FetchLatestStableAsync(cancellationToken).ConfigureAwait(false);
-        _cachedResult = result;
-        _cachedAt = DateTime.UtcNow;
+        if (result is not null)
+        {
+            _cachedResult = result;
+            _cachedAt = DateTime.UtcNow;
+        }
         return result;
     }
 

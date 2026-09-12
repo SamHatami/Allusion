@@ -9,6 +9,7 @@ using FontAwesome.Sharp;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Thumb = System.Windows.Controls.Primitives.Thumb;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Allusion.Views;
@@ -58,6 +59,8 @@ public partial class PageView : UserControl
         var contentControl = thumb.Parent as FrameworkElement;
         var vm = contentControl.DataContext as ImageViewModel;
 
+        RenderOptions.SetBitmapScalingMode(contentControl, BitmapScalingMode.LowQuality);
+
         var aspectRatio = vm.AspectRatio;
 
         // Calculate new width and height
@@ -78,6 +81,9 @@ public partial class PageView : UserControl
     private void ResizeThumb_OnDragCompleted(object sender, DragCompletedEventArgs e)
     {
         Mouse.SetCursor(default);
+
+        if (sender is FrameworkElement content && content.Parent is FrameworkElement parent)
+            parent.ClearValue(RenderOptions.BitmapScalingModeProperty);
 
         if (_dragIcon != null)
         {
