@@ -94,6 +94,7 @@ public class ImageBehavior : Behavior<UIElement>
 
         AssociatedObject.Focus();
         AssociatedObject.CaptureMouse();
+        RenderOptions.SetBitmapScalingMode(AssociatedObject, BitmapScalingMode.LowQuality);
 
         e.Handled = true;
     }
@@ -175,6 +176,7 @@ public class ImageBehavior : Behavior<UIElement>
         if (AssociatedObject.IsMouseCaptured)
             AssociatedObject.ReleaseMouseCapture();
 
+        AssociatedObject.ClearValue(RenderOptions.BitmapScalingModeProperty);
         RemoveDragIcon();
         ExitDropMode();
     }
