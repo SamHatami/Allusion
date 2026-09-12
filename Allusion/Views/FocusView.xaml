@@ -35,9 +35,9 @@
 
         <Rectangle
             x:Name="ZoomBox"
-            Fill="DarkGray"
+            Fill="{DynamicResource Foreground}"
             Opacity="0.25"
-            Stroke="DarkOliveGreen"
+            Stroke="{DynamicResource Mouse.IsOver}"
             StrokeThickness="1" />
     </Canvas>
 

@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <controls:ImageControl.Resources>
-        <converter:InverseZoomThicknessConverter x:Key="InverseZoomThickness" />
+        <converter:ZoomedThicknessConverter x:Key="ZoomedThickness" />
     </controls:ImageControl.Resources>
 
     <Border
@@ -27,10 +27,17 @@
         <Border.Style>
             <Style TargetType="Border">
                 <Setter Property="BorderBrush" Value="{DynamicResource ImageItem.Border}" />
-                <Setter Property="BorderThickness" Value="{Binding DataContext.Viewport.Zoom, RelativeSource={RelativeSource AncestorType=Canvas}, Converter={StaticResource InverseZoomThickness}, ConverterParameter=4}" />
+                <Setter Property="BorderThickness">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource ZoomedThickness}">
+                            <Binding Path="DataContext.Viewport.Zoom" RelativeSource="{RelativeSource AncestorType=Canvas}" />
+                            <Binding Path="DataContext.ImageBorderThickness" RelativeSource="{RelativeSource AncestorType=Canvas}" />
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnTargetUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="True">
-                        <Setter Property="BorderBrush" Value="DarkOliveGreen" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource Mouse.IsOver}" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsSelected, NotifyOnSourceUpdated=True, RelativeSource={RelativeSource AncestorType=controls:ImageControl}}" Value="False">
                         <Setter Property="BorderBrush" Value="{DynamicResource ImageItem.Border}" />

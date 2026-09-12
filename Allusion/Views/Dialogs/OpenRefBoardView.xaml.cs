@@ -8,7 +8,7 @@ namespace Allusion.Views.Dialogs;
 /// <summary>
 /// Interaction logic for OperRefBoardView.xaml
 /// </summary>
-public partial class OpenRefBoardView : UserControl
+public partial class OpenRefBoardView : Window
 {
     public OpenRefBoardView()
     {

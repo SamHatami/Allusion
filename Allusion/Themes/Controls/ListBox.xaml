@@ -79,7 +79,7 @@
                             <SolidColorBrush Color="{DynamicResource Primary.TextBox.Background}" />
                         </Border.Background>
                         <Border.BorderBrush>
-                            <SolidColorBrush Color="{DynamicResource Secondary.Border}" />
+                            <DynamicResource ResourceKey="TextBox.Border" />
                         </Border.BorderBrush>
                         <ScrollViewer Margin="0" Focusable="false">
                             <StackPanel Margin="2" IsItemsHost="True" />

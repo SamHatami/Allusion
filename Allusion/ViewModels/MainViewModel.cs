@@ -11,7 +11,7 @@ using Allusion.WPFCore.Service;
 namespace Allusion.ViewModels;
 
 public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
-    IHandle<BoardIsModfiedEvent>, IHandle<BoardOpenedEvent>
+    IHandle<BoardIsModfiedEvent>, IHandle<BoardOpenedEvent>, IHandle<SettingsChangedEvent>
 {
     //TODO: Booleans on states -> enums
 
@@ -43,12 +43,11 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         }
     }
 
-    public OpenRefBoardViewModel StartBoardPicker { get; }
-
     private readonly IEventAggregator _events;//
     private readonly IReferenceBoardManager _boardManager;
     private readonly IWindowManager _windowManager;
     private readonly IUpdateService _updateService;
+    private readonly IThemeService _themeService;
     private AllusionConfiguration _configuration;
 
     public AllusionConfiguration Configuration
@@ -62,10 +61,11 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     }
     private Size _windowSize;
     private readonly HelpViewModel _help;
+    private OpenRefBoardViewModel? _pickerDialog;
 
     public MainViewModel(IWindowManager windowManager, IEventAggregator events,
         IReferenceBoardManager refBoardManager, AllusionConfiguration configuration, HelpViewModel help,
-        IUpdateService updateService)
+        IUpdateService updateService, IThemeService themeService)
     {
         _windowManager = windowManager;
         _configuration = configuration;
@@ -74,11 +74,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
         _updateService = updateService;
+        _themeService = themeService;
         _help = help;
-        StartBoardPicker = new OpenRefBoardViewModel(_boardManager, _events, _windowManager)
-        {
-            CloseWhenCompleted = false
-        };
 
         StaticLogger.LogEvent += OnLogEvent;
     }
@@ -111,7 +108,10 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     public async Task NewRefBoardDialog()
     {
         if (RefBoardViewModel is null)
+        {
+            await ShowStartBoardPickerAsync();
             return;
+        }
 
         if (BoardIsModified)
         {
@@ -121,17 +121,17 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
             {
                 case DialogResultType.Yes:
                     await _refBoardViewModel.Save();
-                    ShowStartBoardPicker();
+                    await ShowStartBoardPickerAsync();
                     break;
 
                 case DialogResultType.No:
-                    ShowStartBoardPicker();
+                    await ShowStartBoardPickerAsync();
                     break;
             }
         }
         else
         {
-            ShowStartBoardPicker();
+            await ShowStartBoardPickerAsync();
         }
     }
 
@@ -142,10 +142,20 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         AllusionConfiguration.Save(_configuration);
     }
 
+    public IThemeService Theme => _themeService;
+
+    public void ToggleTheme()
+    {
+        _themeService.CycleTheme();
+    }
+
     public async Task OpenRefBoardDialog()
     {
         if (RefBoardViewModel is null)
+        {
+            await ShowStartBoardPickerAsync();
             return;
+        }
 
         //replace with something else.
         if (BoardIsModified)
@@ -156,11 +166,11 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
             {
                 case DialogResultType.Yes:
                     await _refBoardViewModel.Save();
-                    ShowStartBoardPicker();
+                    await ShowStartBoardPickerAsync();
                     break;
 
                 case DialogResultType.No:
-                    ShowStartBoardPicker();
+                    await ShowStartBoardPickerAsync();
                     break;
 
                 case DialogResultType.Cancel: return;
@@ -168,16 +178,17 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         }
         else
         {
-            ShowStartBoardPicker();
+            await ShowStartBoardPickerAsync();
         }
     }
 
-    private void ShowStartBoardPicker()
+    private async Task ShowStartBoardPickerAsync()
     {
-        StartBoardPicker.RefreshBoards();
-        NotifyOfPropertyChange(nameof(StartBoardPicker));
         RefBoardViewModel = null;
         BoardIsModified = false;
+        _pickerDialog = new OpenRefBoardViewModel(_boardManager, _events, _windowManager);
+        await _windowManager.ShowDialogAsync(_pickerDialog);
+        _pickerDialog = null;
     }
 
     public async Task PasteOnCanvas()
@@ -205,6 +216,12 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         if(_help.IsActive)
             _help.Close();
         _windowManager.ShowDialogAsync(_help);
+    }
+
+    public async Task OpenSettings()
+    {
+        var dialog = new SettingsViewModel(_configuration, _themeService, _events);
+        await _windowManager.ShowDialogAsync(dialog);
     }
 
     private UpdateInfo? _availableUpdate;
@@ -281,11 +298,20 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         return Task.CompletedTask;
     }
 
+    public Task HandleAsync(SettingsChangedEvent message, CancellationToken cancellationToken)
+    {
+        NotifyOfPropertyChange(nameof(Configuration));
+
+        return Task.CompletedTask;
+    }
+
     private void InitializeRefBoard()
     {
         BoardIsModified = false;
         Debug.Assert(_boardManager is not null, "Holup");
         RefBoardViewModel = new ReferenceBoardViewModel(_events, _boardManager, _currentRefBoard, this);
+        if (_pickerDialog?.IsActive == true)
+            _pickerDialog.TryCloseAsync(true);
     }
 
     protected override void OnViewLoaded(object view)
@@ -302,7 +328,10 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         }
         
         FirstTime();
+        _themeService.ApplyTheme(_themeService.CurrentTheme);
         _ = CheckForUpdatesOnStartupAsync();
+        if (RefBoardViewModel is null)
+            _ = ShowStartBoardPickerAsync();
 
     }
 

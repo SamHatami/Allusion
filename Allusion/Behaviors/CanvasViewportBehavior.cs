@@ -23,6 +23,7 @@ public class CanvasViewportBehavior : Behavior<FrameworkElement>
         AssociatedObject.PreviewMouseMove += OnPreviewMouseMove;
         AssociatedObject.PreviewMouseUp += OnPreviewMouseUp;
         AssociatedObject.PreviewKeyDown += OnPreviewKeyDown;
+        AssociatedObject.PreviewKeyUp += OnPreviewKeyUp;
         AssociatedObject.LostMouseCapture += OnLostMouseCapture;
 
         SetPage(AssociatedObject.DataContext);
@@ -36,6 +37,7 @@ public class CanvasViewportBehavior : Behavior<FrameworkElement>
         AssociatedObject.PreviewMouseMove -= OnPreviewMouseMove;
         AssociatedObject.PreviewMouseUp -= OnPreviewMouseUp;
         AssociatedObject.PreviewKeyDown -= OnPreviewKeyDown;
+        AssociatedObject.PreviewKeyUp -= OnPreviewKeyUp;
         AssociatedObject.LostMouseCapture -= OnLostMouseCapture;
 
         EndPan();
@@ -114,11 +116,22 @@ public class CanvasViewportBehavior : Behavior<FrameworkElement>
     {
         if (_page == null) return;
 
+        if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            _page.ShowSnapGrid = true;
+
         if (e.Key == Key.D0 && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
         {
             _page.Viewport.Reset();
             e.Handled = true;
         }
+    }
+
+    private void OnPreviewKeyUp(object sender, KeyEventArgs e)
+    {
+        if (_page == null) return;
+
+        if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            _page.ShowSnapGrid = false;
     }
 
     private void OnLostMouseCapture(object sender, MouseEventArgs e)

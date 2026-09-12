@@ -29,7 +29,7 @@ namespace Allusion.ViewModels;
 
 public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner, IHandle<NewImageItemsEvent>,
     IHandle<DropOnTabEvent>,
-    IHandle<PageSelectedEvent>, IHandle<SelectionEvent>
+    IHandle<PageSelectedEvent>, IHandle<SelectionEvent>, IHandle<SettingsChangedEvent>
 {
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
@@ -44,6 +44,33 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     public BindableCollection<ImageViewModel> Images { get; set; }
 
     public CanvasViewport Viewport { get; } = new();
+
+    private double _imageBorderThickness;
+    private bool _showSnapGrid;
+
+    public double ImageBorderThickness
+    {
+        get => _imageBorderThickness;
+        private set
+        {
+            if (Math.Abs(_imageBorderThickness - value) < 0.001) return;
+
+            _imageBorderThickness = value;
+            NotifyOfPropertyChange(nameof(ImageBorderThickness));
+        }
+    }
+
+    public bool ShowSnapGrid
+    {
+        get => _showSnapGrid;
+        set
+        {
+            if (_showSnapGrid == value) return;
+
+            _showSnapGrid = value;
+            NotifyOfPropertyChange(nameof(ShowSnapGrid));
+        }
+    }
 
 
     public IEnumerable<PageViewModel> OtherPages
@@ -138,6 +165,7 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         Images = new BindableCollection<ImageViewModel>();
         _windowManger = IoC.Get<IWindowManager>();
         Images.CollectionChanged += (sender, args) => UpdateInfoBool();
+        ImageBorderThickness = Allusion.WPFCore.AllusionConfiguration.Read().ImageBorderThickness;
 
         InitializePage();
     }
@@ -517,6 +545,13 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         ClearSelection();
         image.IsSelected = true;
         SelectedImages.Add(image);
+    }
+
+    public Task HandleAsync(SettingsChangedEvent message, CancellationToken cancellationToken)
+    {
+        ImageBorderThickness = message.ImageBorderThickness;
+
+        return Task.CompletedTask;
     }
 
     public Task HandleAsync(SelectionEvent message, CancellationToken cancellationToken)

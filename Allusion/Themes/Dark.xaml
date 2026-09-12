@@ -1,124 +1,68 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color
-        x:Key="Transparent"
-        A="0"
-        B="0"
-        G="0"
-        R="0" />
-    <Color
-        x:Key="Primary.Gray"
-        A="255"
-        B="128"
-        G="128"
-        R="128" />
-    <Color
-        x:Key="Primary.Red"
-        A="255"
-        B="70"
-        G="70"
-        R="95" />
-    <Color
-        x:Key="Primary.Green"
-        A="255"
-        B="90"
-        G="95"
-        R="90" />
+    <!--  Theme colors  -->
+    <Color x:Key="Transparent" A="0" B="0" G="0" R="0" />
+    <Color x:Key="Primary.Gray" A="255" B="128" G="128" R="128" />
+    <Color x:Key="Primary.Red" A="255" B="70" G="70" R="95" />
+    <Color x:Key="Primary.Green" A="255" B="90" G="95" R="90" />
+    <Color x:Key="Secondary.Green" A="255" B="95" G="100" R="95" />
+    <Color x:Key="Primary.Selected" A="255" B="61" G="61" R="61" />
+    <Color x:Key="Primary.Unselected" A="255" B="50" G="50" R="50" />
+    <Color x:Key="Primary.Background" A="255" B="40" G="40" R="40" />
+    <Color x:Key="Secondary.Background" A="255" B="50" G="50" R="50" />
+    <Color x:Key="Primary.Button" A="255" B="60" G="65" R="60" />
+    <Color x:Key="Secondary.Button" A="255" B="60" G="60" R="60" />
+    <Color x:Key="Primary.TextBox.Background" A="255" B="40" G="40" R="40" />
+    <Color x:Key="Primary.Foreground" A="255" B="200" G="200" R="200" />
+    <Color x:Key="Secondary.Foreground" A="255" B="225" G="230" R="225" />
+    <Color x:Key="Primary.Border" A="255" B="65" G="65" R="65" />
+    <Color x:Key="Secondary.Border" A="255" B="65" G="70" R="65" />
+    <Color x:Key="Image.Border" A="255" B="25" G="25" R="25" />
+    <Color x:Key="Primary.Border.UnSelected" A="255" B="50" G="50" R="50" />
+    <Color x:Key="Logo" A="255" B="100" G="100" R="100" />
+    <Color x:Key="Logo.Border" A="255" B="170" G="175" R="170" />
 
-    <Color
-        x:Key="Secondary.Green"
-        A="255"
-        B="95"
-        G="100"
-        R="95" />
-    <Color
-        x:Key="Primary.Selected"
-        A="255"
-        B="61"
-        G="61"
-        R="61" />
-    <Color
-        x:Key="Primary.Background"
-        A="255"
-        B="40"
-        G="40"
-        R="40" />
-    <Color
-        x:Key="Secondary.Background"
-        A="255"
-        B="50"
-        G="50"
-        R="50" />
-
-    <Color
-        x:Key="Primary.Button"
-        A="255"
-        B="60"
-        G="65"
-        R="60" />
-
-    <Color
-        x:Key="Secondary.Button"
-        A="255"
-        B="60"
-        G="60"
-        R="60" />
-    <Color
-        x:Key="Primary.TextBox.Background"
-        A="255"
-        B="40"
-        G="40"
-        R="40" />
-    <Color
-        x:Key="Primary.Foreground"
-        A="255"
-        B="200"
-        G="200"
-        R="200" />
-    <Color
-        x:Key="Secondary.Foreground"
-        A="255"
-        B="225"
-        G="230"
-        R="225" />
-    <Color
-        x:Key="Primary.Border"
-        A="255"
-        B="65"
-        G="65"
-        R="65" />
-    <Color
-        x:Key="Secondary.Border"
-        A="255"
-        B="65"
-        G="70"
-        R="65" />
-
-    <Color
-        x:Key="Image.Border"
-        A="255"
-        B="25"
-        G="25"
-        R="25" />
-    <Color
-        x:Key="Primary.Border.UnSelected"
-        A="255"
-        B="50"
-        G="50"
-        R="50" />
-
-    <Color
-        x:Key="Logo"
-        A="255"
-        B="25"
-        G="25"
-        R="25" />
-
-    <Color
-        x:Key="Logo.Border"
-        A="255"
-        B="170"
-        G="175"
-        R="170" />
+    <!--  Theme brushes (literal: every theme fully describes the palette)  -->
+    <SolidColorBrush x:Key="Transparent.Brush" Color="#00000000" />
+    <SolidColorBrush x:Key="Window.TitleBar.Color" Color="#FF282828" />
+    <SolidColorBrush x:Key="Window.TitleBar.ForeGround" Color="#FFC8C8C8" />
+    <SolidColorBrush x:Key="Window.Titlebar.Button.MouseOver" Color="#FFD3D3D3" />
+    <SolidColorBrush x:Key="Window.Titlebar.Button.Close" Color="#FF5F4646" />
+    <SolidColorBrush x:Key="Mouse.OnClick" Color="#FF696969" />
+    <SolidColorBrush x:Key="Allusion.Logo" Color="#FF646464" />
+    <SolidColorBrush x:Key="Allusion.Logo.Border" Color="#FFAAAFAA" />
+    <SolidColorBrush x:Key="BackGround" Color="#FF282828" />
+    <SolidColorBrush x:Key="Mouse.IsOver" Color="#FF5A5F5A" />
+    <SolidColorBrush x:Key="Board.Background" Color="#FF282828" />
+    <SolidColorBrush x:Key="Label.Title.Background" Color="#FF282828" />
+    <SolidColorBrush x:Key="Foreground" Color="#FFC8C8C8" />
+    <SolidColorBrush x:Key="Foreground.Front" Color="#FFE1E6E1" />
+    <SolidColorBrush x:Key="Border" Color="#FF414141" />
+    <SolidColorBrush x:Key="Window.Close" Color="#FF5F4646" />
+    <SolidColorBrush x:Key="Dialog.BackGround" Color="#FF323232" />
+    <SolidColorBrush x:Key="Dialog.Border" Color="#FF414641" />
+    <SolidColorBrush x:Key="Dialog.TextBox.Background" Color="#FF282828" />
+    <SolidColorBrush x:Key="Info.BackGround" Color="#FF323232" />
+    <SolidColorBrush x:Key="ImageItem.Border" Color="#FF191919" />
+    <SolidColorBrush x:Key="ImageItem.TextBlock.Background" Color="#FF191919" />
+    <SolidColorBrush x:Key="ListBox.Background" Color="#FF323232" />
+    <SolidColorBrush x:Key="ListBox.Item.Foreground" Color="#FFE1E6E1" />
+    <SolidColorBrush x:Key="ListBox.Item.Selected" Color="#FF5F645F" />
+    <SolidColorBrush x:Key="ListBox.Item.UnSelected" Color="#FF323232" />
+    <SolidColorBrush x:Key="TextBox.Border.Focus" Color="#FF5F645F" />
+    <SolidColorBrush x:Key="TextBox.Foreground" Color="#FFE1E6E1" />
+    <SolidColorBrush x:Key="TextBox.Border" Color="#FF414641" />
+    <SolidColorBrush x:Key="TextBox.Background.Focus" Color="#FF323232" />
+    <SolidColorBrush x:Key="TextBox.Background" Color="#FF282828" />
+    <SolidColorBrush x:Key="Tab.Button.Border.Selected" Color="#FF414141" />
+    <SolidColorBrush x:Key="Tab.Button.Selected" Color="#FF3D3D3D" />
+    <SolidColorBrush x:Key="Tab.Button.UnSelected" Color="#FF323232" />
+    <SolidColorBrush x:Key="Tab.Button.Border.UnSelected" Color="#FF323232" />
+    <SolidColorBrush x:Key="Button.Primary.Background" Color="#FF3C413C" />
+    <SolidColorBrush x:Key="Button.Primary.Border" Color="#FF5F645F" />
+    <SolidColorBrush x:Key="Button.Primary.MouseOver" Color="#FF5A5F5A" />
+    <SolidColorBrush x:Key="Button.Secondary.Background" Color="#FF3C3C3C" />
+    <SolidColorBrush x:Key="Button.Secondary.Border" Color="#FF414641" />
+    <SolidColorBrush x:Key="Button.Secondary.Selected" Color="#FF5F645F" />
 
 </ResourceDictionary>

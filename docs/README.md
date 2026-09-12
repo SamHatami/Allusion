@@ -19,6 +19,7 @@
 | `events-behaviors.md` | Full event table (Option B), behaviors, `MultiKeyGesture` input |
 | `models-persistence.md` | `ReferenceBoard`/`BoardPage`/`ImageItem` JSON, PNG rule, `AllusionConfiguration` |
 | `updates.md` | Update check service, release process, title-bar indicator |
+| `settings-themes.md` | Settings dialog, ThemeService presets, .NET version |
 | `tech-debt-roadmap.md` | Known issues, typos, anti-patterns, improvement backlog |
 | `legacy-core.md` | Why `Allusion.Core/` is deprecated |
 

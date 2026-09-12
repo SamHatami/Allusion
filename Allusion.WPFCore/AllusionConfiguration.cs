@@ -29,6 +29,22 @@ public class AllusionConfiguration : INotifyPropertyChanged
         get => _topMost;
         set => SetField(ref _topMost, value);
     }
+
+    private string _theme = "Dark";
+
+    public string Theme
+    {
+        get => _theme;
+        set => SetField(ref _theme, string.IsNullOrWhiteSpace(value) ? "Dark" : value);
+    }
+
+    private double _imageBorderThickness = 4;
+
+    public double ImageBorderThickness
+    {
+        get => _imageBorderThickness;
+        set => SetField(ref _imageBorderThickness, Math.Clamp(value, 0, 12));
+    }
     public List<string> IgnoredRefBoardFiles { get; set; } = [];
 
     private string _globalFolder = string.Empty;
