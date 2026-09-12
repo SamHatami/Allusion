@@ -8,7 +8,7 @@ Per-user install, no UAC. Notify + one-click download/apply/restart.
   `GET https://api.github.com/repos/SamHatami/Allusion/releases/latest`.
   GitHub's `latest` endpoint already excludes drafts and prereleases; the client
   additionally rejects any tag containing `-` (`ParseStableVersion`), so only
-  stable tags like `v1.7` qualify – `v1.6-alpha` never triggers.
+  stable tags like `v1.0.0` qualify – `v1.6-alpha` never triggers.
 - The tag is compared against the running assembly version. Newer → `UpdateInfo(Version, PageUrl, DownloadUrl, Notes)`.
   `DownloadUrl` is the first `.exe` release asset, else the release page is used.
 - All failures (404 = no stable release yet, offline, bad JSON, cancelled) return `null`
@@ -39,7 +39,7 @@ Per-user install, no UAC. Notify + one-click download/apply/restart.
 
 ## Releasing (required for the check to ever fire)
 
-1. Tag stable as `vX.Y` (no `-alpha` suffix): `git tag v1.7 && git push origin v1.7`.
+1. Tag stable as `vX.Y.Z` (no `-alpha` suffix): `git tag v1.0.0 && git push origin v1.0.0`.
 2. `release.yml` stamps the build (`-p:Version=` from tag, `0.0.0-dev` for manual runs),
    publishes the single-file exe, then `vpk pack` produces `Allusion-win-Setup.exe`,
    `Allusion-<v>-full.nupkg`, portable zip and `releases.win.json` – all uploaded to

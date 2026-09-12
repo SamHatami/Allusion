@@ -1,49 +1,70 @@
-# ALLUSION - A Reference image helper for artists
+# ALLUSION - reference images for artists
+
+Allusion is a small artboard app for keeping reference images around while you work.
+It stays on top if you want it to. Made mostly for painters and concept artists. Works as a art board too!
+
+Feedback is very welcome, send to mhatami at hotmail.com
 
 ## Adding images
-Add content to current artboard from a browser or file explorer:
+Copy-paste or drag and drop, from a browser or from file explorer, straight onto a page.
 
-- Copy-Paste image
-- Drag and Drop image
-- Adding by folder?
+- Copy-paste image (Ctrl+V, or right-click Paste on the canvas)
+- Drag and drop image files or browser images
+- Pasting from the web usually just works, sometimes it needs a second try
 
-## Artboard 
-- Contains all the images (and future scribble/notes)
-- Contains "section" or pages to since no pan or zoom function exist (perhaps being able to quickly switch between section ?)
-- Saves all the images to the artboard folder and keeps simple data of the image:
-  - Source (url)
-  - Notes
-  - ?
+## Boards and pages
+Everything lives in a board. A board has pages (tabs), each page is a canvas you can paste images in, pan and zoom however you like.
+You can organize items in the pages, create a new page, rename it. Move items between pages by selecting and dragging to the correct tab header.
+
+- New board with Ctrl+N, open with Ctrl+O (or the folder button in the title bar)
+- Boards are saved as folders with pngs plus a small data file (source url, notes, positions)
+- Pages are renamed by double clicking the tab, removed by right clicking it
+- Drag an image above the page tabs to move it to another page
 
 ## Images
-- Can be rescaled and moved inside the artboard (aspect-ratio lock)
-- Are saved to png no matter the source type (might change)
-- Transparency isn't supported yet, not sure if it's even useful.
-- Changing name of the image (?)
+Images can be moved and rescaled on the canvas (aspect ratio stays locked).
+Everything is saved as png no matter the source type. Transparency is not really
+supported, not sure if it's even useful. Once you add an image to your board it will be copied over to your allusion folder. 
 
-## Configuration (more or less a wish list)
-- Hopefully theme
-- Some hotkeys
-- Perhaps default artboard folder
+- Right-click an image for notes and sizes
+- Notes are added/removed from the image menu, edited by single-clicking the note text
+- Arrange a mess of images from the canvas menu: keep size, average height or
+  smallest height, with settings for scope, columns and margin. Undo exists if arrange
+  makes it worse
+- Align (left/right/top/bottom/centers) and ordering (bring to front and friends)
+  live in the canvas menu too
+- Image border thickness is in Settings, and holding Shift while dragging snaps to grid
+  (a grid overlay shows while you hold it)
 
+## Focus view
+Double click an image and it pops up in a small always-on-top window. Handy to keep
+above your painting app while you work. (Still not fully functional)
 
-# Dev Notes
-ClipboardService
-- Handles all actions from the clipboard
+## Themes and settings
+The gear button opens Settings: theme, always on top, image border thickness.
+The boards folder is picked in the Open dialog instead.
 
-BitmapService
+Themes right now: Dark, Light, Midnight, Sand. The half-moon button in the title bar
+cycles through them. Custom colors per theme might come later.
 
+Quick buttons in the title bar: open board, always on top, theme, settings, help.
+They stay where they are.
 
-- Copy/paste from web - the clipboard handles this as an image.
-- Drag and drop from web - the clipboard handles this a html data.
+## Updates
+Releases come as a small per-user installer (Setup.exe, no admin needed) plus a
+portable exe. The app checks for stable releases quietly on startup, an arrow shows
+up in the title bar when something is new, and Help -> Updates downloads and
+restarts into it. Prereleases (the -alpha tags) are ignored.
 
-- Copy/Paste & Drag and Drop from file explorer - the clipboard handles this as FileDrop which are filepaths.
+## Help
+F1 or the question mark button. Topics on the left, release notes on the right.
 
+## Running the code
+Windows only, .NET 10. Caliburn.Micro MVVM, xunit tests.
 
-Copy paste are events in the window that are bound to the mainviewmodel via caliburn gesture action
-drops are consumed by the CanvasBehavior are a DragEvent (System.Windows.DragEventArgs)
+```
+dotnet build Allusion.sln -c Release
+dotnet test Allusion.Tests/Allusion.Tests.csproj -c Release
+```
 
-Each ImageItem are added to a single ImageViewModel, the view is a custom user control with a new dependency property called Selected which will be used for calls where the specific ImageViewModel will be involved in other events such as 
-- Delete
-- Move to other page
-- Add note / Remove note
+Config lives in %LocalAppData%/Allusion/AllusionConfiguration.json. 
