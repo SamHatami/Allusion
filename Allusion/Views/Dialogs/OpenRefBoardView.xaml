@@ -153,12 +153,12 @@
                 </Grid.ColumnDefinitions>
                 <Button
                     x:Name="New"
-                    Grid.Column="0"
+                    Grid.Column="2"
                     Content="New"
                     Style="{DynamicResource DialogSecondaryButton}" />
                 <Button
                     x:Name="Open"
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Content="Open"
                     IsEnabled="{Binding RefBoardPaths, Converter={StaticResource CountToBool}}"
                     Style="{DynamicResource DialogPrimaryButton}" />

@@ -52,7 +52,8 @@ They stay where they are.
 
 ## Updates
 Releases come as a small per-user installer (Setup.exe, no admin needed) plus a
-portable exe. The app checks for stable releases quietly on startup, an arrow shows
+portable exe. Grab the latest here: https://github.com/SamHatami/Allusion/releases/latest
+The app checks for stable releases quietly on startup, an arrow shows
 up in the title bar when something is new, and Help -> Updates downloads and
 restarts into it. Prereleases (the -alpha tags) are ignored.
 

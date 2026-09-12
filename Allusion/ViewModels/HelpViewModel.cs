@@ -1,15 +1,13 @@
-﻿using Allusion.WPFCore.Interfaces;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 
 namespace Allusion.ViewModels;
 
 public class HelpViewModel : Conductor<object>
 {
-    public HelpViewModel(IUpdateService updateService, IUpdateInstaller installer)
+    public HelpViewModel()
     {
         Topics.Add(new HelpTopicsViewModel());
         Topics.Add(new ReleaseNotesViewModel());
-        Topics.Add(new UpdateViewModel(updateService, installer));
         SelectedTopic = Topics[0];
     }
 
@@ -29,13 +27,6 @@ public class HelpViewModel : Conductor<object>
             if (value is not null)
                 _ = ActivateItemAsync(value);
         }
-    }
-
-    public void ShowUpdatesTopic()
-    {
-        var updates = Topics.OfType<UpdateViewModel>().FirstOrDefault();
-        if (updates is not null)
-            SelectedTopic = updates;
     }
 
     public void Close()

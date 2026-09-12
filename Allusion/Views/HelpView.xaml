@@ -16,13 +16,13 @@
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="22" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+        <WindowChrome CaptionHeight="30" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
     </WindowChrome.WindowChrome>
 
     <Window.Resources />
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="22" />
+            <RowDefinition Height="30" />
             <!--  Title bar  -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>

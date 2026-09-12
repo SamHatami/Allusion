@@ -31,6 +31,15 @@
         <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
     </Style>
 
+    <Style x:Key="DialogSectionHeader" TargetType="{x:Type Label}">
+        <Setter Property="Margin" Value="0,10,0,2" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Foreground.Front}" />
+        <Setter Property="FontFamily" Value="{StaticResource LatoFont}" />
+    </Style>
+
     <Style x:Key="DialogTextBox" TargetType="{x:Type TextBox}">
         <Setter Property="Padding" Value="5,2" />
         <Setter Property="Height" Value="30" />
