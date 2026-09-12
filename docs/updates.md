@@ -40,6 +40,9 @@ Per-user install, no UAC. Notify + one-click download/apply/restart.
 ## Releasing (required for the check to ever fire)
 
 1. Tag stable as `vX.Y.Z` (no `-alpha` suffix): `git tag v1.0.0 && git push origin v1.0.0`.
+2. Right after releasing, bump `<Version>` in `Allusion/Allusion.csproj` to the NEXT
+   version with `-dev` (e.g. `1.0.1-dev`) so dev builds self-identify and show
+   `V1.0.1-dev` in the title bar. CI overrides it with the tag version on release.
 2. `release.yml` stamps the build (`-p:Version=` from tag, `0.0.0-dev` for manual runs),
    publishes the single-file exe, then `vpk pack` produces `Allusion-win-Setup.exe`,
    `Allusion-<v>-full.nupkg`, portable zip and `releases.win.json` – all uploaded to

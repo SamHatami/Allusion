@@ -5,6 +5,7 @@ using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using Allusion.WPFCore.Service;
 
@@ -47,6 +48,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private readonly IReferenceBoardManager _boardManager;
     private readonly IWindowManager _windowManager;
     private readonly IUpdateService _updateService;
+    private readonly IUpdateInstaller _updateInstaller;
     private readonly IThemeService _themeService;
     private AllusionConfiguration _configuration;
 
@@ -65,7 +67,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public MainViewModel(IWindowManager windowManager, IEventAggregator events,
         IReferenceBoardManager refBoardManager, AllusionConfiguration configuration, HelpViewModel help,
-        IUpdateService updateService, IThemeService themeService)
+        IUpdateService updateService, IThemeService themeService, IUpdateInstaller updateInstaller)
     {
         _windowManager = windowManager;
         _configuration = configuration;
@@ -74,6 +76,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
         _updateService = updateService;
+        _updateInstaller = updateInstaller;
         _themeService = themeService;
         _help = help;
 
@@ -143,6 +146,19 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     }
 
     public IThemeService Theme => _themeService;
+
+    public string AppVersion
+    {
+        get
+        {
+            var informational = Assembly.GetExecutingAssembly()
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            var version = informational?.Split('+')[0]
+                ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+                ?? "dev";
+            return "V" + version;
+        }
+    }
 
     public void ToggleTheme()
     {
@@ -220,7 +236,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public async Task OpenSettings()
     {
-        var dialog = new SettingsViewModel(_configuration, _themeService, _events);
+        var dialog = new SettingsViewModel(_configuration, _themeService, _events, _updateService, _updateInstaller);
         await _windowManager.ShowDialogAsync(dialog);
     }
 
@@ -248,10 +264,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
 
     public void OpenUpdates()
     {
-        _help.ShowUpdatesTopic();
-        if (_help.IsActive)
-            return;
-        _windowManager.ShowDialogAsync(_help);
+        _ = OpenSettings();
     }
 
     private async Task CheckForUpdatesOnStartupAsync()

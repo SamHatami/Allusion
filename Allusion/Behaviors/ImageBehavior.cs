@@ -21,7 +21,7 @@ public class ImageBehavior : Behavior<UIElement>
     private Point[] _relativePositions;
     private List<ContentPresenter> _contentPresenters;
     private IEventAggregator _events;
-    private Image _dragIcon;
+    private Image? _dragIcon;
     private ImageViewModel? _imageViewModel;
     private ImageViewModel[] _selectedImages;
     private DragDropEffects dropResult;
@@ -171,9 +171,9 @@ public class ImageBehavior : Behavior<UIElement>
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (!AssociatedObject.IsMouseCaptured) return;
         Mouse.OverrideCursor = null;
-        AssociatedObject.ReleaseMouseCapture();
+        if (AssociatedObject.IsMouseCaptured)
+            AssociatedObject.ReleaseMouseCapture();
 
         RemoveDragIcon();
         ExitDropMode();
@@ -216,6 +216,8 @@ public class ImageBehavior : Behavior<UIElement>
     // Move the drag icon as the mouse moves
     private void MoveDragIcon(Point position)
     {
+        if (_dragIcon is null) return;
+
         Canvas.SetLeft(_dragIcon, position.X);
         Canvas.SetTop(_dragIcon, position.Y);
     }
@@ -223,6 +225,8 @@ public class ImageBehavior : Behavior<UIElement>
     // Remove the drag icon when resizing is complete
     private void RemoveDragIcon()
     {
+        if (_dragIcon is null) return;
+
         _mainCanvas.Children.Remove(_dragIcon);
         _dragIcon = null;
     }
@@ -247,6 +251,12 @@ public class ImageBehavior : Behavior<UIElement>
         var data = new DataObject();
         data.SetData("ImageVM", _selectedImages);
         dropEffect = DragDrop.DoDragDrop(AssociatedObject, data, DragDropEffects.Move);
+
+        RemoveDragIcon();
+        ExitDropMode();
+        Mouse.OverrideCursor = null;
+        if (AssociatedObject.IsMouseCaptured)
+            AssociatedObject.ReleaseMouseCapture();
     }
 
     private void ExitDropMode()

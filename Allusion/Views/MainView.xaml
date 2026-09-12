@@ -58,20 +58,20 @@
                     VerticalAlignment="Center">
                     <TextBlock
                         HorizontalAlignment="Center"
-                        DockPanel.Dock="Top"
+                        DockPanel.Dock="Left"
                         FontFamily="Arial Black"
                         FontSize="14"
                         FontWeight="Bold"
                         Foreground="{DynamicResource Allusion.Logo}">
                         ALLUSION
-                        <TextBlock.Effect>
-                            <DropShadowEffect
-                                BlurRadius="2"
-                                Opacity="1"
-                                ShadowDepth="0"
-                                Color="{DynamicResource Logo.Border}" />
-                        </TextBlock.Effect>
                     </TextBlock>
+                    <TextBlock
+                        Margin="6,0,0,2"
+                        VerticalAlignment="Bottom"
+                        DockPanel.Dock="Left"
+                        FontSize="11"
+                        Foreground="{DynamicResource Foreground}"
+                        Text="{Binding AppVersion}" />
                 </DockPanel>
 
                 <Label

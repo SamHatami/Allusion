@@ -15,6 +15,7 @@ public class UpdateService : IUpdateService
     private readonly HttpClient _httpClient;
     private readonly string _repository;
     private readonly Version _currentVersion;
+    private readonly string _informationalVersion;
     private UpdateInfo? _cachedResult;
     private DateTime _cachedAt;
 
@@ -23,9 +24,12 @@ public class UpdateService : IUpdateService
         _httpClient = httpClient;
         _repository = repository;
         _currentVersion = currentVersion ?? Assembly.GetExecutingAssembly().GetName().Version ?? UnstampedVersion;
+        _informationalVersion = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     }
 
-    public bool IsUnstampedBuild => _currentVersion is { Major: 1, Minor: 0, Build: 0, Revision: 0 }
+    public bool IsUnstampedBuild => _informationalVersion.Contains('-')
+        || _currentVersion is { Major: 1, Minor: 0, Build: 0, Revision: 0 }
         or { Major: 0, Minor: 0, Build: 0, Revision: 0 };
 
     public async Task<UpdateInfo?> CheckForUpdatesAsync(CancellationToken cancellationToken = default)

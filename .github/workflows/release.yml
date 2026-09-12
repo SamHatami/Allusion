@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - "v*"
+      - "V*"
 
 permissions:
   contents: write
@@ -34,7 +35,7 @@ jobs:
       - name: Publish single executable
         shell: pwsh
         run: |
-          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          $version = $env:GITHUB_REF_NAME -replace '^[vV]', ''
           if ($version -notmatch '^\d+(\.\d+){1,3}(-[0-9A-Za-z.-]+)?$') { $version = "0.0.0-dev" }
           dotnet publish Allusion/Allusion.csproj `
           --configuration Release `
@@ -51,7 +52,7 @@ jobs:
         shell: pwsh
         run: |
           dotnet tool install --global vpk
-          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          $version = $env:GITHUB_REF_NAME -replace '^[vV]', ''
           if ($version -notmatch '^\d+(\.\d+){1,3}(-[0-9A-Za-z.-]+)?$') { $version = "0.0.0-dev" }
           if ($version -match '^\d+\.\d+$') { $version = "$version.0" }
           vpk pack -u Allusion -v $version -p publish/win-x64 -e Allusion.exe --packTitle Allusion --packAuthors SamHatami --icon Icon.ico
