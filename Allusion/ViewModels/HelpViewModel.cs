@@ -5,11 +5,11 @@ namespace Allusion.ViewModels;
 
 public class HelpViewModel : Conductor<object>
 {
-    public HelpViewModel(IUpdateService updateService)
+    public HelpViewModel(IUpdateService updateService, IUpdateInstaller installer)
     {
         Topics.Add(new HelpTopicsViewModel());
         Topics.Add(new ReleaseNotesViewModel());
-        Topics.Add(new UpdateViewModel(updateService));
+        Topics.Add(new UpdateViewModel(updateService, installer));
         SelectedTopic = Topics[0];
     }
 

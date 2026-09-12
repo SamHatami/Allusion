@@ -1,6 +1,6 @@
-# Updates – In-App Update Notification
+# Updates – In-App Update Notification + Velopack Installer
 
-Notify + download link. No auto-install (installer is a later step).
+Per-user install, no UAC. Notify + one-click download/apply/restart.
 
 ## How it works
 
@@ -23,13 +23,29 @@ Notify + download link. No auto-install (installer is a later step).
   Tooltip shows the version; click opens Help on the Updates topic.
 - **Help → Updates topic** (`UpdateViewModel`/`UpdateView`): current version, status text,
   `Check now` button (disabled while checking), release notes of the new version,
-  `Download update` button (opens `.exe` asset, falls back to release page).
+  `Download update` button.
+
+## Install / apply (`Velopack`)
+
+- `VelopackApp.Build().Run()` runs first in `App()` – handles install/update/uninstall
+  hooks, per-user shortcuts and Add/Remove Programs entry. No UAC (never writes to
+  `Program Files` / `HKLM`).
+- Clicking Download tries `IUpdateInstaller` (`VelopackUpdateInstaller` in
+  `Allusion/Service/`): `UpdateManager` + `GithubSource` (prereleases off) →
+  download → `ApplyUpdatesAndRestart`. If that path fails (dev build, no feed yet),
+  it falls back to opening the release page in the browser.
+- Version detection without elevation: Velopack tracks `%LocalAppData%/Allusion`
+  (`RELEASES` feed file); the running assembly version is stamped by CI (see below).
 
 ## Releasing (required for the check to ever fire)
 
 1. Tag stable as `vX.Y` (no `-alpha` suffix): `git tag v1.7 && git push origin v1.7`.
-2. `release.yml` stamps the build: `-p:Version=$tagWithoutV` (falls back to `0.0.0-dev`
-   for manual dispatches). Attach `Allusion.exe` to the GitHub Release as usual.
+2. `release.yml` stamps the build (`-p:Version=` from tag, `0.0.0-dev` for manual runs),
+   publishes the single-file exe, then `vpk pack` produces `Allusion-win-Setup.exe`,
+   `Allusion-<v>-full.nupkg`, portable zip and `releases.win.json` – all uploaded to
+   the GitHub Release (`Releases/*`). First-time users run `Setup.exe`; existing
+   installs update in-app. The raw `Allusion.exe` asset stays as portable fallback.
+   (Setup is unsigned – expect a SmartScreen prompt until signing is set up.)
 3. Prepend a `ReleaseNoteEntry` in `ReleaseNotesViewModel` so Help documents the release.
 
 ## Tests
@@ -37,8 +53,5 @@ Notify + download link. No auto-install (installer is a later step).
 `Allusion.Tests/UpdateServiceTests.cs` – stub `HttpMessageHandler`: newer → info,
 current → null, prerelease → null, 404 → null, missing `.exe` → page-only,
 1-hour cache, `ParseStableVersion` theory. No network access in tests.
-
-## Future (installer step)
-
-Auto-download + replace needs an updater stub (single-file exe can't replace itself
-while running). When that lands, `UpdateInfo.DownloadUrl` is already the right hook.
+`VelopackUpdateInstaller` is intentionally thin (all failures → browser fallback)
+and untested – it only runs against the live feed.

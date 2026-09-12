@@ -7,14 +7,17 @@ namespace Allusion.ViewModels;
 public class UpdateViewModel : Screen
 {
     private readonly IUpdateService _updateService;
+    private readonly IUpdateInstaller _installer;
     private bool _isChecking;
+    private bool _isInstalling;
     private string _statusText = string.Empty;
     private UpdateInfo? _availableUpdate;
 
-    public UpdateViewModel(IUpdateService updateService)
+    public UpdateViewModel(IUpdateService updateService, IUpdateInstaller installer)
     {
         DisplayName = "Updates";
         _updateService = updateService;
+        _installer = installer;
         CurrentVersion = GetCurrentVersion();
         StatusText = $"Current version: {CurrentVersion}";
     }
@@ -46,6 +49,20 @@ public class UpdateViewModel : Screen
         }
     }
 
+    public bool IsInstalling
+    {
+        get => _isInstalling;
+        private set
+        {
+            if (_isInstalling == value) return;
+
+            _isInstalling = value;
+            NotifyOfPropertyChange(nameof(IsInstalling));
+            NotifyOfPropertyChange(nameof(CanCheckNow));
+            NotifyOfPropertyChange(nameof(CanOpenDownload));
+        }
+    }
+
     public UpdateInfo? AvailableUpdate
     {
         get => _availableUpdate;
@@ -56,12 +73,15 @@ public class UpdateViewModel : Screen
             _availableUpdate = value;
             NotifyOfPropertyChange(nameof(AvailableUpdate));
             NotifyOfPropertyChange(nameof(HasUpdate));
+            NotifyOfPropertyChange(nameof(CanOpenDownload));
         }
     }
 
     public bool HasUpdate => AvailableUpdate is not null;
 
-    public bool CanCheckNow => !IsChecking;
+    public bool CanCheckNow => !IsChecking && !IsInstalling;
+
+    public bool CanOpenDownload => HasUpdate && !IsInstalling;
 
     public async Task CheckNow()
     {
@@ -89,10 +109,44 @@ public class UpdateViewModel : Screen
 
     public void OpenDownload()
     {
+        if (AvailableUpdate is null || IsInstalling) return;
+
+        _ = InstallAsync();
+    }
+
+    private async Task InstallAsync()
+    {
+        IsInstalling = true;
+        StatusText = $"Downloading {AvailableUpdate!.Version}...";
+        try
+        {
+            if (await _installer.DownloadAndInstallAsync().ConfigureAwait(true))
+            {
+                StatusText = "Restarting to finish the update...";
+                return;
+            }
+        }
+        finally
+        {
+            IsInstalling = false;
+        }
+
+        OpenInBrowser();
+    }
+
+    private void OpenInBrowser()
+    {
         var url = AvailableUpdate?.DownloadUrl ?? AvailableUpdate?.PageUrl;
         if (string.IsNullOrEmpty(url)) return;
 
-        Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        try
+        {
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        }
+        catch
+        {
+            StatusText = "Couldn't open the download page";
+        }
     }
 
     private static string GetCurrentVersion()

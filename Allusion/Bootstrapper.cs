@@ -8,6 +8,7 @@ using Allusion.WPFCore;
 using Allusion.WPFCore.Interfaces;
 using Caliburn.Micro;
 using Allusion.ViewModels.Dialogs;
+using Allusion.Service;
 using Allusion.WPFCore.Managers;
 using Allusion.WPFCore.Service;
 using System.Net.Http;
@@ -41,6 +42,7 @@ public class Bootstrapper : BootstrapperBase
         _container.Singleton<IPageManager, PageManager>();
         _container.Singleton<IUpdateService, UpdateService>();
         _container.Singleton<IThemeService, ThemeService>();
+        _container.Singleton<IUpdateInstaller, VelopackUpdateInstaller>();
         _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
         _container.Singleton<HelpViewModel>();
         _container.Singleton<MainViewModel>();
