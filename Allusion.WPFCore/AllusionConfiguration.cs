@@ -1,17 +1,34 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Allusion.WPFCore;
 
 [Serializable]
-public class AllusionConfiguration
+public class AllusionConfiguration : INotifyPropertyChanged
 {
     private const string ConfigFileName = "AllusionConfiguration.json";
 
-    public bool FirstStartUp { get; set; } = true;
-    public bool TopMost { get; set; } = true;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private bool _firstStartUp = true;
+
+    public bool FirstStartUp
+    {
+        get => _firstStartUp;
+        set => SetField(ref _firstStartUp, value);
+    }
+
+    private bool _topMost = true;
+
+    public bool TopMost
+    {
+        get => _topMost;
+        set => SetField(ref _topMost, value);
+    }
     public List<string> IgnoredRefBoardFiles { get; set; } = [];
 
     private string _globalFolder = string.Empty;
@@ -26,7 +43,12 @@ public class AllusionConfiguration
             Trace.WriteLine($"GlobalFolder get: {result}");
             return result;
         }
-        set => _globalFolder = value;
+        set
+        {
+            if (_globalFolder == value) return;
+            _globalFolder = value;
+            OnPropertyChanged();
+        }
     }
 
     [JsonIgnore]
@@ -60,6 +82,19 @@ public class AllusionConfiguration
     private static void CreateNew()
     {
         Save(new AllusionConfiguration());
+    }
+
+    private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     internal static IDisposable UseDataFolderForTests(string dataFolder)

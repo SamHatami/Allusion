@@ -48,6 +48,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private readonly IEventAggregator _events;//
     private readonly IReferenceBoardManager _boardManager;
     private readonly IWindowManager _windowManager;
+    private readonly IUpdateService _updateService;
     private AllusionConfiguration _configuration;
 
     public AllusionConfiguration Configuration
@@ -63,7 +64,8 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     private readonly HelpViewModel _help;
 
     public MainViewModel(IWindowManager windowManager, IEventAggregator events,
-        IReferenceBoardManager refBoardManager, AllusionConfiguration configuration, HelpViewModel help)
+        IReferenceBoardManager refBoardManager, AllusionConfiguration configuration, HelpViewModel help,
+        IUpdateService updateService)
     {
         _windowManager = windowManager;
         _configuration = configuration;
@@ -71,6 +73,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _events.SubscribeOnBackgroundThread(this);
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
+        _updateService = updateService;
         _help = help;
         StartBoardPicker = new OpenRefBoardViewModel(_boardManager, _events, _windowManager)
         {
@@ -135,6 +138,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
     public void SetTopMost()
     {
         Configuration.TopMost = !Configuration.TopMost;
+        NotifyOfPropertyChange(nameof(Configuration));
         AllusionConfiguration.Save(_configuration);
     }
 
@@ -203,6 +207,51 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _windowManager.ShowDialogAsync(_help);
     }
 
+    private UpdateInfo? _availableUpdate;
+
+    public UpdateInfo? AvailableUpdate
+    {
+        get => _availableUpdate;
+        private set
+        {
+            if (Equals(_availableUpdate, value)) return;
+
+            _availableUpdate = value;
+            NotifyOfPropertyChange(nameof(AvailableUpdate));
+            NotifyOfPropertyChange(nameof(HasUpdate));
+            NotifyOfPropertyChange(nameof(UpdateTooltip));
+        }
+    }
+
+    public bool HasUpdate => AvailableUpdate is not null;
+
+    public string UpdateTooltip => AvailableUpdate is null
+        ? "Check for updates"
+        : $"Allusion {AvailableUpdate.Version} is available";
+
+    public void OpenUpdates()
+    {
+        _help.ShowUpdatesTopic();
+        if (_help.IsActive)
+            return;
+        _windowManager.ShowDialogAsync(_help);
+    }
+
+    private async Task CheckForUpdatesOnStartupAsync()
+    {
+        try
+        {
+            if (_updateService is UpdateService concrete && concrete.IsUnstampedBuild)
+                return;
+
+            AvailableUpdate = await _updateService.CheckForUpdatesAsync().ConfigureAwait(true);
+        }
+        catch
+        {
+            AvailableUpdate = null;
+        }
+    }
+
     public async Task Save()
     {
         if (RefBoardViewModel is null) return;
@@ -253,6 +302,7 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         }
         
         FirstTime();
+        _ = CheckForUpdatesOnStartupAsync();
 
     }
 

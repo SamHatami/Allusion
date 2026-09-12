@@ -34,6 +34,8 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     private readonly IPageManager _pageManager;
     private readonly IEventAggregator _events;
     private readonly ArrangeImageLayoutService _arrangeService = new();
+    private readonly Stack<IReadOnlyList<ImageArrangeSnapshot>> _arrangeUndo = new();
+    private ArrangeImageLayoutOptions _lastArrangeOptions = new();
     public ReferenceBoardViewModel Board { get; }
 
 
@@ -228,28 +230,15 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         await ArrangeSettings();
     }
 
-    public void ArrangeKeepCurrent()
-    {
-        ArrangeImages(GetDefaultArrangeImages(), new ArrangeImageLayoutOptions
-        {
-            ScaleMode = ArrangeScaleMode.KeepCurrent
-        });
-    }
+    public void ArrangeKeepCurrent() => ArrangeWithScaleMode(ArrangeScaleMode.KeepCurrent);
 
-    public void ArrangeAverageHeight()
-    {
-        ArrangeImages(GetDefaultArrangeImages(), new ArrangeImageLayoutOptions
-        {
-            ScaleMode = ArrangeScaleMode.AverageHeight
-        });
-    }
+    public void ArrangeAverageHeight() => ArrangeWithScaleMode(ArrangeScaleMode.AverageHeight);
 
-    public void ArrangeSmallestHeight()
+    public void ArrangeSmallestHeight() => ArrangeWithScaleMode(ArrangeScaleMode.SmallestHeight);
+
+    private void ArrangeWithScaleMode(ArrangeScaleMode scaleMode)
     {
-        ArrangeImages(GetDefaultArrangeImages(), new ArrangeImageLayoutOptions
-        {
-            ScaleMode = ArrangeScaleMode.SmallestHeight
-        });
+        ArrangeImages(GetDefaultArrangeImages(), _lastArrangeOptions with { ScaleMode = scaleMode });
     }
 
     public async Task ArrangeSettings()
@@ -259,11 +248,31 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
         if (accepted != true) return;
 
-        var images = dialog.SelectedScope == ArrangeScope.SelectedImages
+        ImageViewModel[] images = dialog.SelectedScope == ArrangeScope.SelectedImages
             ? SelectedImages.ToArray()
             : Images.ToArray();
 
-        ArrangeImages(images, dialog.CreateOptions());
+        var options = dialog.CreateOptions();
+        _lastArrangeOptions = options;
+        ArrangeImages(images, options);
+    }
+
+    public bool CanUndoArrange => _arrangeUndo.Count > 0;
+
+    public void UndoArrange()
+    {
+        if (_arrangeUndo.Count == 0) return;
+
+        var snapshot = _arrangeUndo.Pop();
+        foreach (var entry in snapshot)
+        {
+            entry.Image.Scale = entry.Scale;
+            entry.Image.PosX = entry.X;
+            entry.Image.PosY = entry.Y;
+        }
+
+        NotifyOfPropertyChange(nameof(CanUndoArrange));
+        _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
     }
 
     public void ZoomToExtent(Size viewportSize)
@@ -354,30 +363,48 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
     private ImageViewModel[] GetDefaultArrangeImages()
     {
-        return SelectedImages.Count > 0
+        var source = SelectedImages.Count > 0
             ? SelectedImages.ToArray()
             : Images.ToArray();
+        return SortForArrange(source);
+    }
+
+    private static ImageViewModel[] SortForArrange(IReadOnlyList<ImageViewModel> images)
+    {
+        return images.OrderBy(image => image.PosY).ThenBy(image => image.PosX).ToArray();
     }
 
     private void ArrangeImages(IReadOnlyList<ImageViewModel> images, ArrangeImageLayoutOptions options)
     {
         if (images.Count == 0) return;
 
-        var originX = CanvasGridSnap.Snap(images.Min(image => image.PosX));
-        var originY = CanvasGridSnap.Snap(images.Min(image => image.PosY));
-        var layoutItems = images
-            .Select(image => new ArrangeImageLayoutItem(image.Width, image.Height, image.Scale))
-            .ToArray();
+        var ordered = SortForArrange(images);
+        _arrangeUndo.Push(ordered.Select(image => new ImageArrangeSnapshot(image, image.PosX, image.PosY, image.Scale)).ToArray());
+        NotifyOfPropertyChange(nameof(CanUndoArrange));
+
+        var originX = CanvasGridSnap.Snap(ordered.Min(image => image.PosX));
+        var originY = CanvasGridSnap.Snap(ordered.Min(image => image.PosY));
+        var layoutItems = ordered.Select(BuildLayoutItem).ToArray();
         var results = _arrangeService.Arrange(layoutItems, options);
 
-        for (var i = 0; i < images.Count; i++)
+        for (var i = 0; i < ordered.Length; i++)
         {
-            images[i].Scale = results[i].Scale;
-            images[i].PosX = originX + results[i].X;
-            images[i].PosY = originY + results[i].Y;
+            ordered[i].Scale = results[i].Scale;
+            ordered[i].PosX = originX + results[i].X;
+            ordered[i].PosY = originY + results[i].Y;
         }
 
         _events.PublishOnBackgroundThreadAsync(new BoardIsModfiedEvent(true));
+    }
+
+    private static ArrangeImageLayoutItem BuildLayoutItem(ImageViewModel image)
+    {
+        var hasNote = !string.IsNullOrWhiteSpace(image.Description);
+        return new ArrangeImageLayoutItem(
+            Math.Max(0, image.Width),
+            Math.Max(0, image.Height),
+            image.Scale,
+            hasNote ? image.DescriptorHeight : 0);
     }
 
     private static Rect GetImageBounds(IEnumerable<ImageViewModel> images)
@@ -518,3 +545,5 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         _pageManager.OpenPageFolder(Page);
     }
 }
+
+internal sealed record ImageArrangeSnapshot(ImageViewModel Image, double X, double Y, double Scale);

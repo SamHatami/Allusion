@@ -56,6 +56,39 @@
         Background="Transparent"
         ClipToBounds="True"
         Focusable="True">
+        <Grid.ContextMenu>
+            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                <MenuItem
+                    cm:Message.Attach="[PasteOnCanvas]"
+                    Header="Paste"
+                    IsEnabled="True" />
+                <MenuItem Header="Arrange">
+                    <MenuItem Header="Presets" IsEnabled="False" />
+                    <Separator />
+                    <MenuItem cm:Message.Attach="[ArrangeKeepCurrent]" Header="Keep current size" />
+                    <MenuItem cm:Message.Attach="[ArrangeAverageHeight]" Header="Normalize average height" />
+                    <MenuItem cm:Message.Attach="[ArrangeSmallestHeight]" Header="Normalize smallest height" />
+                    <Separator />
+                    <MenuItem cm:Message.Attach="[ArrangeSettings]" Header="Settings" />
+                </MenuItem>
+                <MenuItem Header="Order">
+                    <MenuItem cm:Message.Attach="[BringToFront]" Header="Bring to front" />
+                    <MenuItem cm:Message.Attach="[BringForward]" Header="Bring forward" />
+                    <MenuItem cm:Message.Attach="[SendBackward]" Header="Send backward" />
+                    <MenuItem cm:Message.Attach="[SendToBack]" Header="Send to back" />
+                </MenuItem>
+                <MenuItem Header="Align">
+                    <MenuItem cm:Message.Attach="[AlignLeft]" Header="Left" />
+                    <MenuItem cm:Message.Attach="[AlignHorizontalCenters]" Header="Horizontal centers" />
+                    <MenuItem cm:Message.Attach="[AlignRight]" Header="Right" />
+                    <Separator />
+                    <MenuItem cm:Message.Attach="[AlignTop]" Header="Top" />
+                    <MenuItem cm:Message.Attach="[AlignVerticalCenters]" Header="Vertical centers" />
+                    <MenuItem cm:Message.Attach="[AlignBottom]" Header="Bottom" />
+                </MenuItem>
+                <MenuItem cm:Message.Attach="[Save]" Header="Save" />
+            </ContextMenu>
+        </Grid.ContextMenu>
         <b:Interaction.Behaviors>
             <behaviors:CanvasViewportBehavior />
         </b:Interaction.Behaviors>
@@ -73,39 +106,6 @@
                     <TranslateTransform X="{Binding Viewport.OffsetX}" Y="{Binding Viewport.OffsetY}" />
                 </TransformGroup>
             </Canvas.RenderTransform>
-            <Canvas.ContextMenu>
-                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-                    <MenuItem
-                        cm:Message.Attach="[PasteOnCanvas]"
-                        Header="Paste"
-                        IsEnabled="True" />
-                    <MenuItem Header="Arrange">
-                        <MenuItem Header="Presets" IsEnabled="False" />
-                        <Separator />
-                        <MenuItem cm:Message.Attach="[ArrangeKeepCurrent]" Header="Keep current size" />
-                        <MenuItem cm:Message.Attach="[ArrangeAverageHeight]" Header="Normalize average height" />
-                        <MenuItem cm:Message.Attach="[ArrangeSmallestHeight]" Header="Normalize smallest height" />
-                        <Separator />
-                        <MenuItem cm:Message.Attach="[ArrangeSettings]" Header="Settings" />
-                    </MenuItem>
-                    <MenuItem Header="Order">
-                        <MenuItem cm:Message.Attach="[BringToFront]" Header="Bring to front" />
-                        <MenuItem cm:Message.Attach="[BringForward]" Header="Bring forward" />
-                        <MenuItem cm:Message.Attach="[SendBackward]" Header="Send backward" />
-                        <MenuItem cm:Message.Attach="[SendToBack]" Header="Send to back" />
-                    </MenuItem>
-                    <MenuItem Header="Align">
-                        <MenuItem cm:Message.Attach="[AlignLeft]" Header="Left" />
-                        <MenuItem cm:Message.Attach="[AlignHorizontalCenters]" Header="Horizontal centers" />
-                        <MenuItem cm:Message.Attach="[AlignRight]" Header="Right" />
-                        <Separator />
-                        <MenuItem cm:Message.Attach="[AlignTop]" Header="Top" />
-                        <MenuItem cm:Message.Attach="[AlignVerticalCenters]" Header="Vertical centers" />
-                        <MenuItem cm:Message.Attach="[AlignBottom]" Header="Bottom" />
-                    </MenuItem>
-                    <MenuItem cm:Message.Attach="[Save]" Header="Save" />
-                </ContextMenu>
-            </Canvas.ContextMenu>
             <b:Interaction.Behaviors>
                 <behaviors:CanvasBehavior />
                 <behaviors:CanvasSelectionBoxBehavior />

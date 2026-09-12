@@ -1,0 +1,41 @@
+<UserControl
+    x:Class="Allusion.Views.UpdateView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="400"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+    <ScrollViewer
+        Padding="10"
+        VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock
+                Margin="0,4"
+                FontSize="14"
+                Foreground="{DynamicResource Foreground.Front}"
+                Text="{Binding StatusText}" />
+            <TextBlock
+                Margin="0,4"
+                FontSize="14"
+                Foreground="{DynamicResource Foreground.Front}"
+                Text="{Binding AvailableUpdate.Notes}"
+                TextWrapping="Wrap"
+                Visibility="{Binding HasUpdate, Converter={StaticResource BoolToVis}}" />
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    x:Name="CheckNow"
+                    Margin="0,10,10,0"
+                    Content="Check now"
+                    Style="{DynamicResource DialogPrimaryButton}" />
+                <Button
+                    x:Name="OpenDownload"
+                    Margin="0,10,0,0"
+                    Content="Download update"
+                    Style="{DynamicResource DialogSecondaryButton}"
+                    Visibility="{Binding HasUpdate, Converter={StaticResource BoolToVis}}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

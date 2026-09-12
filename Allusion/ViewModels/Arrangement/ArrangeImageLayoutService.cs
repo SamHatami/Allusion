@@ -7,14 +7,15 @@ public enum ArrangeScaleMode
     SmallestHeight
 }
 
-public sealed record ArrangeImageLayoutItem(double Width, double Height, double Scale);
+public sealed record ArrangeImageLayoutItem(double Width, double Height, double Scale, double ExtraHeight = 0);
 
 public sealed record ArrangeImageLayoutResult(double X, double Y, double Scale);
 
-public sealed class ArrangeImageLayoutOptions
+public sealed record ArrangeImageLayoutOptions
 {
     public double Margin { get; init; } = 24;
     public ArrangeScaleMode ScaleMode { get; init; } = ArrangeScaleMode.KeepCurrent;
+    public int Columns { get; init; } = 0;
 }
 
 public class ArrangeImageLayoutService
@@ -29,29 +30,41 @@ public class ArrangeImageLayoutService
             .Select(item => GetArrangedSize(item, targetHeight))
             .ToArray();
 
-        var columnCount = Math.Max(1, (int)Math.Ceiling(Math.Sqrt(items.Count)));
+        var columnCount = ResolveColumnCount(items.Count, options.Columns);
         var results = new List<ArrangeImageLayoutResult>(items.Count);
-        var x = 0.0;
-        var y = 0.0;
+        var xCursor = 0.0;
+        var yCursor = 0.0;
         var rowHeight = 0.0;
 
         for (var i = 0; i < items.Count; i++)
         {
-            if (i > 0 && i % columnCount == 0)
+            var startsNewRow = i > 0 && i % columnCount == 0;
+            if (startsNewRow)
             {
-                x = 0;
-                y = CanvasGridSnap.SnapUp(y + rowHeight + margin);
+                xCursor = 0;
+                yCursor += rowHeight + margin;
                 rowHeight = 0;
             }
 
             var size = arrangedSizes[i];
-            results.Add(new ArrangeImageLayoutResult(x, y, size.Scale));
+            results.Add(new ArrangeImageLayoutResult(
+                CanvasGridSnap.Snap(xCursor),
+                CanvasGridSnap.SnapUp(yCursor),
+                size.Scale));
 
-            x = CanvasGridSnap.SnapUp(x + size.Width + margin);
-            rowHeight = Math.Max(rowHeight, size.Height);
+            xCursor += size.Width + margin;
+            rowHeight = Math.Max(rowHeight, size.Height + size.ExtraHeight);
         }
 
         return results;
+    }
+
+    private static int ResolveColumnCount(int itemCount, int requestedColumns)
+    {
+        if (requestedColumns > 0)
+            return requestedColumns;
+
+        return Math.Max(1, (int)Math.Ceiling(Math.Sqrt(itemCount)));
     }
 
     private static double? GetTargetHeight(IReadOnlyList<ArrangeImageLayoutItem> items, ArrangeScaleMode scaleMode)
@@ -74,15 +87,17 @@ public class ArrangeImageLayoutService
 
     private static ArrangeImageLayoutItem GetArrangedSize(ArrangeImageLayoutItem item, double? targetHeight)
     {
-        if (targetHeight is null || item.Height <= 0)
-            return item;
+        var width = Math.Max(0, item.Width);
+        var height = Math.Max(0, item.Height);
+        var extraHeight = Math.Max(0, item.ExtraHeight);
+        if (targetHeight is null || height <= 0)
+            return new ArrangeImageLayoutItem(width, height, item.Scale, extraHeight);
 
-        var scaleFactor = targetHeight.Value / item.Height;
-        return item with
-        {
-            Width = item.Width * scaleFactor,
-            Height = targetHeight.Value,
-            Scale = item.Scale * scaleFactor
-        };
+        var scaleFactor = targetHeight.Value / height;
+        return new ArrangeImageLayoutItem(
+            width * scaleFactor,
+            targetHeight.Value,
+            item.Scale * scaleFactor,
+            extraHeight);
     }
 }

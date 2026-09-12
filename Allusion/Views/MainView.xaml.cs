@@ -64,12 +64,13 @@ public partial class MainView : Window
 
     private void MainView_OnDragEnter(object sender, DragEventArgs e)
     {
-        this.Topmost = true;
+        SetCurrentValue(TopmostProperty, true);
     }
 
     private void MainView_OnDragLeave(object sender, DragEventArgs e)
     {
-        this.Topmost = false;
+        var vm = DataContext as MainViewModel;
+        SetCurrentValue(TopmostProperty, vm?.Configuration.TopMost ?? false);
     }
 
     private void Settings_Click(object sender, RoutedEventArgs e)

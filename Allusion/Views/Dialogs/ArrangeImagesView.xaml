@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Arrange Images"
     Width="360"
-    Height="220"
+    Height="330"
     cm:Message.Attach="[Key Escape] = [Cancel]; [Key Enter] = [Apply]"
     d:DataContext="{d:DesignInstance Type=dialogs:ArrangeImagesViewModel}"
     ResizeMode="NoResize"
@@ -22,6 +22,9 @@
 
     <Grid Style="{DynamicResource DialogContentGrid}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -60,15 +63,30 @@
 
         <Label
             Grid.Row="5"
+            Content="Columns (0 = Auto)"
+            Style="{DynamicResource DialogLabel}" />
+        <ComboBox
+            Grid.Row="6"
+            ItemsSource="{Binding ColumnOptions}"
+            SelectedItem="{Binding SelectedColumns}"
+            Style="{DynamicResource DialogComboBox}" />
+
+        <Label
+            Grid.Row="7"
             Content="Margin"
             Style="{DynamicResource DialogLabel}" />
+        <Slider
+            Grid.Row="8"
+            Minimum="0"
+            Maximum="100"
+            Value="{Binding Margin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
-            Grid.Row="6"
+            Grid.Row="9"
             VerticalAlignment="Top"
             Text="{Binding Margin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Style="{DynamicResource DialogTextBox}" />
 
-        <Grid Grid.Row="7">
+        <Grid Grid.Row="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />

@@ -11,9 +11,14 @@ public enum ArrangeScope
 
 public class ArrangeImagesViewModel : Screen
 {
-    private double _margin = 24;
-    private ArrangeScaleMode _selectedScaleMode = ArrangeScaleMode.KeepCurrent;
+    private static double _lastMargin = 24;
+    private static ArrangeScaleMode _lastScaleMode = ArrangeScaleMode.KeepCurrent;
+    private static int _lastColumns;
+
+    private double _margin = _lastMargin;
+    private ArrangeScaleMode _selectedScaleMode = _lastScaleMode;
     private ArrangeScope _selectedScope;
+    private int _selectedColumns = _lastColumns;
 
     public string Title => "Arrange Images";
 
@@ -25,6 +30,21 @@ public class ArrangeImagesViewModel : Screen
     ];
 
     public IReadOnlyList<ArrangeScope> Scopes { get; }
+
+    public IReadOnlyList<int> ColumnOptions { get; } = [0, 1, 2, 3, 4, 5, 6];
+
+    public int SelectedColumns
+    {
+        get => _selectedColumns;
+        set
+        {
+            var clamped = Math.Clamp(value, 0, 6);
+            if (_selectedColumns == clamped) return;
+
+            _selectedColumns = clamped;
+            NotifyOfPropertyChange(nameof(SelectedColumns));
+        }
+    }
 
     public double Margin
     {
@@ -72,20 +92,18 @@ public class ArrangeImagesViewModel : Screen
 
     public ArrangeImageLayoutOptions CreateOptions()
     {
+        _lastMargin = Margin;
+        _lastScaleMode = SelectedScaleMode;
+        _lastColumns = SelectedColumns;
         return new ArrangeImageLayoutOptions
         {
             Margin = Margin,
-            ScaleMode = SelectedScaleMode
+            ScaleMode = SelectedScaleMode,
+            Columns = SelectedColumns
         };
     }
 
-    public Task Apply()
-    {
-        return TryCloseAsync(true);
-    }
+    public Task Apply() => TryCloseAsync(true);
 
-    public Task Cancel()
-    {
-        return TryCloseAsync(false);
-    }
+    public Task Cancel() => TryCloseAsync(false);
 }

@@ -39,6 +39,7 @@ public class Bootstrapper : BootstrapperBase
         _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
         _container.Singleton<ImageItemService>();
         _container.Singleton<IPageManager, PageManager>();
+        _container.Singleton<IUpdateService, UpdateService>();
         _container.RegisterInstance(typeof(AllusionConfiguration),"Config",config);
         _container.Singleton<HelpViewModel>();
         _container.Singleton<MainViewModel>();

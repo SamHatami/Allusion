@@ -44,7 +44,7 @@ public class ArrangeImageLayoutServiceTests
         result.Should().HaveCount(3);
         result[0].X.Should().Be(0);
         result[0].Y.Should().Be(0);
-        result[1].X.Should().Be(125);
+        result[1].X.Should().Be(100);
         result[1].Y.Should().Be(0);
         result[2].X.Should().Be(0);
         result[2].Y.Should().Be(75);
@@ -105,5 +105,71 @@ public class ArrangeImageLayoutServiceTests
 
         result[0].Scale.Should().Be(1);
         result[1].Scale.Should().BeApproximately(0.3333, 0.0001);
+    }
+
+    [Fact]
+    public void Arrange_ShouldRespectExplicitColumnCount()
+    {
+        var service = new ArrangeImageLayoutService();
+        var items = new[]
+        {
+            new ArrangeImageLayoutItem(50, 50, 1),
+            new ArrangeImageLayoutItem(50, 50, 1),
+            new ArrangeImageLayoutItem(50, 50, 1)
+        };
+
+        var result = service.Arrange(items, new ArrangeImageLayoutOptions { Margin = 0, Columns = 3 });
+
+        result.Should().HaveCount(3);
+        result[0].Y.Should().Be(0);
+        result[1].Y.Should().Be(0);
+        result[2].Y.Should().Be(0);
+        result[1].X.Should().BeGreaterThan(result[0].X);
+        result[2].X.Should().BeGreaterThan(result[1].X);
+    }
+
+    [Fact]
+    public void Arrange_ShouldIncludeExtraHeightInRowHeight()
+    {
+        var service = new ArrangeImageLayoutService();
+        var items = new[]
+        {
+            new ArrangeImageLayoutItem(50, 50, 1, 30),
+            new ArrangeImageLayoutItem(50, 50, 1)
+        };
+
+        var result = service.Arrange(items, new ArrangeImageLayoutOptions { Margin = 10, Columns = 1 });
+
+        result[1].Y.Should().BeGreaterThanOrEqualTo(50 + 30 + 10);
+    }
+
+    [Fact]
+    public void Arrange_ShouldHandleEmptyAndZeroSizes()
+    {
+        var service = new ArrangeImageLayoutService();
+
+        service.Arrange([], new ArrangeImageLayoutOptions()).Should().BeEmpty();
+
+        var result = service.Arrange(
+            [new ArrangeImageLayoutItem(0, 0, 1), new ArrangeImageLayoutItem(50, 50, 1)],
+            new ArrangeImageLayoutOptions { Margin = 10, ScaleMode = ArrangeScaleMode.AverageHeight });
+
+        result.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void Arrange_ShouldClampNegativeMargin()
+    {
+        var service = new ArrangeImageLayoutService();
+        var items = new[]
+        {
+            new ArrangeImageLayoutItem(50, 50, 1),
+            new ArrangeImageLayoutItem(50, 50, 1)
+        };
+
+        var result = service.Arrange(items, new ArrangeImageLayoutOptions { Margin = -5 });
+
+        result.Should().HaveCount(2);
+        result[1].X.Should().BeGreaterThanOrEqualTo(result[0].X + 50);
     }
 }
