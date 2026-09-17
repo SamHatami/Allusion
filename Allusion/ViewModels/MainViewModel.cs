@@ -72,7 +72,6 @@ public class MainViewModel : Conductor<object>, IHandle<NewRefBoardEvent>,
         _windowManager = windowManager;
         _configuration = configuration;
         _events = events;
-        _events.SubscribeOnBackgroundThread(this);
         _events.SubscribeOnUIThread(this);
         _boardManager = refBoardManager;
         _updateService = updateService;

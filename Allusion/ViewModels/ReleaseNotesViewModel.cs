@@ -16,6 +16,11 @@ public class ReleaseNotesViewModel : Screen
 
     public IReadOnlyList<ReleaseNoteEntry> ReleaseHistory { get; } =
     [
+        new("v1.0.4", new[]
+        {
+            "Fixed pasted / dropped images being imported twice",
+            "Fixed update check wrongly reporting up to date when the check failed",
+        }),
         new("Current – unreleased", new[]
         {
             "Arrange respects the margin you type and lays images out in reading order",

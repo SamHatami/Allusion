@@ -62,17 +62,17 @@ namespace Allusion.Tests
         }
 
         [Fact]
-        public async Task GetWebBitmapAsync_ShouldReturnBitmapFromBitmapData()
+        public async Task GetWebBitmapAsync_ShouldIgnoreBitmapData_OwnedByImageDataStrategy()
         {
             var dataObject = A.Fake<IDataObject>();
-            var expected = new BitmapImage();
 
             A.CallTo(() => dataObject.GetDataPresent(DataFormats.Bitmap)).Returns(true);
-            A.CallTo(() => dataObject.GetData(DataFormats.Bitmap)).Returns(expected);
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Html)).Returns(false);
+            A.CallTo(() => dataObject.GetDataPresent(DataFormats.Text)).Returns(false);
 
             var result = await _extractor.GetWebBitmapAsync(dataObject);
 
-            result.Should().BeSameAs(expected);
+            result.Should().BeNull();
             A.CallTo(() => _bitmapService.DownloadAndConvert(A<string>._, A<CancellationToken>._)).MustNotHaveHappened();
         }
 

@@ -161,7 +161,6 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
         Page = page;
         DisplayName = Page.Name;
         _events.SubscribeOnBackgroundThread(this);
-        _events.SubscribeOnUIThread(this);
         Images = new BindableCollection<ImageViewModel>();
         _windowManger = IoC.Get<IWindowManager>();
         Images.CollectionChanged += (sender, args) => UpdateInfoBool();

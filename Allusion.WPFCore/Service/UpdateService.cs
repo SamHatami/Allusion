@@ -23,8 +23,9 @@ public class UpdateService : IUpdateService
     {
         _httpClient = httpClient;
         _repository = repository;
-        _currentVersion = currentVersion ?? Assembly.GetExecutingAssembly().GetName().Version ?? UnstampedVersion;
-        _informationalVersion = Assembly.GetExecutingAssembly()
+        var appAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+        _currentVersion = currentVersion ?? appAssembly.GetName().Version ?? UnstampedVersion;
+        _informationalVersion = appAssembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     }
 
@@ -48,35 +49,19 @@ public class UpdateService : IUpdateService
 
     private async Task<UpdateInfo?> FetchLatestStableAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get,
-                $"https://api.github.com/repos/{_repository}/releases/latest");
-            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Allusion", _currentVersion.ToString()));
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        using var request = new HttpRequestMessage(HttpMethod.Get,
+            $"https://api.github.com/repos/{_repository}/releases/latest");
+        request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Allusion", _currentVersion.ToString()));
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-            if (response.StatusCode == HttpStatusCode.NotFound)
-                return null;
-            if (!response.IsSuccessStatusCode)
-                return null;
+        using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return null;
+        response.EnsureSuccessStatusCode();
 
-            using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-            using var release = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken).ConfigureAwait(false);
-            return ToUpdateInfo(release.RootElement);
-        }
-        catch (OperationCanceledException)
-        {
-            return null;
-        }
-        catch (HttpRequestException)
-        {
-            return null;
-        }
-        catch (JsonException)
-        {
-            return null;
-        }
+        using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        using var release = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken).ConfigureAwait(false);
+        return ToUpdateInfo(release.RootElement);
     }
 
     private UpdateInfo? ToUpdateInfo(JsonElement release)

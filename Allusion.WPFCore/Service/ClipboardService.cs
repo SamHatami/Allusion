@@ -21,12 +21,11 @@ public class ClipboardService : IClipboardService
         _bitmapService = bitmapService;
         _dataObjectImageExtractor = new DataObjectImageExtractor(_bitmapService);
 
-        // Initialize strategies
         _strategies = new IClipboardDataStrategy[]
         {
-            new TextUrlStrategy(_dataObjectImageExtractor),
+            new FileDropStrategy(_bitmapService),
             new ImageDataStrategy(),
-            new FileDropStrategy(_bitmapService)
+            new TextUrlStrategy(_dataObjectImageExtractor)
         };
     }
 
@@ -35,14 +34,15 @@ public class ClipboardService : IClipboardService
         var dataObject = Clipboard.GetDataObject();
         if (dataObject == null) return Array.Empty<BitmapImage>();
 
-        // Try each strategy in order
         foreach (var strategy in _strategies)
         {
             if (strategy.CanHandle(dataObject))
             {
                 try
                 {
-                    return await strategy.ExtractBitmapsAsync(dataObject);
+                    var bitmaps = await strategy.ExtractBitmapsAsync(dataObject);
+                    if (bitmaps.OfType<BitmapImage>().Any())
+                        return bitmaps;
                 }
                 catch (Exception ex)
                 {
@@ -59,9 +59,6 @@ public class ClipboardService : IClipboardService
     {
         if (droppedObject == null) return Array.Empty<BitmapImage>();
 
-        var allBitmaps = new List<BitmapImage>();
-
-        // Try each strategy in order
         foreach (var strategy in _strategies)
         {
             if (strategy.CanHandle(droppedObject))
@@ -69,7 +66,9 @@ public class ClipboardService : IClipboardService
                 try
                 {
                     var bitmaps = await strategy.ExtractBitmapsAsync(droppedObject, cancellationToken);
-                    allBitmaps.AddRange(bitmaps.OfType<BitmapImage>());
+                    var found = bitmaps.OfType<BitmapImage>().ToArray();
+                    if (found.Length > 0)
+                        return found;
                 }
                 catch (Exception ex)
                 {
@@ -79,6 +78,6 @@ public class ClipboardService : IClipboardService
             }
         }
 
-        return allBitmaps.ToArray();
+        return Array.Empty<BitmapImage>();
     }
 }

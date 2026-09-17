@@ -38,7 +38,6 @@ public class Bootstrapper : BootstrapperBase
         _container.Singleton<IClipboardService, ClipboardService>();
 
         _container.Singleton<IReferenceBoardManager, ReferenceBoardManager>();
-        _container.Singleton<ImageItemService>();
         _container.Singleton<IPageManager, PageManager>();
         _container.Singleton<IUpdateService, UpdateService>();
         _container.Singleton<IThemeService, ThemeService>();

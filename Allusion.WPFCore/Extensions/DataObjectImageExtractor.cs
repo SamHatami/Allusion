@@ -47,9 +47,6 @@ public class DataObjectImageExtractor
 
     public async Task<BitmapImage?> GetWebBitmapAsync(IDataObject dataObject, CancellationToken cancellationToken = default)
     {
-        if (dataObject.GetDataPresent(DataFormats.Bitmap))
-            return dataObject.GetData(DataFormats.Bitmap) as BitmapImage;
-
         if (dataObject.GetDataPresent(DataFormats.Html))
         {
             if (TryGetUrl(dataObject, out var imageUrl))
