@@ -81,12 +81,21 @@ public class AllusionConfiguration : INotifyPropertyChanged
     public static AllusionConfiguration Read()
     {
         if (!File.Exists(ConfigPath))
+        {
             CreateNew();
+            return new AllusionConfiguration();
+        }
 
-        var rawFile = File.ReadAllText(ConfigPath);
-        var configuration = JsonSerializer.Deserialize<AllusionConfiguration>(rawFile);
-
-        return configuration ?? new AllusionConfiguration();
+        try
+        {
+            var rawFile = File.ReadAllText(ConfigPath);
+            var configuration = JsonSerializer.Deserialize<AllusionConfiguration>(rawFile);
+            return configuration ?? new AllusionConfiguration();
+        }
+        catch (Exception)
+        {
+            return new AllusionConfiguration();
+        }
     }
 
     public static void Save(AllusionConfiguration config)

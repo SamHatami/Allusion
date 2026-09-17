@@ -36,10 +36,6 @@ supported, not sure if it's even useful. Once you add an image to your board it 
 - Image border thickness is in Settings, and holding Shift while dragging snaps to grid
   (a grid overlay shows while you hold it)
 
-## Focus view
-Double click an image and it pops up in a small always-on-top window. Handy to keep
-above your painting app while you work. (Still not fully functional)
-
 ## Themes and settings
 The gear button opens Settings: theme, always on top, image border thickness.
 The boards folder is picked in the Open dialog instead.

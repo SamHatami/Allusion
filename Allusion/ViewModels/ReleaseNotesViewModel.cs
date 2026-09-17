@@ -16,6 +16,10 @@ public class ReleaseNotesViewModel : Screen
 
     public IReadOnlyList<ReleaseNoteEntry> ReleaseHistory { get; } =
     [
+        new("v1.0.5", new[]
+        {
+            "Removed the Focus view",
+        }),
         new("v1.0.4", new[]
         {
             "Fixed pasted / dropped images being imported twice",

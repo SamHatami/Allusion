@@ -1,8 +1,5 @@
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
-using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -190,13 +187,6 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     private void UpdateInfoBool()
     {
         ShowHelpBox = Images.Count == 0;
-    }
-
-    public void FocusImage(ImageViewModel image)
-    {
-        dynamic settings = new ExpandoObject();
-        settings.WindowState = WindowState.Normal;
-        _windowManger.ShowWindowAsync(new FocusViewModel(image.Item), null, settings);
     }
 
     private void AddItems(ImageItem[] items)
