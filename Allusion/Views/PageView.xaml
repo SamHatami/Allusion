@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:Allusion.Behaviors"
+             xmlns:groupbox="clr-namespace:Allusion.Controls"
+             xmlns:conv="clr-namespace:Allusion.Converters"
     xmlns:cm="http://caliburnmicro.com"
     xmlns:controls="clr-namespace:Allusion.WPFCore.Controls;assembly=Allusion.WPFCore"
     xmlns:converter="clr-namespace:Allusion.WPFCore.Converter;assembly=Allusion.WPFCore"
@@ -22,6 +24,7 @@
     <UserControl.Resources>
 
         <converter:StringToVisibilityConverter x:Key="StringToVis" />
+        <conv:PaletteIndexConverter x:Key="PaletteIndexConverter" />
         <converter:InvertBoolToVis x:Key="InvertBoolVis" />
         <converter:InverseZoomDoubleConverter x:Key="InverseZoomDouble" />
         <DrawingBrush
@@ -105,6 +108,7 @@
                     <MenuItem cm:Message.Attach="[AlignVerticalCenters]" Header="Vertical centers" />
                     <MenuItem cm:Message.Attach="[AlignBottom]" Header="Bottom" />
                 </MenuItem>
+                <MenuItem cm:Message.Attach="[CreateNewGroup]" Header="Create new group" />
                 <MenuItem cm:Message.Attach="[Save]" Header="Save" />
             </ContextMenu>
         </Grid.ContextMenu>
@@ -250,6 +254,47 @@
                         <Setter Property="Panel.ZIndex" Value="{Binding ZIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{Binding GroupBrush}" BorderThickness="2" Background="#33FFFFFF" Width="{Binding Width}" Height="{Binding Height}" IsHitTestVisible="True">
+                            <b:Interaction.Behaviors>
+                                <behaviors:GroupBehavior />
+                            </b:Interaction.Behaviors>
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BorderThickness" Value="3"/>
+                                            <Setter Property="Background" Value="#22FFFFFF"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Title}" Foreground="{Binding GroupBrush}" FontWeight="Bold" FontSize="12" Margin="2,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                <ContentPresenter Grid.Row="1" Content="{Binding}" Margin="4"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
             </ItemsControl>
 
             <Rectangle

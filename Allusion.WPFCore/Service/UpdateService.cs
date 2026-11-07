@@ -101,6 +101,8 @@ public class UpdateService : IUpdateService
             return null;
 
         var cleaned = tag.Trim().TrimStart('v', 'V');
+        // Handle "v." prefix (e.g. tag "v.1.0.3") by stripping the leading dot too.
+        cleaned = cleaned.TrimStart('.');
         if (cleaned.Contains('-'))
             return null;
 

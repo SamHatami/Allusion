@@ -11,8 +11,10 @@ Per-user install, no UAC. Notify + one-click download/apply/restart.
   stable tags like `v1.0.0` qualify – `v1.6-alpha` never triggers.
 - The tag is compared against the running assembly version. Newer → `UpdateInfo(Version, PageUrl, DownloadUrl, Notes)`.
   `DownloadUrl` is the first `.exe` release asset, else the release page is used.
-- All failures (404 = no stable release yet, offline, bad JSON, cancelled) return `null`
-  silently – the check never crashes or nags.
+- Only 404 (no stable release yet) returns `null` silently. Other failures
+  (offline, rate-limited, bad JSON) throw so the manual check can report
+  “couldn't reach the server” instead of a false “up to date”; the silent
+  startup check swallows them and never nags.
 - Results are cached in memory for 1 hour.
 
 ## UX

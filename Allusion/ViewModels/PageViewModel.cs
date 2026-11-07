@@ -37,8 +37,10 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
 
 
     public List<ImageViewModel> SelectedImages { get; } = [];
+    public List<GroupViewModel> SelectedGroups { get; } = [];
 
     public BindableCollection<ImageViewModel> Images { get; set; }
+    public BindableCollection<GroupViewModel> Groups { get; set; } = new();
 
     public CanvasViewport Viewport { get; } = new();
 
@@ -209,6 +211,32 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     public async Task PasteOnCanvas()
     {
         await Board.PasteOnCanvas();
+    }
+
+    public void CreateNewGroup()
+    {
+        var palette = new System.Windows.Media.Brush[]
+        {
+            System.Windows.Media.Brushes.Brown, System.Windows.Media.Brushes.DarkSlateGray, System.Windows.Media.Brushes.Gray,
+            System.Windows.Media.Brushes.DarkGray, System.Windows.Media.Brushes.DarkGoldenrod, System.Windows.Media.Brushes.DarkOliveGreen,
+            System.Windows.Media.Brushes.DarkGreen, System.Windows.Media.Brushes.DarkSlateBlue, System.Windows.Media.Brushes.DarkMagenta,
+            System.Windows.Media.Brushes.DarkCyan, System.Windows.Media.Brushes.DarkRed, System.Windows.Media.Brushes.DarkBlue,
+            System.Windows.Media.Brushes.DarkKhaki, System.Windows.Media.Brushes.DarkOrange, System.Windows.Media.Brushes.DarkViolet,
+            System.Windows.Media.Brushes.DarkTurquoise, System.Windows.Media.Brushes.DarkSalmon, System.Windows.Media.Brushes.Peru,
+            System.Windows.Media.Brushes.DarkOrchid, System.Windows.Media.Brushes.DarkGreen, System.Windows.Media.Brushes.DarkGoldenrod,
+            System.Windows.Media.Brushes.DarkOliveGreen, System.Windows.Media.Brushes.DarkOrange, System.Windows.Media.Brushes.DarkSlateBlue,
+            System.Windows.Media.Brushes.DarkCyan, System.Windows.Media.Brushes.DarkMagenta, System.Windows.Media.Brushes.DarkRed,
+            System.Windows.Media.Brushes.DarkBlue, System.Windows.Media.Brushes.DarkGreen, System.Windows.Media.Brushes.DarkGoldenrod,
+            System.Windows.Media.Brushes.DarkOliveGreen
+        };
+        int idx = 15; // fixed default; could read from config
+        var group = new GroupViewModel { Title = "no name", X = 50, Y = 50, Width = 320, Height = 220, BorderColorIndex = idx, GroupBrush = palette[idx] };
+        if (SelectedImages.Count > 0)
+        {
+            foreach (var img in SelectedImages.ToArray())
+                group.Images.Add(img);
+        }
+        Groups.Add(group);
     }
 
     public async Task Save()
@@ -561,6 +589,31 @@ public class PageViewModel : Screen, IPageViewModel, IRemovableItem, IItemOwner,
     {
         SelectedImages.Add(imageViewModel);
         imageViewModel.IsSelected = true;
+    }
+
+    public void SetSingleGroupSelection(GroupViewModel group)
+    {
+        foreach (var g in SelectedGroups)
+            g.IsSelected = false;
+        SelectedGroups.Clear();
+        group.IsSelected = true;
+        SelectedGroups.Add(group);
+    }
+
+    public void AddToGroupSelection(GroupViewModel group)
+    {
+        if (!SelectedGroups.Contains(group))
+        {
+            SelectedGroups.Add(group);
+            group.IsSelected = true;
+        }
+    }
+
+    public void ClearGroupSelection()
+    {
+        foreach (var g in SelectedGroups)
+            g.IsSelected = false;
+        SelectedGroups.Clear();
     }
 
 

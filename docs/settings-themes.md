@@ -49,7 +49,7 @@ was deleted in the consolidation; `App.xaml` merges only theme + Globals + Contr
 
 Every dialog is a modal `Window` with the shared `DialogWindow` style
 (`BorderBrush = Dialog.Border`, thickness 2): Settings, Help, Arrange, Open/New/Remove
-board pickers, generic `DialogView`, Focus, Welcome. The Open picker used to be
+board pickers, generic `DialogView`, Welcome. The Open picker used to be
 embedded inline in `MainView` – it is now a modal `OpenRefBoardView` window
 (`MainViewModel.ShowStartBoardPickerAsync`), with the main window keeping only a
 logo watermark as its empty state. Inner panels use the `InfoBox` border style,

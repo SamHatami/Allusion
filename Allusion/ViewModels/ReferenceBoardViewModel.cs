@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Forms.VisualStyles;
+using Allusion.Events;
 using Allusion.WPFCore.Board;
 using Allusion.WPFCore.Events;
 using Allusion.WPFCore.Interfaces;
@@ -8,7 +11,7 @@ using Caliburn.Micro;
 
 namespace Allusion.ViewModels;
 
-public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelectedEvent>
+public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelectedEvent>, IHandle<ReorderTabEvent>
 {
     private ReferenceBoard _board;
     private readonly MainViewModel _parent;
@@ -98,6 +101,19 @@ public class ReferenceBoardViewModel : PropertyChangedBase, IHandle<PageSelected
     public void RemoveSelectedImage()
     {
         ActivePageViewModel.DeleteSelectedImages();
+    }
+
+    public Task HandleAsync(ReorderTabEvent message, CancellationToken cancellationToken)
+    {
+        var pageVM = message.Source as PageViewModel;
+        if (pageVM == null || !Pages.Contains(pageVM)) return Task.CompletedTask;
+        int current = Pages.IndexOf(pageVM);
+        int target = Math.Clamp(message.TargetIndex, 0, Pages.Count - 1);
+        if (current == target) return Task.CompletedTask;
+        Pages.RemoveAt(current);
+        Pages.Insert(target, pageVM);
+        NotifyOfPropertyChange(nameof(Pages));
+        return Task.CompletedTask;
     }
 
     public void RemovePage()

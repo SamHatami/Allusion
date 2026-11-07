@@ -52,6 +52,7 @@
                             Focusable="True">
                             <b:Interaction.Behaviors>
                                 <behaviors:TabButtonBehavior />
+                                <behaviors:ReorderTabBehavior />
                             </b:Interaction.Behaviors>
                             <Button.Style>
                                 <Style BasedOn="{StaticResource TabButton}" TargetType="Button">
